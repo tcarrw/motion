@@ -12,7 +12,7 @@
     --gap: 12px;
     --fg: #e9fffa;
     --fg-dim:#c7efe4;
-    --bg:#061512; /* slightly deeper for Matrix vibe */
+    --bg:#061512;
     --bg-panel: color-mix(in sRGB, var(--accent) 8%, #0a0f0e 78%);
     --glass-border: color-mix(in sRGB, var(--accent) 55%, rgba(255,255,255,0));
     --shadow: 0 8px 26px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
@@ -20,13 +20,13 @@
     --muted: #a8e5d4;
     --chip: #0d2d27;
     --chip-border: color-mix(in sRGB, var(--accent) 55%, transparent);
-    --ok:#32ffbe; /* Neon Sprout for accents on success */
+    --ok:#32ffbe; /* Neon Sprout */
     --warn:#ffd166;
     --danger:#ff6b6b;
     --accent:#0bbf8a; /* Emerald Drift default */
   }
 
-  /* THEME TOKENS (named greens) */
+  /* THEME TOKENS — only set --accent so the file stays lean */
   html[data-theme="emerald-drift"]{ --accent:#0bbf8a; }
   html[data-theme="teal-current"]{ --accent:#00c2a8; }
   html[data-theme="jade-pulse"]{ --accent:#15a87a; }
@@ -51,18 +51,15 @@
     -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   }
 
-  /* MATRIX OVERLAY (White Rabbit) — lightweight CSS, reduced-motion aware */
+  /* MATRIX OVERLAY — lightweight CSS, reduced-motion aware */
   .matrix{ position:fixed; inset:0; z-index:0; pointer-events:none; }
   .matrix::before, .matrix::after{
     content:"";
     position:absolute; inset:-8%;
     background-image:
-      /* vertical code streaks */
       repeating-linear-gradient(90deg, rgba(0,0,0,0) 0 56px, rgba(0,0,0,0.0) 56px 60px),
-      /* falling dots/streams */
       repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 18px, rgba(42,255,199,.065) 18px 19px, rgba(0,0,0,0) 19px 80px);
     background-size: 60px 100px, 100% 100%;
-    background-repeat: repeat;
     filter: blur(.2px);
     opacity:.18;
     animation: rainA 42s linear infinite;
@@ -213,14 +210,14 @@
     <header class="hero" role="banner" aria-label="Motion Flow Studio header">
       <div class="row" style="justify-content:space-between; align-items:flex-start">
         <div>
-          <div class="h1">Motion — Flow Studio (Miss Monique)</div>
+          <div class="h1" title="Motion — Flow Studio (Miss Monique)">Motion — Flow Studio (Miss Monique)</div>
           <div class="sub"> <em>Pulse that steadies the mind. Movement before meaning.</em></div>
           <div class="why"> <strong>Why:</strong> <em>Dance first, think later. Warm body, clear head. Then choose your next page.</em></div>
           <div class="ritual"> <strong>Ritual:</strong> <em>Breath → Step → Release</em> (4-2-6 breathing; jaw unclench @6m; soft eyes at close)</div>
         </div>
         <div class="actions" aria-label="Theme and view">
-          <button id="displayToggle" class="btn ghost" aria-pressed="false" aria-label="Toggle Display Mode">Display</button>
-          <select id="themePicker" aria-label="Theme picker (named greens)">
+          <button id="displayToggle" class="btn ghost" aria-pressed="false" aria-label="Toggle Display Mode" title="Toggle Display/Kiosk mode">Display</button>
+          <select id="themePicker" aria-label="Theme picker (named greens)" title="Theme picker — changes just one accent color">
             <option value="emerald-drift">Emerald Drift</option>
             <option value="teal-current">Teal Current</option>
             <option value="jade-pulse">Jade Pulse</option>
@@ -249,13 +246,13 @@
           </div>
         </div>
         <div class="actions">
-          <button id="lockBtn" class="btn ghost" aria-label="Lock Display quickly">Lock Display</button>
+          <button id="lockBtn" class="btn ghost" aria-label="Lock Display quickly" title="Quick-lock the editor in Display mode">Lock Display</button>
         </div>
       </div>
 
       <div class="player-wrap" aria-label="Video player area">
         <div id="startOverlay" class="overlay-start" role="dialog" aria-modal="false" aria-live="polite">
-          <button id="startBtn" class="big primary" aria-label="Start playback">Start</button>
+          <button id="startBtn" class="big primary" aria-label="Start playback" title="Start (iPhone: enables audio with one tap)">Start</button>
         </div>
         <iframe id="yt" title="Miss Monique — official set"
           loading="lazy"
@@ -267,35 +264,36 @@
 
       <div class="controls editable" role="region" aria-label="Playback controls">
         <div class="bar">
-          <button id="playPause" class="primary" aria-label="Start or Pause">Start</button>
+          <button id="playPause" class="primary" aria-label="Start or Pause" title="Space to toggle">Start</button>
           <div class="timer" id="timerText" aria-live="polite" aria-atomic="true" title="Time remaining">12:00</div>
-          <button id="extend" class="btn" aria-label="Extend by 5 minutes">+5m Extend</button>
+          <button id="extend" class="btn" aria-label="Extend by 5 minutes" title="+ key extends by 5 minutes">+5m Extend</button>
           <div class="actions">
-            <button class="btn ghost preset" data-preset="quick" aria-label="Quick 12 minutes">Quick 12m</button>
-            <button class="btn ghost preset" data-preset="deep" aria-label="Deep 20 minutes">Deep 20m</button>
-            <button class="btn ghost preset" data-preset="night" aria-label="Night 12 minutes">Night 12m</button>
+            <button class="btn ghost preset" data-preset="quick" aria-label="Quick 12 minutes" title="Preset: Quick 12m">Quick 12m</button>
+            <button class="btn ghost preset" data-preset="deep" aria-label="Deep 20 minutes" title="Preset: Deep 20m">Deep 20m</button>
+            <button class="btn ghost preset" data-preset="night" aria-label="Night 12 minutes" title="Preset: Night 12m">Night 12m</button>
           </div>
-          <div class="vol">
+          <div class="vol" title="Volume: use -, = or Arrow keys">
             <label for="vol" class="sr-only">Volume</label>
             <span>🔊</span>
             <input id="vol" type="range" min="0" max="1" step="0.01" value="0.8" aria-valuemin="0" aria-valuemax="1" aria-label="Volume slider"/>
           </div>
+          <div id="iosHint" class="chip" style="display:none" title="If audio stops after lock, enable Picture‑in‑Picture from Safari.">iPhone tip: use PiP if audio stops after lock.</div>
         </div>
 
         <div class="bar">
           <div class="mode-tabs" role="tablist" aria-label="Play mode">
-            <button id="modeWhole"   role="tab" aria-selected="true"  aria-pressed="true"  class="btn ghost">Whole</button>
-            <button id="modeWindow"  role="tab" aria-selected="false" aria-pressed="false" class="btn ghost">Segment</button>
-            <button id="modeSeq"     role="tab" aria-selected="false" aria-pressed="false" class="btn ghost">Sequence</button>
+            <button id="modeWhole"   role="tab" aria-selected="true"  aria-pressed="true"  class="btn ghost" title="Play the whole set">Whole</button>
+            <button id="modeWindow"  role="tab" aria-selected="false" aria-pressed="false" class="btn ghost" title="Play a defined segment window">Segment</button>
+            <button id="modeSeq"     role="tab" aria-selected="false" aria-pressed="false" class="btn ghost" title="Play a sequence of cuts">Sequence</button>
           </div>
           <div class="actions">
-            <button id="prevCut" class="btn ghost" aria-label="Previous cut (Q)">◀ Prev</button>
-            <button id="nextCut" class="btn ghost" aria-label="Next cut (E)">Next ▶</button>
+            <button id="prevCut" class="btn ghost" aria-label="Previous cut (Q)" title="Previous cut (Q)">◀ Prev</button>
+            <button id="nextCut" class="btn ghost" aria-label="Next cut (E)" title="Next cut (E)">Next ▶</button>
             <span id="cutLabel" class="chip" aria-live="polite" title="Current cut label" style="display:none"></span>
           </div>
           <div class="grow"></div>
           <div class="actions">
-            <select id="trackPicker" aria-label="Select track"></select>
+            <select id="trackPicker" aria-label="Select track" title="Choose set"></select>
           </div>
         </div>
       </div>
@@ -310,37 +308,37 @@
           <div class="fields">
             <div class="half">
               <label for="segStart">Start (mm:ss or sec)</label>
-              <input id="segStart" type="text" inputmode="numeric" placeholder="0:00" />
+              <input id="segStart" type="text" inputmode="numeric" placeholder="0:00" title="Segment start — mm:ss or seconds" />
             </div>
             <div class="half">
               <label for="segEnd">End (mm:ss or sec)</label>
-              <input id="segEnd" type="text" inputmode="numeric" placeholder="12:00" />
+              <input id="segEnd" type="text" inputmode="numeric" placeholder="12:00" title="Segment end — mm:ss or seconds" />
             </div>
             <div class="half" style="display:flex;align-items:end;gap:8px">
-              <input id="segLoop" type="checkbox" aria-label="Loop segment" /> <label for="segLoop">Loop</label>
+              <input id="segLoop" type="checkbox" aria-label="Loop segment" /> <label for="segLoop" title="Loop the segment">Loop</label>
             </div>
             <div class="half" style="display:flex;align-items:end;gap:8px">
-              <button id="applySeg" class="btn">Apply</button>
+              <button id="applySeg" class="btn" title="Apply segment window">Apply</button>
             </div>
             <div class="half">
-              <button id="fromNow12" class="btn ghost" aria-label="From now plus 12 minutes">From now +12m</button>
+              <button id="fromNow12" class="btn ghost" aria-label="From now plus 12 minutes" title="Create a 12‑minute window starting now">From now +12m</button>
             </div>
             <div class="half">
-              <button id="fromNow20" class="btn ghost" aria-label="From now plus 20 minutes">From now +20m</button>
+              <button id="fromNow20" class="btn ghost" aria-label="From now plus 20 minutes" title="Create a 20‑minute window starting now">From now +20m</button>
             </div>
             <div class="wide"><hr style="border:none;border-top:1px solid var(--glass-border)" /></div>
             <div class="wide">
               <h3>Tap-Tempo</h3>
               <div class="row">
-                <button id="tapBtn" class="btn" aria-label="Tap to estimate BPM">Tap</button>
+                <button id="tapBtn" class="btn" aria-label="Tap to estimate BPM" title="Tap to estimate BPM (averages last 3–8 taps)">Tap</button>
                 <div class="chip">BPM: <span id="bpmOut">—</span></div>
                 <label class="sr-only" for="barsSel">Bars</label>
-                <select id="barsSel" aria-label="Choose bars">
+                <select id="barsSel" aria-label="Choose bars" title="How many bars to snap">
                   <option value="8">8 bars</option>
                   <option value="16" selected>16 bars</option>
                   <option value="32">32 bars</option>
                 </select>
-                <button id="snapWindow" class="btn ghost" aria-label="Create bar-aligned segment">Snap window</button>
+                <button id="snapWindow" class="btn ghost" aria-label="Create bar-aligned segment" title="Create a bar-aligned window from 'now'">Snap window</button>
               </div>
             </div>
           </div>
@@ -352,25 +350,25 @@
           <div class="fields">
             <div>
               <label for="cutStart">Start</label>
-              <input id="cutStart" type="text" placeholder="e.g., 1:20" />
+              <input id="cutStart" type="text" placeholder="e.g., 1:20" title="Cut start (mm:ss or seconds)"/>
             </div>
             <div>
               <label for="cutEnd">End</label>
-              <input id="cutEnd" type="text" placeholder="e.g., 2:40" />
+              <input id="cutEnd" type="text" placeholder="e.g., 2:40" title="Cut end (mm:ss or seconds)"/>
             </div>
             <div>
               <label for="cutRepeats">Repeats</label>
-              <input id="cutRepeats" type="number" min="0" step="1" value="0" />
+              <input id="cutRepeats" type="number" min="0" step="1" value="0" title="Repeat this cut N extra times"/>
             </div>
             <div style="display:flex;gap:8px;align-items:end">
-              <input id="cutLoop" type="checkbox" /> <label for="cutLoop">Loop ∞</label>
+              <input id="cutLoop" type="checkbox" /> <label for="cutLoop" title="Loop this cut indefinitely">Loop ∞</label>
             </div>
             <div class="wide">
               <label for="cutLabel">Label</label>
-              <input id="cutLabelInput" type="text" placeholder="Jam loop / Build / etc." />
+              <input id="cutLabelInput" type="text" placeholder="Jam loop / Build / etc." title="Optional label for this cut"/>
             </div>
             <div class="wide">
-              <button id="addCut" class="btn">Add cut</button>
+              <button id="addCut" class="btn" title="Add cut to sequence">Add cut</button>
             </div>
           </div>
 
@@ -378,12 +376,12 @@
 
           <div class="row" style="margin-top:8px">
             <label class="chip" style="gap:8px">Loop sequence
-              <input id="loopSeq" type="checkbox" aria-label="Loop entire sequence" style="margin-left:8px" />
+              <input id="loopSeq" type="checkbox" aria-label="Loop entire sequence" style="margin-left:8px" title="Loop through the sequence"/>
             </label>
-            <button id="applySeq" class="btn">Apply sequence</button>
+            <button id="applySeq" class="btn" title="Apply sequence for playback">Apply sequence</button>
             <div class="grow"></div>
-            <button id="btnPrevCut" class="btn ghost" aria-label="Previous cut">Prev</button>
-            <button id="btnNextCut" class="btn ghost" aria-label="Next cut">Next</button>
+            <button id="btnPrevCut" class="btn ghost" aria-label="Previous cut" title="Previous cut (Q)">Prev</button>
+            <button id="btnNextCut" class="btn ghost" aria-label="Next cut" title="Next cut (E)">Next</button>
           </div>
         </div>
       </div>
@@ -393,18 +391,18 @@
     <section class="panel share-panel editable" aria-label="Share & Export">
       <h2>Share Tools</h2>
       <div class="row">
-        <button id="copyLink" class="btn">Copy share link</button>
-        <button id="exportState" class="btn ghost">Export .json</button>
-        <button id="importState" class="btn ghost">Import .json</button>
+        <button id="copyLink" class="btn" title="Copy a URL with #flow=…">Copy share link</button>
+        <button id="exportState" class="btn ghost" title="Download current state as JSON">Export .json</button>
+        <button id="importState" class="btn ghost" title="Import state from a JSON file">Import .json</button>
         <div id="shareMsg" class="chip" aria-live="polite" style="display:none"></div>
       </div>
     </section>
 
     <section class="panel favorites-panel editable" aria-label="Favorites with DJ Notes">
       <div class="row" style="justify-content:space-between; align-items:flex-end">
-        <h2>Favorites <span class="chip">⭐ Save + DJ Notes</span></h2>
+        <h2>Favorites <span class="chip" title="Save exact playback state with notes">⭐ Save + DJ Notes</span></h2>
         <div class="row">
-          <select id="favColor" aria-label="Favorite color tag">
+          <select id="favColor" aria-label="Favorite color tag" title="Color tag (green token)">
             <option value="emerald-drift">Emerald Drift</option>
             <option value="teal-current">Teal Current</option>
             <option value="jade-pulse">Jade Pulse</option>
@@ -416,9 +414,9 @@
             <option value="seafoam-glow">Seafoam Glow</option>
             <option value="neon-sprout">Neon Sprout</option>
           </select>
-          <input id="favTitle" type="text" placeholder="Title (optional)" aria-label="Favorite title" />
-          <input id="favNotes" type="text" placeholder="DJ Notes (optional)" aria-label="DJ Notes" />
-          <button id="saveFav" class="btn">⭐ Save Favorite</button>
+          <input id="favTitle" type="text" placeholder="Title (optional)" aria-label="Favorite title" title="Optional title" />
+          <input id="favNotes" type="text" placeholder="DJ Notes (optional)" aria-label="DJ Notes" title="Optional notes" />
+          <button id="saveFav" class="btn" title="Save current state as a favorite">⭐ Save Favorite</button>
         </div>
       </div>
       <div id="favorites" class="favorites" style="margin-top:10px"></div>
@@ -430,15 +428,18 @@
       <div class="fields">
         <div>
           <label for="ciMood">Mood</label>
-          <input id="ciMood" type="text" placeholder="One word" />
+          <input id="ciMood" type="text" placeholder="One word" title="Mood word" />
         </div>
         <div>
           <label for="ciEnergy">Energy (0–10)</label>
-          <input id="ciEnergy" type="range" min="0" max="10" step="1" value="5" />
+          <div class="row" title="Drag or use keyboard to adjust">
+            <input id="ciEnergy" type="range" min="0" max="10" step="1" value="5" aria-valuemin="0" aria-valuemax="10" aria-valuenow="5" />
+            <span id="ciEnergyVal" class="chip" title="Current energy">5</span>
+          </div>
         </div>
         <div>
           <label for="ciBody">Body</label>
-          <select id="ciBody">
+          <select id="ciBody" title="Body feel">
             <option>Loose</option>
             <option selected>Neutral</option>
             <option>Tight</option>
@@ -446,17 +447,17 @@
         </div>
         <div class="wide">
           <label for="ciIntent">Intention</label>
-          <input id="ciIntent" type="text" placeholder="One-liner intention" />
+          <input id="ciIntent" type="text" placeholder="One-liner intention" title="Your intention for this session" />
         </div>
         <div class="wide">
           <label for="ciNotes">Notes</label>
-          <textarea id="ciNotes" placeholder="Session reflections"></textarea>
+          <textarea id="ciNotes" placeholder="Session reflections" title="Notes about the session"></textarea>
         </div>
       </div>
       <div class="row" style="margin-top:10px">
-        <button id="ciLog" class="btn">Log</button>
-        <button id="ciExport" class="btn ghost">Export .json</button>
-        <button id="ciClear" class="btn ghost">Clear log</button>
+        <button id="ciLog" class="btn" title="Save a check-in entry">Log</button>
+        <button id="ciExport" class="btn ghost" title="Download all check-ins as JSON">Export .json</button>
+        <button id="ciClear" class="btn ghost" title="Clear all check-ins (local only)">Clear log</button>
       </div>
       <div id="ciCards" class="cards" style="margin-top:10px"></div>
     </section>
@@ -467,7 +468,7 @@
       <div class="row" style="flex-wrap:wrap; gap:10px">
         <span class="kbd">Space</span> Start/Pause
         <span class="kbd">+</span> +5m
-        <span class="kbd">v</span>/<span class="kbd">V</span> volume −/+
+        <span class="kbd">v</span>/<span class="kbd">V</span> volume −/+ <span class="chip" title="Also: - / = and Arrow Down/Up">(or - / = / ⬇︎ / ⬆︎)</span>
         <span class="kbd">1</span>/<span class="kbd">2</span>/<span class="kbd">3</span> Quick/Deep/Night
         <span class="kbd">W</span> Whole
         <span class="kbd">S</span> Sequence
@@ -610,6 +611,12 @@
     setTimeout(()=> { el.style.display="none"; }, 2400);
   }
 
+  /* Simple iOS detection for hint chip */
+  function isIOS(){
+    const ua = navigator.userAgent || "";
+    return /iPhone|iPad|iPod/.test(ua);
+  }
+
   /* ===========================
      FlowRoom (Public API)
   =========================== */
@@ -695,7 +702,6 @@
       try { data = JSON.parse(src); } catch(err){ return; }
       if(data.event === "onReady"){
         state.playerReady = true;
-        /* Initialize volume and request infoDelivery updates */
         post("setVolume", [Math.round(state.volume*100)]);
         post("unMute");
       }
@@ -705,17 +711,16 @@
         enforceWindows();
       }
       if(data.event === "onStateChange"){
-        /* 1=playing, 2=paused, 0=ended (per IFrame API) */
+        /* 1=playing, 2=paused, 0=ended */
         if(data.info === 1){ state.playing = true; startOverlay.classList.add("hidden"); playPause.textContent = "Pause"; }
         if(data.info === 2){ state.playing = false; playPause.textContent = "Start"; }
-        if(data.info === 0){ state.playing = false; playPause.textContent = "Start"; /* natural end */ }
+        if(data.info === 0){ state.playing = false; playPause.textContent = "Start"; }
       }
     }
     window.addEventListener("message", onMessage);
 
     yt.addEventListener("load", function(){
       sendListening();
-      /* Request periodic infoDelivery */
       post("addEventListener", ["onStateChange"]);
       post("addEventListener", ["onPlaybackQualityChange"]);
       post("addEventListener", ["onPlaybackRateChange"]);
@@ -755,7 +760,6 @@
         if(!cuts.length) return;
         const c = cuts[state.seqIndex] || cuts[0];
         if(typeof c === "undefined") return;
-        /* Update cut label */
         showCutLabel(c.label);
         if(state.currentTime < c.start - 0.35){ softSeek(c.start); }
         if(state.currentTime >= c.end){
@@ -900,10 +904,8 @@
       state.trackLabel = label || "";
       state.starts = starts || {quick:0, deep:0, night:0};
       yt.src = buildSrc(youtubeId);
-      /* ensure overlay visible and timer stopped initially */
       startOverlay.classList.remove("hidden");
       state.timerRunning = false;
-      /* per-preset windows/sequence */
       if(segmentByPreset) setWindowByPreset(segmentByPreset);
       if(sequence) state.sequence = { cuts: sequence.cuts || [], loopSequence: !!sequence.loopSequence };
       if(defaultPreset) applyPreset(defaultPreset);
@@ -950,11 +952,14 @@
 
     /* Wiring controls */
     startBtn.addEventListener("click", function(){
-      /* On first user gesture, seek to preset start (if defined) then play */
       const presetStart = state.starts?.[state.preset] || 0;
       if(presetStart > 0) post("seekTo",[presetStart, true]);
       play();
       state.timerRunning = true;
+      /* iOS hint chip after first gesture */
+      if(isIOS()){
+        const hint = $("#iosHint"); if(hint){ hint.style.display="inline-flex"; setTimeout(()=>{ hint.style.display="none"; }, 5000); }
+      }
     });
     playPause.addEventListener("click", function(){
       if(state.playing){ pause(); state.timerRunning = false; }
@@ -994,7 +999,6 @@
       }
     });
 
-    /* Public */
     return {
       play, pause, toggle,
       loadTrack,
@@ -1094,7 +1098,7 @@
   /* ===========================
      Sequence Editor
   =========================== */
-  const list = $("#cutsList"), loopSeq = $("#loopSeq");
+  const list = $("#cutsList");
   const cutsModel = [];
   function renderCuts(){
     list.innerHTML = "";
@@ -1116,9 +1120,9 @@
       left.appendChild(txt);
       const right = document.createElement("div");
       right.className="actions";
-      const up  = document.createElement("button"); up.className="btn ghost"; up.textContent="↑"; up.setAttribute("aria-label","Move up");
-      const dn  = document.createElement("button"); dn.className="btn ghost"; dn.textContent="↓"; dn.setAttribute("aria-label","Move down");
-      const del = document.createElement("button"); del.className="btn";       del.textContent="×"; del.setAttribute("aria-label","Delete");
+      const up  = document.createElement("button"); up.className="btn ghost"; up.textContent="↑"; up.setAttribute("aria-label","Move up"); up.title="Move cut up";
+      const dn  = document.createElement("button"); dn.className="btn ghost"; dn.textContent="↓"; dn.setAttribute("aria-label","Move down"); dn.title="Move cut down";
+      const del = document.createElement("button"); del.className="btn";       del.textContent="×"; del.setAttribute("aria-label","Delete"); del.title="Delete cut";
       up.addEventListener("click", ()=>{ if(idx>0){ const t=cutsModel[idx-1]; cutsModel[idx-1]=cutsModel[idx]; cutsModel[idx]=t; renderCuts(); }});
       dn.addEventListener("click", ()=>{ if(idx<cutsModel.length-1){ const t=cutsModel[idx+1]; cutsModel[idx+1]=cutsModel[idx]; cutsModel[idx]=t; renderCuts(); }});
       del.addEventListener("click", ()=>{ cutsModel.splice(idx,1); renderCuts(); });
@@ -1210,9 +1214,9 @@
       notes.style.fontSize=".92rem"; notes.style.opacity=".9"; notes.textContent = f.notes || "";
 
       const actions = document.createElement("div"); actions.className="actions";
-      const playBtn = document.createElement("button"); playBtn.className="btn"; playBtn.textContent="Play";
-      const linkBtn = document.createElement("button"); linkBtn.className="btn ghost"; linkBtn.textContent="Link";
-      const delBtn = document.createElement("button"); delBtn.className="btn ghost"; delBtn.textContent="Delete";
+      const playBtn = document.createElement("button"); playBtn.className="btn"; playBtn.textContent="Play"; playBtn.title="Load this favorite";
+      const linkBtn = document.createElement("button"); linkBtn.className="btn ghost"; linkBtn.textContent="Link"; linkBtn.title="Copy share link to clipboard";
+      const delBtn = document.createElement("button"); delBtn.className="btn ghost"; delBtn.textContent="Delete"; delBtn.title="Remove this favorite";
       playBtn.addEventListener("click", ()=> FlowRoom.importState(f.state));
       linkBtn.addEventListener("click", ()=>{
         const b = b64Encode(f.state);
@@ -1340,6 +1344,15 @@
   }
   renderCheckins();
 
+  const ciEnergy = $("#ciEnergy");
+  const ciEnergyVal = $("#ciEnergyVal");
+  if(ciEnergy && ciEnergyVal){
+    ciEnergy.addEventListener("input", function(){
+      ciEnergyVal.textContent = String(this.value);
+      this.setAttribute("aria-valuenow", String(this.value));
+    });
+  }
+
   $("#ciLog").addEventListener("click", function(){
     const rec = {
       ts: Date.now(),
@@ -1367,40 +1380,73 @@
   });
 
   /* ===========================
-     Keyboard Shortcuts
+     Keyboard Shortcuts (robust)
   =========================== */
-  window.addEventListener("keydown", function(e){
+  function handleKey(e){
     const active = document.activeElement;
     const isTyping = active && (active.tagName==="INPUT" || active.tagName==="TEXTAREA" || active.tagName==="SELECT" || active.isContentEditable);
     if(isTyping) return;
 
-    if(e.code==="Space"){ e.preventDefault(); FlowRoom.toggle(); FlowRoom._state.timerRunning = FlowRoom._state.playing; }
-    if(e.key==="+"){ FlowRoom._state.timerSec += 5*60; $("#timerText").textContent = fmtTime(FlowRoom._state.timerSec); }
-    if(e.key==="v"){ const v = Math.max(0, FlowRoom._state.volume - 0.05); $("#vol").value = String(v); FlowRoom._post("setVolume",[Math.round(v*100)]); FlowRoom._state.volume=v; }
-    if(e.key==="V"){ const v = Math.min(1, FlowRoom._state.volume + 0.05); $("#vol").value = String(v); FlowRoom._post("setVolume",[Math.round(v*100)]); FlowRoom._state.volume=v; }
+    /* Space: toggle + keep timer in sync */
+    if(e.key === ' ' || e.code === "Space"){
+      e.preventDefault();
+      FlowRoom.toggle();
+      FlowRoom._state.timerRunning = FlowRoom._state.playing;
+      return;
+    }
 
-    /* Use the same path as clicking preset buttons to ensure preset windows apply */
+    /* Extend +5m: '+' or Shift+=' */
+    if(e.key === '+' || (e.code === 'Equal' && e.shiftKey)){
+      e.preventDefault();
+      FlowRoom._state.timerSec += 5*60;
+      document.getElementById("timerText").textContent = (function(t){ const m=Math.floor(t/60),s=t%60; return m+":"+(s<10?"0"+s:s); })(FlowRoom._state.timerSec);
+      return;
+    }
+
+    /* Volume down: v, '-', ArrowDown */
+    if(e.key === 'v' || e.key === '-' || e.key === 'ArrowDown'){
+      e.preventDefault();
+      const v = Math.max(0, FlowRoom._state.volume - 0.05);
+      document.getElementById("vol").value = String(v);
+      FlowRoom._post("setVolume",[Math.round(v*100)]);
+      FlowRoom._state.volume=v;
+      return;
+    }
+
+    /* Volume up: V (Shift+v), '=', ArrowUp */
+    if(e.key === 'V' || e.key === '=' || e.key === 'ArrowUp'){
+      e.preventDefault();
+      const v = Math.min(1, FlowRoom._state.volume + 0.05);
+      document.getElementById("vol").value = String(v);
+      FlowRoom._post("setVolume",[Math.round(v*100)]);
+      FlowRoom._state.volume=v;
+      return;
+    }
+
+    /* Presets via same path as buttons */
     const btnQuick = document.querySelector('.preset[data-preset="quick"]');
     const btnDeep  = document.querySelector('.preset[data-preset="deep"]');
     const btnNight = document.querySelector('.preset[data-preset="night"]');
-    if(e.key==="1" && btnQuick){ btnQuick.click(); }
-    if(e.key==="2" && btnDeep ){ btnDeep.click();  }
-    if(e.key==="3" && btnNight){ btnNight.click(); }
+    if(e.key==="1" && btnQuick){ e.preventDefault(); btnQuick.click(); return; }
+    if(e.key==="2" && btnDeep ){ e.preventDefault(); btnDeep.click();  return; }
+    if(e.key==="3" && btnNight){ e.preventDefault(); btnNight.click(); return; }
 
-    if(e.key==="W" || e.key==="w"){ FlowRoom.setPlayMode("whole"); }
-    if(e.key==="S" || e.key==="s"){ FlowRoom.setPlayMode("sequence"); }
-    if(e.key==="Q" || e.key==="q"){ FlowRoom.prevCut(); }
-    if(e.key==="E" || e.key==="e"){ FlowRoom.nextCut(); }
-  });
+    if(e.key==="W" || e.key==="w"){ e.preventDefault(); FlowRoom.setPlayMode("whole"); return; }
+    if(e.key==="S" || e.key==="s"){ e.preventDefault(); FlowRoom.setPlayMode("sequence"); return; }
+    if(e.key==="Q" || e.key==="q"){ e.preventDefault(); FlowRoom.prevCut(); return; }
+    if(e.key==="E" || e.key==="e"){ e.preventDefault(); FlowRoom.nextCut(); return; }
+  }
+  /* Listen on both window and document to catch more cases */
+  window.addEventListener("keydown", handleKey, true);
+  document.addEventListener("keydown", handleKey, true);
 
   /* ===========================
      Apply initial preset + reduced motion
   =========================== */
   FlowRoom.setPlayMode(FlowRoom._state.mode);
   FlowRoom._state.timerSec = (FlowData.defaultPreset==="deep" ? 20*60 : 12*60);
-  $("#timerText").textContent = (FlowData.defaultPreset==="deep") ? "20:00" : "12:00";
+  document.getElementById("timerText").textContent = (FlowData.defaultPreset==="deep") ? "20:00" : "12:00";
 
-  /* Reduced motion: minimize transitions if user prefers */
   try{
     if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
       document.querySelectorAll("*").forEach(el=>{ el.style.transitionDuration = "0s"; });
