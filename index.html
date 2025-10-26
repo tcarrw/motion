@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Motion — Flow Studio (Miss Monique)</title>
-<meta name="description" content="Flow Studio for Miss Monique sets — cut segments, chain sequences, save favorites with DJ notes, share exact states, and log Check‑Ins. Green Edition." />
+<meta name="description" content="Flow Studio for Miss Monique sets — cut segments, chain sequences, save favorites with DJ notes, share exact states, and log Check‑Ins. Green Edition with a subtle White Rabbit / Matrix feel." />
 <style>
   :root{
     --radius: 14px;
@@ -12,7 +12,7 @@
     --gap: 12px;
     --fg: #e9fffa;
     --fg-dim:#c7efe4;
-    --bg:#071a16;
+    --bg:#061512; /* slightly deeper for Matrix vibe */
     --bg-panel: color-mix(in sRGB, var(--accent) 8%, #0a0f0e 78%);
     --glass-border: color-mix(in sRGB, var(--accent) 55%, rgba(255,255,255,0));
     --shadow: 0 8px 26px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
@@ -46,10 +46,46 @@
   html,body{height:100%}
   body{
     margin:0; font:500 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
-    color:var(--fg); background: radial-gradient(1200px 1200px at 15% -10%, color-mix(in sRGB,var(--accent) 22%, #000 0%), transparent 60%), linear-gradient(180deg, #050b0a, var(--bg));
+    color:var(--fg);
+    background: linear-gradient(180deg, #050b0a, var(--bg));
     -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   }
-  .wrap{ max-width:1100px; margin:0 auto; padding:16px; display:grid; grid-template-columns: 1fr; gap:var(--gap); }
+
+  /* MATRIX OVERLAY (White Rabbit) — lightweight CSS, reduced-motion aware */
+  .matrix{ position:fixed; inset:0; z-index:0; pointer-events:none; }
+  .matrix::before, .matrix::after{
+    content:"";
+    position:absolute; inset:-8%;
+    background-image:
+      /* vertical code streaks */
+      repeating-linear-gradient(90deg, rgba(0,0,0,0) 0 56px, rgba(0,0,0,0.0) 56px 60px),
+      /* falling dots/streams */
+      repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 18px, rgba(42,255,199,.065) 18px 19px, rgba(0,0,0,0) 19px 80px);
+    background-size: 60px 100px, 100% 100%;
+    background-repeat: repeat;
+    filter: blur(.2px);
+    opacity:.18;
+    animation: rainA 42s linear infinite;
+    mix-blend-mode:screen;
+  }
+  .matrix::after{
+    opacity:.12;
+    background-image:
+      repeating-linear-gradient(90deg, rgba(0,0,0,0) 0 48px, rgba(0,0,0,0.0) 48px 52px),
+      repeating-linear-gradient(180deg, rgba(0,0,0,0) 0 14px, rgba(0,255,170,.055) 14px 15px, rgba(0,0,0,0) 15px 72px);
+    animation: rainB 56s linear infinite;
+  }
+  @keyframes rainA { to { background-position: 0 200%, 0 200%; } }
+  @keyframes rainB { to { background-position: 0 160%, 0 180%; } }
+  @media (prefers-reduced-motion: reduce){
+    .matrix::before, .matrix::after{ animation: none; opacity:.06; }
+  }
+  .rabbit-mark{
+    position:fixed; bottom:10px; right:12px; z-index:0; pointer-events:none;
+    font-size:18px; opacity:.35; filter: drop-shadow(0 1px 0 rgba(0,0,0,.4));
+  }
+
+  .wrap{ position:relative; z-index:1; max-width:1100px; margin:0 auto; padding:16px; display:grid; grid-template-columns: 1fr; gap:var(--gap); }
   header.hero{
     border:1px solid var(--glass-border);
     background:var(--bg-panel);
@@ -169,6 +205,10 @@
 </style>
 </head>
 <body>
+  <!-- Subtle, low-cost Matrix backdrop -->
+  <div class="matrix" aria-hidden="true"></div>
+  <div class="rabbit-mark" aria-hidden="true" title="Follow the white rabbit">🐇</div>
+
   <div class="wrap">
     <header class="hero" role="banner" aria-label="Motion Flow Studio header">
       <div class="row" style="justify-content:space-between; align-items:flex-start">
@@ -355,6 +395,7 @@
       <div class="row">
         <button id="copyLink" class="btn">Copy share link</button>
         <button id="exportState" class="btn ghost">Export .json</button>
+        <button id="importState" class="btn ghost">Import .json</button>
         <div id="shareMsg" class="chip" aria-live="polite" style="display:none"></div>
       </div>
     </section>
@@ -434,7 +475,7 @@
       </div>
     </section>
 
-    <!-- Builder data (official IDs) -->
+    <!-- Builder data (official IDs) — precomputed numbers for valid JSON -->
     <script type="application/json" id="flow-builder-data">
     {
       "defaultPreset": "quick",
@@ -446,9 +487,9 @@
           "starts": { "quick": 120, "deep": 0, "night": 1800 },
           "mode": "window",
           "segmentByPreset": {
-            "quick": { "start": 120, "end": 120 + 12*60, "loop": false },
-            "deep":  { "start":   0, "end":   0 + 20*60, "loop": false },
-            "night": { "start": 600, "end":  600 + 12*60, "loop": true  }
+            "quick": { "start": 120,  "end": 840,  "loop": false },
+            "deep":  { "start":   0,  "end": 1200, "loop": false },
+            "night": { "start": 600,  "end": 1320, "loop": true  }
           },
           "sequence": {
             "loopSequence": false,
@@ -465,9 +506,9 @@
           "starts": { "quick": 300, "deep": 0, "night": 1500 },
           "mode": "window",
           "segmentByPreset": {
-            "quick": { "start": 300, "end": 300 + 12*60, "loop": false },
-            "deep":  { "start": 300, "end": 300 + 20*60, "loop": false },
-            "night": { "start": 1500, "end": 1500 + 12*60, "loop": true }
+            "quick": { "start": 300,  "end": 1020, "loop": false },
+            "deep":  { "start": 300,  "end": 1500, "loop": false },
+            "night": { "start": 1500, "end": 2220, "loop": true  }
           },
           "sequence": {
             "loopSequence": true,
@@ -866,7 +907,6 @@
       if(segmentByPreset) setWindowByPreset(segmentByPreset);
       if(sequence) state.sequence = { cuts: sequence.cuts || [], loopSequence: !!sequence.loopSequence };
       if(defaultPreset) applyPreset(defaultPreset);
-      /* seek to preset start once ready & user starts */
     }
 
     function exportState(){
@@ -903,7 +943,6 @@
     }
 
     function getTime(){ return state.currentTime || 0; }
-
     function setWindowFromNow(seconds){
       const now = getTime();
       setWindow({start: now, end: now + (seconds||0), loop:false});
@@ -957,9 +996,7 @@
 
     /* Public */
     return {
-      /* Controls */
       play, pause, toggle,
-      /* API */
       loadTrack,
       setPlayMode: setMode,
       setWindow,
@@ -970,8 +1007,6 @@
       importState,
       getTime,
       setWindowFromNow,
-
-      /* Internals exposed for editor */
       _state: state,
       _post: post,
       _softSeek: softSeek
@@ -1081,9 +1116,9 @@
       left.appendChild(txt);
       const right = document.createElement("div");
       right.className="actions";
-      const up = document.createElement("button"); up.className="btn ghost"; up.textContent="↑"; up.ariaLabel="Move up";
-      const dn = document.createElement("button"); dn.className="btn ghost"; dn.textContent="↓"; dn.ariaLabel="Move down";
-      const del = document.createElement("button"); del.className="btn"; del.textContent="×"; del.ariaLabel="Delete";
+      const up  = document.createElement("button"); up.className="btn ghost"; up.textContent="↑"; up.setAttribute("aria-label","Move up");
+      const dn  = document.createElement("button"); dn.className="btn ghost"; dn.textContent="↓"; dn.setAttribute("aria-label","Move down");
+      const del = document.createElement("button"); del.className="btn";       del.textContent="×"; del.setAttribute("aria-label","Delete");
       up.addEventListener("click", ()=>{ if(idx>0){ const t=cutsModel[idx-1]; cutsModel[idx-1]=cutsModel[idx]; cutsModel[idx]=t; renderCuts(); }});
       dn.addEventListener("click", ()=>{ if(idx<cutsModel.length-1){ const t=cutsModel[idx+1]; cutsModel[idx+1]=cutsModel[idx]; cutsModel[idx]=t; renderCuts(); }});
       del.addEventListener("click", ()=>{ cutsModel.splice(idx,1); renderCuts(); });
@@ -1118,6 +1153,27 @@
   $("#exportState").addEventListener("click", function(){
     const s = FlowRoom.exportState(); download("flow_state.json", s);
   });
+  (function attachImport(){
+    const btn = document.getElementById('importState');
+    if(!btn) return;
+    const input = document.createElement('input');
+    input.type = 'file'; input.accept = 'application/json'; input.style.display = 'none';
+    document.body.appendChild(input);
+    btn.addEventListener('click', ()=> input.click());
+    input.addEventListener('change', ()=>{
+      const f = input.files && input.files[0]; if(!f) return;
+      const r = new FileReader();
+      r.onload = ()=>{
+        try{
+          const obj = JSON.parse(String(r.result||"{}"));
+          FlowRoom.importState(obj);
+          showChip(document.getElementById('shareMsg'), "Imported");
+        }catch(_){}
+      };
+      r.readAsText(f);
+      input.value = "";
+    });
+  })();
 
   /* Import from URL hash */
   (function importFromHash(){
@@ -1142,7 +1198,6 @@
       const row1 = document.createElement("div"); row1.className="row"; row1.style.justifyContent="space-between";
       const title = document.createElement("div"); title.style.fontWeight="800"; title.textContent = f.title || f.trackLabel || "Untitled";
       const sw = document.createElement("div"); sw.className="swatch"; sw.style.background = "color-mix(in sRGB, var(--accent) 10%, var(--accent))";
-      /* Color swatch by theme token */
       sw.style.setProperty("background", themeColorFromToken(f.colorTag||"emerald-drift"));
       sw.style.borderColor = "rgba(0,0,0,.2)";
       row1.append(title, sw);
@@ -1216,7 +1271,6 @@
     const a = $("#displayAvatar");
     if(cfg.avatar){ a.style.backgroundImage = "url('"+cfg.avatar+"')"; }
     if(cfg.theme_color){
-      /* Snap to nearest token if possible; else set inline accent */
       document.documentElement.style.setProperty("--accent", cfg.theme_color);
     }
   }
@@ -1308,7 +1362,6 @@
     const reason = (ev && ev.detail && ev.detail.reason) || "end";
     const note = `Close: ${FlowRoom._state.mode} • ${FlowRoom._state.preset}`;
     $("#ciNotes").value = note + (reason==="timer" ? " • timer" : "");
-    /* Ensure panel visible (in editor mode) */
     if(document.body.getAttribute("data-view")==="display"){ setViewDisplay(false); }
     window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
   });
@@ -1325,9 +1378,15 @@
     if(e.key==="+"){ FlowRoom._state.timerSec += 5*60; $("#timerText").textContent = fmtTime(FlowRoom._state.timerSec); }
     if(e.key==="v"){ const v = Math.max(0, FlowRoom._state.volume - 0.05); $("#vol").value = String(v); FlowRoom._post("setVolume",[Math.round(v*100)]); FlowRoom._state.volume=v; }
     if(e.key==="V"){ const v = Math.min(1, FlowRoom._state.volume + 0.05); $("#vol").value = String(v); FlowRoom._post("setVolume",[Math.round(v*100)]); FlowRoom._state.volume=v; }
-    if(e.key==="1"){ FlowRoom._state.timerSec = 12*60; FlowRoom._state.preset="quick"; FlowRoom.setPlayMode(FlowRoom._state.mode); }
-    if(e.key==="2"){ FlowRoom._state.timerSec = 20*60; FlowRoom._state.preset="deep";  FlowRoom.setPlayMode(FlowRoom._state.mode); }
-    if(e.key==="3"){ FlowRoom._state.timerSec = 12*60; FlowRoom._state.preset="night"; FlowRoom.setPlayMode(FlowRoom._state.mode); }
+
+    /* Use the same path as clicking preset buttons to ensure preset windows apply */
+    const btnQuick = document.querySelector('.preset[data-preset="quick"]');
+    const btnDeep  = document.querySelector('.preset[data-preset="deep"]');
+    const btnNight = document.querySelector('.preset[data-preset="night"]');
+    if(e.key==="1" && btnQuick){ btnQuick.click(); }
+    if(e.key==="2" && btnDeep ){ btnDeep.click();  }
+    if(e.key==="3" && btnNight){ btnNight.click(); }
+
     if(e.key==="W" || e.key==="w"){ FlowRoom.setPlayMode("whole"); }
     if(e.key==="S" || e.key==="s"){ FlowRoom.setPlayMode("sequence"); }
     if(e.key==="Q" || e.key==="q"){ FlowRoom.prevCut(); }
@@ -1338,7 +1397,6 @@
      Apply initial preset + reduced motion
   =========================== */
   FlowRoom.setPlayMode(FlowRoom._state.mode);
-  /* Respect initial preset choice from builder */
   FlowRoom._state.timerSec = (FlowData.defaultPreset==="deep" ? 20*60 : 12*60);
   $("#timerText").textContent = (FlowData.defaultPreset==="deep") ? "20:00" : "12:00";
 
@@ -1348,8 +1406,6 @@
       document.querySelectorAll("*").forEach(el=>{ el.style.transitionDuration = "0s"; });
     }
   }catch(e){}
-
-  /* If hash present after init, timer text reflects imported state (handled in importFromHash) */
 
 })();
 </script>
