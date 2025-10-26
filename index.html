@@ -20,13 +20,13 @@
     --muted: #a8e5d4;
     --chip: #0d2d27;
     --chip-border: color-mix(in sRGB, var(--accent) 55%, transparent);
-    --ok:#32ffbe; /* Neon Sprout */
+    --ok:#32ffbe;
     --warn:#ffd166;
     --danger:#ff6b6b;
-    --accent:#0bbf8a; /* Emerald Drift default */
+    --accent:#0bbf8a; /* single accent token; themes only change this */
   }
 
-  /* THEME TOKENS — only set --accent so the file stays lean */
+  /* THEME TOKENS — only set --accent (keeps file lean) */
   html[data-theme="emerald-drift"]{ --accent:#0bbf8a; }
   html[data-theme="teal-current"]{ --accent:#00c2a8; }
   html[data-theme="jade-pulse"]{ --accent:#15a87a; }
@@ -174,7 +174,9 @@
   body[data-view="display"] .favorites-panel,
   body[data-view="display"] .share-panel,
   body[data-view="display"] .checkin-panel,
-  body[data-view="display"] .help-panel{ display:none !important }
+  body[data-view="display"] .help-panel,
+  body[data-view="display"] .guide-panel,
+  body[data-view="display"] .pads-panel { display:none !important }
   .display-header{ display:none; }
   body[data-view="display"] .display-header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px }
   .display-header .person{ display:flex; align-items:center; gap:12px }
@@ -190,7 +192,21 @@
   /* Help list */
   .kbd{ font-weight:800; padding:2px 7px; border:1px solid var(--glass-border); border-radius:7px; background:color-mix(in sRGB, var(--accent) 12%, transparent); }
 
-  /* Links and subtle fades */
+  /* Pads (A/B) */
+  .pads-group .list{ display:grid; gap:8px }
+  .pads-item{
+    display:flex; justify-content:space-between; align-items:center;
+    border:1px solid var(--glass-border); border-radius:10px; padding:8px;
+    background: color-mix(in sRGB, var(--accent) 7%, #091412 72%);
+  }
+  .pads-item .meta{ opacity:.9; font-size:.92rem }
+
+  /* Guide */
+  .qitem{ border:1px solid var(--glass-border); border-radius:10px; padding:10px; background: color-mix(in sRGB, var(--accent) 7%, #091412 72%); display:grid; gap:8px }
+  .qitem .q{ font-weight:800; }
+  #guideMsg{ display:none; }
+
+  /* Links & fades */
   a{ color: var(--muted); text-decoration: none; border-bottom:1px dotted color-mix(in sRGB, var(--accent) 40%, #fff 0%); }
   @media (prefers-reduced-motion:no-preference){
     .fade{ animation:fade .18s ease both }
@@ -210,13 +226,13 @@
     <header class="hero" role="banner" aria-label="Motion Flow Studio header">
       <div class="row" style="justify-content:space-between; align-items:flex-start">
         <div>
-          <div class="h1" title="Motion — Flow Studio (Miss Monique)">Motion — Flow Studio (Miss Monique)</div>
-          <div class="sub"> <em>Pulse that steadies the mind. Movement before meaning.</em></div>
-          <div class="why"> <strong>Why:</strong> <em>Dance first, think later. Warm body, clear head. Then choose your next page.</em></div>
-          <div class="ritual"> <strong>Ritual:</strong> <em>Breath → Step → Release</em> (4-2-6 breathing; jaw unclench @6m; soft eyes at close)</div>
+          <div class="h1">Motion — Flow Studio (Miss Monique)</div>
+          <div class="sub"><em>Pulse that steadies the mind. Movement before meaning.</em></div>
+          <div class="why"><strong>Why:</strong> <em>Dance first, think later. Warm body, clear head. Then choose your next page.</em></div>
+          <div class="ritual"><strong>Ritual:</strong> <em>Breath → Step → Release</em> (4-2-6 breathing; jaw unclench @6m; soft eyes at close)</div>
         </div>
-        <div class="actions" aria-label="Theme and view">
-          <button id="displayToggle" class="btn ghost" aria-pressed="false" aria-label="Toggle Display Mode" title="Toggle Display/Kiosk mode">Display</button>
+        <div class="actions" aria-label="Theme, language, and view">
+          <button id="displayToggle" class="btn ghost" aria-pressed="false" aria-label="Toggle Display Mode" title="Toggle Display/Kiosk mode" data-i18n="display">Display</button>
           <select id="themePicker" aria-label="Theme picker (named greens)" title="Theme picker — changes just one accent color">
             <option value="emerald-drift">Emerald Drift</option>
             <option value="teal-current">Teal Current</option>
@@ -229,6 +245,10 @@
             <option value="seafoam-glow">Seafoam Glow</option>
             <option value="neon-sprout">Neon Sprout</option>
           </select>
+          <select id="langPicker" aria-label="Language" title="Language">
+            <option value="en">English</option>
+            <option value="uk">Українська</option>
+          </select>
         </div>
       </div>
     </header>
@@ -239,20 +259,20 @@
         <div class="person">
           <div class="avatar" id="displayAvatar" aria-hidden="true"></div>
           <div>
-            <div id="displayName" style="font-weight:800">Guest</div>
+            <div id="displayName" style="font-weight:800" data-i18n="guest">Guest</div>
             <div class="chip" id="displayBadge" title="Long-press to unlock editor (PIN)">
-              <span aria-hidden="true">🔒</span> <span>Locked</span>
+              <span aria-hidden="true">🔒</span> <span id="lockedLabel" data-i18n="display_locked">Locked</span>
             </div>
           </div>
         </div>
         <div class="actions">
-          <button id="lockBtn" class="btn ghost" aria-label="Lock Display quickly" title="Quick-lock the editor in Display mode">Lock Display</button>
+          <button id="lockBtn" class="btn ghost" aria-label="Lock Display quickly" title="Quick-lock the editor in Display mode" data-i18n="lock_display">Lock Display</button>
         </div>
       </div>
 
       <div class="player-wrap" aria-label="Video player area">
         <div id="startOverlay" class="overlay-start" role="dialog" aria-modal="false" aria-live="polite">
-          <button id="startBtn" class="big primary" aria-label="Start playback" title="Start (iPhone: enables audio with one tap)">Start</button>
+          <button id="startBtn" class="big primary" aria-label="Start playback" title="Start (iPhone: enables audio with one tap)" data-i18n="start">Start</button>
         </div>
         <iframe id="yt" title="Miss Monique — official set"
           loading="lazy"
@@ -264,31 +284,31 @@
 
       <div class="controls editable" role="region" aria-label="Playback controls">
         <div class="bar">
-          <button id="playPause" class="primary" aria-label="Start or Pause" title="Space to toggle">Start</button>
-          <div class="timer" id="timerText" aria-live="polite" aria-atomic="true" title="Time remaining">12:00</div>
-          <button id="extend" class="btn" aria-label="Extend by 5 minutes" title="+ key extends by 5 minutes">+5m Extend</button>
+          <button id="playPause" class="primary" aria-label="Start or Pause" title="Space to toggle" data-i18n="start">Start</button>
+          <div class="timer" id="timerText" aria-live="polite" aria-atomic="true" title="Time remaining" data-i18n-aria="timer_remaining">12:00</div>
+          <button id="extend" class="btn" aria-label="Extend by 5 minutes" title="+ key extends by 5 minutes" data-i18n="extend">+5m Extend</button>
           <div class="actions">
-            <button class="btn ghost preset" data-preset="quick" aria-label="Quick 12 minutes" title="Preset: Quick 12m">Quick 12m</button>
-            <button class="btn ghost preset" data-preset="deep" aria-label="Deep 20 minutes" title="Preset: Deep 20m">Deep 20m</button>
-            <button class="btn ghost preset" data-preset="night" aria-label="Night 12 minutes" title="Preset: Night 12m">Night 12m</button>
+            <button class="btn ghost preset" data-preset="quick" aria-label="Quick 12 minutes" title="Preset: Quick 12m" data-i18n="quick12">Quick 12m</button>
+            <button class="btn ghost preset" data-preset="deep" aria-label="Deep 20 minutes" title="Preset: Deep 20m" data-i18n="deep20">Deep 20m</button>
+            <button class="btn ghost preset" data-preset="night" aria-label="Night 12 minutes" title="Preset: Night 12m" data-i18n="night12">Night 12m</button>
           </div>
           <div class="vol" title="Volume: use -, = or Arrow keys">
-            <label for="vol" class="sr-only">Volume</label>
+            <label for="vol" class="sr-only" data-i18n="volume">Volume</label>
             <span>🔊</span>
             <input id="vol" type="range" min="0" max="1" step="0.01" value="0.8" aria-valuemin="0" aria-valuemax="1" aria-label="Volume slider"/>
           </div>
-          <div id="iosHint" class="chip" style="display:none" title="If audio stops after lock, enable Picture‑in‑Picture from Safari.">iPhone tip: use PiP if audio stops after lock.</div>
+          <div id="iosHint" class="chip" style="display:none" data-i18n="ios_hint">iPhone tip: use PiP if audio stops after lock.</div>
         </div>
 
         <div class="bar">
           <div class="mode-tabs" role="tablist" aria-label="Play mode">
-            <button id="modeWhole"   role="tab" aria-selected="true"  aria-pressed="true"  class="btn ghost" title="Play the whole set">Whole</button>
-            <button id="modeWindow"  role="tab" aria-selected="false" aria-pressed="false" class="btn ghost" title="Play a defined segment window">Segment</button>
-            <button id="modeSeq"     role="tab" aria-selected="false" aria-pressed="false" class="btn ghost" title="Play a sequence of cuts">Sequence</button>
+            <button id="modeWhole"   role="tab" aria-selected="true"  aria-pressed="true"  class="btn ghost" title="Play the whole set" data-i18n="whole">Whole</button>
+            <button id="modeWindow"  role="tab" aria-selected="false" aria-pressed="false" class="btn ghost" title="Play a defined segment window" data-i18n="segment">Segment</button>
+            <button id="modeSeq"     role="tab" aria-selected="false" aria-pressed="false" class="btn ghost" title="Play a sequence of cuts" data-i18n="sequence">Sequence</button>
           </div>
           <div class="actions">
-            <button id="prevCut" class="btn ghost" aria-label="Previous cut (Q)" title="Previous cut (Q)">◀ Prev</button>
-            <button id="nextCut" class="btn ghost" aria-label="Next cut (E)" title="Next cut (E)">Next ▶</button>
+            <button id="prevCut" class="btn ghost" aria-label="Previous cut (Q)" title="Previous cut (Q)" data-i18n="prev">◀ Prev</button>
+            <button id="nextCut" class="btn ghost" aria-label="Next cut (E)" title="Next cut (E)" data-i18n="next">Next ▶</button>
             <span id="cutLabel" class="chip" aria-live="polite" title="Current cut label" style="display:none"></span>
           </div>
           <div class="grow"></div>
@@ -304,41 +324,41 @@
       <div class="grid-2">
         <!-- Segment editor -->
         <div>
-          <h2>Segment Editor</h2>
+          <h2 data-i18n="segment_editor">Segment Editor</h2>
           <div class="fields">
             <div class="half">
-              <label for="segStart">Start (mm:ss or sec)</label>
-              <input id="segStart" type="text" inputmode="numeric" placeholder="0:00" title="Segment start — mm:ss or seconds" />
+              <label for="segStart" data-i18n="seg_start">Start (mm:ss or sec)</label>
+              <input id="segStart" type="text" inputmode="numeric" placeholder="0:00" />
             </div>
             <div class="half">
-              <label for="segEnd">End (mm:ss or sec)</label>
-              <input id="segEnd" type="text" inputmode="numeric" placeholder="12:00" title="Segment end — mm:ss or seconds" />
+              <label for="segEnd" data-i18n="seg_end">End (mm:ss or sec)</label>
+              <input id="segEnd" type="text" inputmode="numeric" placeholder="12:00" />
             </div>
             <div class="half" style="display:flex;align-items:end;gap:8px">
-              <input id="segLoop" type="checkbox" aria-label="Loop segment" /> <label for="segLoop" title="Loop the segment">Loop</label>
+              <input id="segLoop" type="checkbox" aria-label="Loop segment" /> <label for="segLoop" data-i18n="loop">Loop</label>
             </div>
             <div class="half" style="display:flex;align-items:end;gap:8px">
-              <button id="applySeg" class="btn" title="Apply segment window">Apply</button>
+              <button id="applySeg" class="btn" data-i18n="apply">Apply</button>
             </div>
             <div class="half">
-              <button id="fromNow12" class="btn ghost" aria-label="From now plus 12 minutes" title="Create a 12‑minute window starting now">From now +12m</button>
+              <button id="fromNow12" class="btn ghost" aria-label="From now plus 12 minutes" data-i18n="from_now_12">From now +12m</button>
             </div>
             <div class="half">
-              <button id="fromNow20" class="btn ghost" aria-label="From now plus 20 minutes" title="Create a 20‑minute window starting now">From now +20m</button>
+              <button id="fromNow20" class="btn ghost" aria-label="From now plus 20 minutes" data-i18n="from_now_20">From now +20m</button>
             </div>
             <div class="wide"><hr style="border:none;border-top:1px solid var(--glass-border)" /></div>
             <div class="wide">
-              <h3>Tap-Tempo</h3>
+              <h3 data-i18n="tap_tempo">Tap-Tempo</h3>
               <div class="row">
-                <button id="tapBtn" class="btn" aria-label="Tap to estimate BPM" title="Tap to estimate BPM (averages last 3–8 taps)">Tap</button>
+                <button id="tapBtn" class="btn" aria-label="Tap to estimate BPM" title="Tap to estimate BPM (averages last 3–8 taps)" data-i18n="tap">Tap</button>
                 <div class="chip">BPM: <span id="bpmOut">—</span></div>
-                <label class="sr-only" for="barsSel">Bars</label>
+                <label class="sr-only" for="barsSel" data-i18n="bars">Bars</label>
                 <select id="barsSel" aria-label="Choose bars" title="How many bars to snap">
                   <option value="8">8 bars</option>
                   <option value="16" selected>16 bars</option>
                   <option value="32">32 bars</option>
                 </select>
-                <button id="snapWindow" class="btn ghost" aria-label="Create bar-aligned segment" title="Create a bar-aligned window from 'now'">Snap window</button>
+                <button id="snapWindow" class="btn ghost" aria-label="Create bar-aligned segment" title="Create a bar-aligned window from 'now'" data-i18n="snap_window">Snap window</button>
               </div>
             </div>
           </div>
@@ -346,42 +366,132 @@
 
         <!-- Sequence editor -->
         <div>
-          <h2>Sequence Editor</h2>
+          <h2 data-i18n="sequence_editor">Sequence Editor</h2>
           <div class="fields">
             <div>
-              <label for="cutStart">Start</label>
-              <input id="cutStart" type="text" placeholder="e.g., 1:20" title="Cut start (mm:ss or seconds)"/>
+              <label for="cutStart" data-i18n="seg_start">Start (mm:ss or sec)</label>
+              <input id="cutStart" type="text" placeholder="e.g., 1:20" />
             </div>
             <div>
-              <label for="cutEnd">End</label>
-              <input id="cutEnd" type="text" placeholder="e.g., 2:40" title="Cut end (mm:ss or seconds)"/>
+              <label for="cutEnd" data-i18n="seg_end">End (mm:ss or sec)</label>
+              <input id="cutEnd" type="text" placeholder="e.g., 2:40" />
             </div>
             <div>
-              <label for="cutRepeats">Repeats</label>
-              <input id="cutRepeats" type="number" min="0" step="1" value="0" title="Repeat this cut N extra times"/>
+              <label for="cutRepeats" data-i18n="repeats">Repeats</label>
+              <input id="cutRepeats" type="number" min="0" step="1" value="0" />
             </div>
             <div style="display:flex;gap:8px;align-items:end">
-              <input id="cutLoop" type="checkbox" /> <label for="cutLoop" title="Loop this cut indefinitely">Loop ∞</label>
+              <input id="cutLoop" type="checkbox" /> <label for="cutLoop" data-i18n="loop_inf">Loop ∞</label>
             </div>
             <div class="wide">
-              <label for="cutLabel">Label</label>
-              <input id="cutLabelInput" type="text" placeholder="Jam loop / Build / etc." title="Optional label for this cut"/>
+              <label for="cutLabel" data-i18n="label">Label</label>
+              <input id="cutLabelInput" type="text" placeholder="Jam loop / Build / etc." />
             </div>
             <div class="wide">
-              <button id="addCut" class="btn" title="Add cut to sequence">Add cut</button>
+              <button id="addCut" class="btn" data-i18n="add_cut">Add cut</button>
             </div>
           </div>
 
           <div id="cutsList" class="fade" role="list" aria-label="Current cuts" style="margin-top:8px; display:grid; gap:8px"></div>
 
           <div class="row" style="margin-top:8px">
-            <label class="chip" style="gap:8px">Loop sequence
-              <input id="loopSeq" type="checkbox" aria-label="Loop entire sequence" style="margin-left:8px" title="Loop through the sequence"/>
+            <label class="chip" style="gap:8px" data-i18n="loop_sequence">Loop sequence
+              <input id="loopSeq" type="checkbox" aria-label="Loop entire sequence" style="margin-left:8px" />
             </label>
-            <button id="applySeq" class="btn" title="Apply sequence for playback">Apply sequence</button>
+            <button id="applySeq" class="btn" data-i18n="apply_sequence">Apply sequence</button>
             <div class="grow"></div>
-            <button id="btnPrevCut" class="btn ghost" aria-label="Previous cut" title="Previous cut (Q)">Prev</button>
-            <button id="btnNextCut" class="btn ghost" aria-label="Next cut" title="Next cut (E)">Next</button>
+            <button id="btnPrevCut" class="btn ghost" aria-label="Previous cut" data-i18n="prev">◀ Prev</button>
+            <button id="btnNextCut" class="btn ghost" aria-label="Next cut" data-i18n="next">Next ▶</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Preset Pads — Columns A & B -->
+    <section class="panel pads-panel editable" aria-label="Preset Pads">
+      <h2 data-i18n="title_pads">Preset Pads — Columns A & B</h2>
+      <div class="grid-2">
+        <!-- Column A (Day Flow) -->
+        <div>
+          <h3 data-i18n="colA">Column A — Day Flow</h3>
+          <div role="group" aria-label="Segments A" class="pads-group">
+            <div class="row"><span class="chip" data-i18n="segments">Segments</span></div>
+            <div id="padsASeg" class="list"></div>
+          </div>
+          <div role="group" aria-label="Sequences A" class="pads-group" style="margin-top:8px">
+            <div class="row"><span class="chip" data-i18n="sequences">Sequences</span></div>
+            <div id="padsASeq" class="list"></div>
+          </div>
+        </div>
+
+        <!-- Column B (Night Flow) -->
+        <div>
+          <h3 data-i18n="colB">Column B — Night Flow</h3>
+          <div role="group" aria-label="Segments B" class="pads-group">
+            <div class="row"><span class="chip" data-i18n="segments">Segments</span></div>
+            <div id="padsBSeg" class="list"></div>
+          </div>
+          <div role="group" aria-label="Sequences B" class="pads-group" style="margin-top:8px">
+            <div class="row"><span class="chip" data-i18n="sequences">Sequences</span></div>
+            <div id="padsBSeq" class="list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Guide (Questions) -->
+    <section class="panel guide-panel editable" aria-label="Guide">
+      <h2 data-i18n="guide_title">Guide (Questions)</h2>
+      <div class="cards">
+        <div class="qitem">
+          <div class="q" data-i18n="q_duration">How long do you want to move right now?</div>
+          <div class="actions">
+            <button class="btn" id="gQuick"  data-i18n="btn_quick12">Quick 12m</button>
+            <button class="btn" id="gDeep"   data-i18n="btn_deep20">Deep 20m</button>
+            <button class="btn" id="gNight"  data-i18n="btn_night12">Night 12m</button>
+          </div>
+        </div>
+        <div class="qitem">
+          <div class="q" data-i18n="q_land">Do you want to land on a precise moment?</div>
+          <div class="actions">
+            <button class="btn" id="gA1" data-i18n="btn_A1">A1 Warm‑up Glide</button>
+            <button class="btn" id="gB1" data-i18n="btn_B1">B1 Takeoff</button>
+            <button class="btn ghost" id="gSnap16" data-i18n="btn_snap16">Snap 16 bars</button>
+          </div>
+        </div>
+        <div class="qitem">
+          <div class="q" data-i18n="q_loop">Do you want to stay in the feel with a loop?</div>
+          <div class="actions">
+            <button class="btn" id="gLoopOn"  data-i18n="btn_loop_on">Loop current window</button>
+            <button class="btn ghost" id="gLoopOff" data-i18n="btn_loop_off">Unloop window</button>
+          </div>
+        </div>
+        <div class="qitem">
+          <div class="q" data-i18n="q_chapters">Do you want chapters you can step through?</div>
+          <div class="actions">
+            <button class="btn" id="gASeq" data-i18n="btn_Aseq">A‑Seq Build→Pocket</button>
+            <button class="btn" id="gBSeq" data-i18n="btn_Bseq">B‑Seq Night Cycle</button>
+            <span class="chip" id="guideMsg"></span>
+          </div>
+        </div>
+        <div class="qitem">
+          <div class="q" data-i18n="q_return">Do you want to return to this exact flow later?</div>
+          <div class="actions">
+            <button class="btn" id="gFav" data-i18n="btn_savefav">Save Favorite</button>
+            <button class="btn ghost" id="gLink" data-i18n="btn_copylink">Copy Link</button>
+          </div>
+        </div>
+        <div class="qitem">
+          <div class="q" data-i18n="q_room">Are you guiding a room?</div>
+          <div class="actions">
+            <button class="btn" id="gDisplay" data-i18n="btn_display">Open Display</button>
+            <button class="btn ghost" id="gLock" data-i18n="btn_lock">Lock</button>
+          </div>
+        </div>
+        <div class="qitem">
+          <div class="q" data-i18n="q_close">Want to close with a word?</div>
+          <div class="actions">
+            <button class="btn" id="gCheckin" data-i18n="btn_checkin">Open Check‑In</button>
           </div>
         </div>
       </div>
@@ -389,20 +499,20 @@
 
     <!-- Share & Favorites -->
     <section class="panel share-panel editable" aria-label="Share & Export">
-      <h2>Share Tools</h2>
+      <h2 data-i18n="share_tools">Share Tools</h2>
       <div class="row">
-        <button id="copyLink" class="btn" title="Copy a URL with #flow=…">Copy share link</button>
-        <button id="exportState" class="btn ghost" title="Download current state as JSON">Export .json</button>
-        <button id="importState" class="btn ghost" title="Import state from a JSON file">Import .json</button>
+        <button id="copyLink" class="btn" title="Copy a URL with #flow=…" data-i18n="copy_link">Copy share link</button>
+        <button id="exportState" class="btn ghost" title="Download current state as JSON" data-i18n="export_json">Export .json</button>
+        <button id="importState" class="btn ghost" title="Import state from a JSON file" data-i18n="import_json">Import .json</button>
         <div id="shareMsg" class="chip" aria-live="polite" style="display:none"></div>
       </div>
     </section>
 
     <section class="panel favorites-panel editable" aria-label="Favorites with DJ Notes">
       <div class="row" style="justify-content:space-between; align-items:flex-end">
-        <h2>Favorites <span class="chip" title="Save exact playback state with notes">⭐ Save + DJ Notes</span></h2>
+        <h2><span data-i18n="favorites_title">Favorites</span> <span class="chip" title="Save exact playback state with notes">⭐ Save + DJ Notes</span></h2>
         <div class="row">
-          <select id="favColor" aria-label="Favorite color tag" title="Color tag (green token)">
+          <select id="favColor" aria-label="Favorite color tag" title="Color tag (green token)" data-i18n="fav_color">
             <option value="emerald-drift">Emerald Drift</option>
             <option value="teal-current">Teal Current</option>
             <option value="jade-pulse">Jade Pulse</option>
@@ -414,9 +524,9 @@
             <option value="seafoam-glow">Seafoam Glow</option>
             <option value="neon-sprout">Neon Sprout</option>
           </select>
-          <input id="favTitle" type="text" placeholder="Title (optional)" aria-label="Favorite title" title="Optional title" />
-          <input id="favNotes" type="text" placeholder="DJ Notes (optional)" aria-label="DJ Notes" title="Optional notes" />
-          <button id="saveFav" class="btn" title="Save current state as a favorite">⭐ Save Favorite</button>
+          <input id="favTitle" type="text" placeholder="Title (optional)" aria-label="Favorite title" />
+          <input id="favNotes" type="text" placeholder="DJ Notes (optional)" aria-label="DJ Notes" />
+          <button id="saveFav" class="btn" data-i18n="save_favorite">⭐ Save Favorite</button>
         </div>
       </div>
       <div id="favorites" class="favorites" style="margin-top:10px"></div>
@@ -424,51 +534,51 @@
 
     <!-- Check-In -->
     <section class="panel checkin-panel editable" aria-label="Check-In">
-      <h2>Check-In (MirrorHoney-style)</h2>
+      <h2 data-i18n="checkin_title">Check-In (MirrorHoney-style)</h2>
       <div class="fields">
         <div>
-          <label for="ciMood">Mood</label>
+          <label for="ciMood" data-i18n="mood">Mood</label>
           <input id="ciMood" type="text" placeholder="One word" title="Mood word" />
         </div>
         <div>
-          <label for="ciEnergy">Energy (0–10)</label>
+          <label for="ciEnergy" data-i18n="energy">Energy (0–10)</label>
           <div class="row" title="Drag or use keyboard to adjust">
             <input id="ciEnergy" type="range" min="0" max="10" step="1" value="5" aria-valuemin="0" aria-valuemax="10" aria-valuenow="5" />
             <span id="ciEnergyVal" class="chip" title="Current energy">5</span>
           </div>
         </div>
         <div>
-          <label for="ciBody">Body</label>
+          <label for="ciBody" data-i18n="body">Body</label>
           <select id="ciBody" title="Body feel">
-            <option>Loose</option>
-            <option selected>Neutral</option>
-            <option>Tight</option>
+            <option data-i18n="loose">Loose</option>
+            <option data-i18n="neutral" selected>Neutral</option>
+            <option data-i18n="tight">Tight</option>
           </select>
         </div>
         <div class="wide">
-          <label for="ciIntent">Intention</label>
+          <label for="ciIntent" data-i18n="intention">Intention</label>
           <input id="ciIntent" type="text" placeholder="One-liner intention" title="Your intention for this session" />
         </div>
         <div class="wide">
-          <label for="ciNotes">Notes</label>
+          <label for="ciNotes" data-i18n="notes">Notes</label>
           <textarea id="ciNotes" placeholder="Session reflections" title="Notes about the session"></textarea>
         </div>
       </div>
       <div class="row" style="margin-top:10px">
-        <button id="ciLog" class="btn" title="Save a check-in entry">Log</button>
-        <button id="ciExport" class="btn ghost" title="Download all check-ins as JSON">Export .json</button>
-        <button id="ciClear" class="btn ghost" title="Clear all check-ins (local only)">Clear log</button>
+        <button id="ciLog" class="btn" data-i18n="log">Log</button>
+        <button id="ciExport" class="btn ghost" data-i18n="export_json">Export .json</button>
+        <button id="ciClear" class="btn ghost" data-i18n="clear_log">Clear log</button>
       </div>
       <div id="ciCards" class="cards" style="margin-top:10px"></div>
     </section>
 
     <!-- Help -->
     <section class="panel help-panel" aria-label="Keyboard shortcuts">
-      <h2>Shortcuts</h2>
+      <h2 data-i18n="shortcuts">Shortcuts</h2>
       <div class="row" style="flex-wrap:wrap; gap:10px">
         <span class="kbd">Space</span> Start/Pause
         <span class="kbd">+</span> +5m
-        <span class="kbd">v</span>/<span class="kbd">V</span> volume −/+ <span class="chip" title="Also: - / = and Arrow Down/Up">(or - / = / ⬇︎ / ⬆︎)</span>
+        <span class="kbd">–</span>/<span class="kbd">=</span>/<span class="kbd">⬇</span>/<span class="kbd">⬆</span> volume
         <span class="kbd">1</span>/<span class="kbd">2</span>/<span class="kbd">3</span> Quick/Deep/Night
         <span class="kbd">W</span> Whole
         <span class="kbd">S</span> Sequence
@@ -529,7 +639,7 @@
 
 <script>
 /* ===========================
-   Utilities (no console logs)
+   Utilities, i18n (no console logs)
 =========================== */
 (function(){
   const $ = sel => document.querySelector(sel);
@@ -580,6 +690,112 @@
     del(k){ try{ localStorage.removeItem(k);}catch(e){} }
   };
 
+  /* i18n dictionary (focused on core UI) */
+  const I18N = {
+    en: {
+      display:"Display", editor:"Editor",
+      start:"Start", pause:"Pause", extend:"+5m Extend",
+      quick12:"Quick 12m", deep20:"Deep 20m", night12:"Night 12m",
+      whole:"Whole", segment:"Segment", sequence:"Sequence", prev:"◀ Prev", next:"Next ▶",
+      segment_editor:"Segment Editor", seg_start:"Start (mm:ss or sec)", seg_end:"End (mm:ss or sec)", loop:"Loop", apply:"Apply",
+      from_now_12:"From now +12m", from_now_20:"From now +20m",
+      tap_tempo:"Tap-Tempo", tap:"Tap", bars:"Bars", snap_window:"Snap window",
+      sequence_editor:"Sequence Editor", repeats:"Repeats", loop_inf:"Loop ∞", label:"Label", add_cut:"Add cut",
+      loop_sequence:"Loop sequence", apply_sequence:"Apply sequence",
+      share_tools:"Share Tools", copy_link:"Copy share link", export_json:"Export .json", import_json:"Import .json",
+      favorites_title:"Favorites", save_favorite:"⭐ Save Favorite", fav_color:"Favorite color tag",
+      checkin_title:"Check-In (MirrorHoney-style)", mood:"Mood", energy:"Energy (0–10)", body:"Body",
+      loose:"Loose", neutral:"Neutral", tight:"Tight", intention:"Intention", notes:"Notes", log:"Log", clear_log:"Clear log",
+      shortcuts:"Shortcuts", ios_hint:"iPhone tip: use PiP if audio stops after lock.",
+      display_locked:"Locked", lock_display:"Lock Display", enter_pin:"Enter PIN to unlock:", guest:"Guest",
+      title_pads:"Preset Pads — Columns A & B", colA:"Column A — Day Flow", colB:"Column B — Night Flow", segments:"Segments", sequences:"Sequences", apply_btn:"Apply",
+      guide_title:"Guide (Questions)",
+      q_duration:"How long do you want to move right now?",
+      q_land:"Do you want to land on a precise moment?",
+      q_loop:"Do you want to stay in the feel with a loop?",
+      q_chapters:"Do you want chapters you can step through?",
+      q_return:"Do you want to return to this exact flow later?",
+      q_room:"Are you guiding a room?",
+      q_close:"Want to close with a word?",
+      btn_quick12:"Quick 12m", btn_deep20:"Deep 20m", btn_night12:"Night 12m", btn_snap16:"Snap 16 bars",
+      btn_A1:"A1 Warm‑up Glide", btn_B1:"B1 Takeoff", btn_loop_on:"Loop current window", btn_loop_off:"Unloop window",
+      btn_Aseq:"A‑Seq Build→Pocket", btn_Bseq:"B‑Seq Night Cycle", btn_savefav:"Save Favorite", btn_copylink:"Copy Link",
+      btn_display:"Open Display", btn_lock:"Lock", btn_checkin:"Open Check‑In",
+      link_copied:"Link copied", link_in_url:"Link in URL", imported:"Imported",
+      timer_remaining:"Time remaining", volume:"Volume"
+    },
+    uk: {
+      display:"Екран", editor:"Редактор",
+      start:"Старт", pause:"Пауза", extend:"+5хв Додати",
+      quick12:"Швидко 12хв", deep20:"Глибоко 20хв", night12:"Ніч 12хв",
+      whole:"Усе", segment:"Сегмент", sequence:"Послідовність", prev:"◀ Назад", next:"Далі ▶",
+      segment_editor:"Редактор сегмента", seg_start:"Старт (хв:с або сек)", seg_end:"Фініш (хв:с або сек)", loop:"Цикл", apply:"Застосувати",
+      from_now_12:"Від зараз +12хв", from_now_20:"Від зараз +20хв",
+      tap_tempo:"Тап-темпо", tap:"Тап", bars:"Такти", snap_window:"Прив’язати вікно",
+      sequence_editor:"Редактор послідовності", repeats:"Повтори", loop_inf:"Цикл ∞", label:"Мітка", add_cut:"Додати фрагмент",
+      loop_sequence:"Цикл послідовності", apply_sequence:"Застосувати послідовність",
+      share_tools:"Поділитися", copy_link:"Копіювати посилання", export_json:"Експорт .json", import_json:"Імпорт .json",
+      favorites_title:"Вибране", save_favorite:"⭐ Зберегти", fav_color:"Колір",
+      checkin_title:"Чек-ін", mood:"Настрій", energy:"Енергія (0–10)", body:"Тіло",
+      loose:"Розслаблено", neutral:"Нейтрально", tight:"Напружено", intention:"Намір", notes:"Нотатки", log:"Записати", clear_log:"Очистити журнал",
+      shortcuts:"Швидкі команди", ios_hint:"Порада для iPhone: увімкніть Картинка‑в‑картинці, якщо звук зупиняється після блокування.",
+      display_locked:"Заблоковано", lock_display:"Заблокувати екран", enter_pin:"Введіть PIN для розблокування:", guest:"Гість",
+      title_pads:"Пади пресетів — Колонки A та B", colA:"Колонка A — Day Flow", colB:"Колонка B — Night Flow", segments:"Сегменти", sequences:"Послідовності", apply_btn:"Застосувати",
+      guide_title:"Гід (Питання)",
+      q_duration:"Скільки часу ви хочете рухатися зараз?",
+      q_land:"Хочете потрапити в конкретний момент?",
+      q_loop:"Залишитися у відчутті за допомогою циклу?",
+      q_chapters:"Потрібні розділи, між якими можна перемикатися?",
+      q_return:"Повернутися до цього потоку пізніше?",
+      q_room:"Ви ведете групу?",
+      q_close:"Завершити одним словом?",
+      btn_quick12:"Швидко 12хв", btn_deep20:"Глибоко 20хв", btn_night12:"Ніч 12хв", btn_snap16:"Прив’язати 16 тактів",
+      btn_A1:"A1 Розігрів", btn_B1:"B1 Зліт", btn_loop_on:"Зациклити поточне вікно", btn_loop_off:"Зняти цикл",
+      btn_Aseq:"A‑Seq Build→Pocket", btn_Bseq:"B‑Seq Night Cycle", btn_savefav:"Зберегти у вибране", btn_copylink:"Копіювати посилання",
+      btn_display:"Відкрити Екран", btn_lock:"Заблокувати", btn_checkin:"Відкрити Чек‑ін",
+      link_copied:"Посилання скопійовано", link_in_url:"Посилання в адресному рядку", imported:"Імпортовано",
+      timer_remaining:"Залишок часу", volume:"Гучність"
+    }
+  };
+  function t(key){ const lang = LS.get("motion.lang","en"); return (I18N[lang] && I18N[lang][key]) || I18N.en[key] || ""; }
+
+  function applyLang(){
+    const lang = LS.get("motion.lang","en");
+    document.documentElement.setAttribute("lang", lang);
+    /* Update text for elements with data-i18n */
+    $$("[data-i18n]").forEach(el => { el.textContent = t(el.getAttribute("data-i18n")); });
+    /* ARIA labels that reflect language (timer live region) */
+    const timerText = $("#timerText");
+    if(timerText){ timerText.setAttribute("title", t("timer_remaining")); }
+
+    /* Placeholders */
+    const ph = {
+      "#segStart":"seg_start", "#segEnd":"seg_end",
+      "#cutStart":"seg_start", "#cutEnd":"seg_end",
+      "#favTitle":null, "#favNotes":null, "#ciIntent":null, "#ciNotes":null
+    };
+    if($("#favTitle")) $("#favTitle").setAttribute("placeholder", (lang==="uk"?"Назва (необов’язково)":"Title (optional)"));
+    if($("#favNotes")) $("#favNotes").setAttribute("placeholder", (lang==="uk"?"DJ нотатки (необов’язково)":"DJ Notes (optional)"));
+    if($("#ciIntent")) $("#ciIntent").setAttribute("placeholder", (lang==="uk"?"Однорядковий намір":"One-liner intention"));
+    if($("#ciNotes")) $("#ciNotes").setAttribute("placeholder", (lang==="uk"?"Нотатки про сесію":"Session reflections"));
+
+    /* Play/Pause button text should reflect state */
+    const playPause = $("#playPause");
+    if(playPause){
+      playPause.textContent = FlowRoom._state.playing ? t("pause") : t("start");
+    }
+
+    /* Display toggle should reflect current view state */
+    const isDisplay = document.body.getAttribute("data-view")==="display";
+    $("#displayToggle").textContent = isDisplay ? t("editor") : t("display");
+    /* Locked chip */
+    $("#lockedLabel").textContent = t("display_locked");
+    /* iOS hint */
+    const hint = $("#iosHint"); if(hint) hint.textContent = t("ios_hint");
+    /* Guest */
+    const guest = $("#displayName"); if(guest) guest.textContent = t("guest");
+  }
+
   /* Volume ramp (soft jump) */
   function rampVolume(setVol, from, to, ms){
     return new Promise(resolve=>{
@@ -607,6 +823,7 @@
 
   /* Accessible notify */
   function showChip(el, msg){
+    if(!el) return;
     el.textContent = msg; el.style.display = "inline-flex";
     setTimeout(()=> { el.style.display="none"; }, 2400);
   }
@@ -652,7 +869,6 @@
       preset: LS.get("flow.preset","quick"),
       mode: LS.get("flow.mode","whole"),
       volume: LS.get("flow.vol", 0.8),
-      /* Timer */
       timerSec: (LS.get("flow.preset","quick")==="deep" ? 20*60 : 12*60),
       timerRunning:false,
       lastTick:0,
@@ -669,25 +885,17 @@
       softSeekInFlight:false
     };
 
-    /* Build the YouTube src lazily on loadTrack */
     function buildSrc(id){
       const params = [
-        "enablejsapi=1",
-        "playsinline=1",
-        "rel=0",
-        "modestbranding=1",
-        "iv_load_policy=3",
-        "controls=0"
+        "enablejsapi=1","playsinline=1","rel=0","modestbranding=1","iv_load_policy=3","controls=0"
       ].join("&");
       return "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) + "?" + params;
     }
-
     function post(cmd, args){
       if(!state.playerReady && cmd!=="addEventListener") return;
       const payload = JSON.stringify({event:"command", func:cmd, args:args || []});
       if(yt && yt.contentWindow) yt.contentWindow.postMessage(payload, "*");
     }
-
     function sendListening(){
       if(state.listening || !yt.contentWindow) return;
       const msg = JSON.stringify({event:"listening", id:"flow-studio"});
@@ -697,8 +905,7 @@
 
     function onMessage(e){
       const src = (typeof e.data === "string") ? e.data : "";
-      if(!src) return;
-      let data;
+      if(!src) return; let data;
       try { data = JSON.parse(src); } catch(err){ return; }
       if(data.event === "onReady"){
         state.playerReady = true;
@@ -711,10 +918,9 @@
         enforceWindows();
       }
       if(data.event === "onStateChange"){
-        /* 1=playing, 2=paused, 0=ended */
-        if(data.info === 1){ state.playing = true; startOverlay.classList.add("hidden"); playPause.textContent = "Pause"; }
-        if(data.info === 2){ state.playing = false; playPause.textContent = "Start"; }
-        if(data.info === 0){ state.playing = false; playPause.textContent = "Start"; }
+        if(data.info === 1){ state.playing = true; startOverlay.classList.add("hidden"); playPause.textContent = t("pause"); }
+        if(data.info === 2){ state.playing = false; playPause.textContent = t("start"); }
+        if(data.info === 0){ state.playing = false; playPause.textContent = t("start"); }
       }
     }
     window.addEventListener("message", onMessage);
@@ -784,12 +990,12 @@
       post("playVideo",[]);
       state.playing = true;
       startOverlay.classList.add("hidden");
-      playPause.textContent = "Pause";
+      playPause.textContent = t("pause");
     }
     function pause(){
       post("pauseVideo",[]);
       state.playing = false;
-      playPause.textContent = "Start";
+      playPause.textContent = t("start");
     }
     function toggle(){
       if(state.playing) pause();
@@ -797,14 +1003,14 @@
     }
 
     /* Timer loop ~1s via rAF */
-    function tick(t){
-      if(!state.lastTick) state.lastTick = t;
-      if(t - state.lastTick >= 950){
-        state.lastTick = t;
+    function tick(ti){
+      if(!state.lastTick) state.lastTick = ti;
+      if(ti - state.lastTick >= 950){
+        state.lastTick = ti;
         if(state.timerRunning && state.timerSec > 0){
           state.timerSec--;
           timerText.textContent = fmtTime(state.timerSec);
-          timerText.setAttribute("aria-label", "Timer " + fmtTime(state.timerSec) + " remaining");
+          timerText.setAttribute("aria-label", (t("timer_remaining")+": "+fmtTime(state.timerSec)));
           if(state.timerSec <= 0){
             state.timerRunning = false;
             endFlow("timer");
@@ -840,11 +1046,7 @@
     }
 
     function setWindow(obj){
-      state.window = {
-        start: parseTime(obj.start),
-        end: parseTime(obj.end),
-        loop: !!obj.loop
-      };
+      state.window = { start: parseTime(obj.start), end: parseTime(obj.end), loop: !!obj.loop };
       setMode("window");
     }
 
@@ -890,9 +1092,7 @@
       const cuts = state.sequence.cuts;
       if(!cuts.length) return;
       if(state.seqIndex > 0){ state.seqIndex--; }
-      else {
-        if(state.sequence.loopSequence){ state.seqIndex = cuts.length - 1; }
-      }
+      else { if(state.sequence.loopSequence){ state.seqIndex = cuts.length - 1; } }
       const c = cuts[state.seqIndex];
       state.seqRepeatsLeft = c.repeats || 0;
       showCutLabel(c.label);
@@ -903,7 +1103,7 @@
       state.youtubeId = youtubeId;
       state.trackLabel = label || "";
       state.starts = starts || {quick:0, deep:0, night:0};
-      yt.src = buildSrc(youtubeId);
+      $("#yt").src = buildSrc(youtubeId);
       startOverlay.classList.remove("hidden");
       state.timerRunning = false;
       if(segmentByPreset) setWindowByPreset(segmentByPreset);
@@ -913,13 +1113,8 @@
 
     function exportState(){
       const out = {
-        youtubeId: state.youtubeId,
-        trackLabel: state.trackLabel,
-        starts: state.starts,
-        preset: state.preset,
-        mode: state.mode,
-        window: state.window,
-        sequence: state.sequence,
+        youtubeId: state.youtubeId, trackLabel: state.trackLabel, starts: state.starts,
+        preset: state.preset, mode: state.mode, window: state.window, sequence: state.sequence,
         segmentByPreset: state.segmentByPreset
       };
       return JSON.stringify(out);
@@ -927,17 +1122,11 @@
 
     function importState(jsonOrObj){
       let obj = jsonOrObj;
-      if(typeof jsonOrObj === "string"){
-        try{ obj = JSON.parse(jsonOrObj); }catch(e){ return; }
-      }
+      if(typeof jsonOrObj === "string"){ try{ obj = JSON.parse(jsonOrObj); }catch(e){ return; } }
       if(!obj || !obj.youtubeId) return;
       loadTrack({
-        youtubeId: obj.youtubeId,
-        starts: obj.starts,
-        defaultPreset: obj.preset || "quick",
-        label: obj.trackLabel || "",
-        segmentByPreset: obj.segmentByPreset || null,
-        sequence: obj.sequence || null
+        youtubeId: obj.youtubeId, starts: obj.starts, defaultPreset: obj.preset || "quick",
+        label: obj.trackLabel || "", segmentByPreset: obj.segmentByPreset || null, sequence: obj.sequence || null
       });
       setMode(obj.mode || "whole");
       if(obj.mode === "window" && obj.window) setWindow(obj.window);
@@ -951,24 +1140,20 @@
     }
 
     /* Wiring controls */
-    startBtn.addEventListener("click", function(){
+    $("#startBtn").addEventListener("click", function(){
       const presetStart = state.starts?.[state.preset] || 0;
       if(presetStart > 0) post("seekTo",[presetStart, true]);
-      play();
-      state.timerRunning = true;
-      /* iOS hint chip after first gesture */
-      if(isIOS()){
-        const hint = $("#iosHint"); if(hint){ hint.style.display="inline-flex"; setTimeout(()=>{ hint.style.display="none"; }, 5000); }
-      }
+      play(); state.timerRunning = true;
+      if(isIOS()){ const hint = $("#iosHint"); if(hint){ hint.style.display="inline-flex"; setTimeout(()=>{ hint.style.display="none"; }, 5000); } }
     });
-    playPause.addEventListener("click", function(){
+    $("#playPause").addEventListener("click", function(){
       if(state.playing){ pause(); state.timerRunning = false; }
       else { play(); state.timerRunning = true; }
     });
-    extendBtn.addEventListener("click", function(){ state.timerSec += 5*60; timerText.textContent = fmtTime(state.timerSec); });
+    $("#extend").addEventListener("click", function(){ state.timerSec += 5*60; $("#timerText").textContent = fmtTime(state.timerSec); });
 
-    volSlider.value = String(state.volume);
-    volSlider.addEventListener("input", function(){ setVolume(parseFloat(this.value||"0")); });
+    $("#vol").value = String(state.volume);
+    $("#vol").addEventListener("input", function(){ setVolume(parseFloat(this.value||"0")); });
 
     presetBtns.forEach(btn=>{
       btn.addEventListener("click", function(){
@@ -977,24 +1162,20 @@
       });
     });
 
-    modeBtns.whole.addEventListener("click", ()=> setMode("whole"));
-    modeBtns.window.addEventListener("click", ()=> setMode("window"));
-    modeBtns.sequence.addEventListener("click", ()=> setMode("sequence"));
+    $("#modeWhole").addEventListener("click", ()=> setMode("whole"));
+    $("#modeWindow").addEventListener("click", ()=> setMode("window"));
+    $("#modeSeq").addEventListener("click", ()=> setMode("sequence"));
     $("#prevCut").addEventListener("click", prevCut);
     $("#nextCut").addEventListener("click", nextCut);
 
     /* Track picker */
-    trackPicker.addEventListener("change", function(){
+    $("#trackPicker").addEventListener("change", function(){
       const idx = parseInt(this.value,10);
       const entry = FlowData.entries[idx];
       if(entry){
         loadTrack({
-          youtubeId: entry.youtubeId,
-          starts: entry.starts,
-          defaultPreset: FlowData.defaultPreset || "quick",
-          label: entry.label,
-          segmentByPreset: entry.segmentByPreset,
-          sequence: entry.sequence
+          youtubeId: entry.youtubeId, starts: entry.starts, defaultPreset: FlowData.defaultPreset || "quick",
+          label: entry.label, segmentByPreset: entry.segmentByPreset, sequence: entry.sequence
         });
       }
     });
@@ -1044,17 +1225,27 @@
     trackPicker.appendChild(opt);
   });
 
+  /* Helper: switch to a track by youtubeId */
+  function ensureTrack(id){
+    const idx = (FlowData.entries||[]).findIndex(e=> e.youtubeId===id);
+    if(idx<0) return;
+    const entry = FlowData.entries[idx];
+    if(FlowRoom._state.youtubeId !== id){
+      FlowRoom.loadTrack({
+        youtubeId: entry.youtubeId, starts: entry.starts, defaultPreset: FlowData.defaultPreset || "quick",
+        label: entry.label, segmentByPreset: entry.segmentByPreset, sequence: entry.sequence
+      });
+      trackPicker.value = String(idx);
+    }
+  }
+
   /* Default pick */
   (function initLoad(){
     const entry = FlowData.entries[0];
     if(entry){
       FlowRoom.loadTrack({
-        youtubeId: entry.youtubeId,
-        starts: entry.starts,
-        defaultPreset: FlowData.defaultPreset || "quick",
-        label: entry.label,
-        segmentByPreset: entry.segmentByPreset,
-        sequence: entry.sequence
+        youtubeId: entry.youtubeId, starts: entry.starts, defaultPreset: FlowData.defaultPreset || "quick",
+        label: entry.label, segmentByPreset: entry.segmentByPreset, sequence: entry.sequence
       });
       trackPicker.value = "0";
     }
@@ -1063,18 +1254,16 @@
   /* ===========================
      Segment Editor
   =========================== */
-  const segStart = $("#segStart"), segEnd = $("#segEnd"), segLoop = $("#segLoop");
   $("#applySeg").addEventListener("click", function(){
-    FlowRoom.setWindow({ start: parseTime(segStart.value), end: parseTime(segEnd.value), loop: segLoop.checked });
+    FlowRoom.setWindow({ start: parseTime($("#segStart").value), end: parseTime($("#segEnd").value), loop: $("#segLoop").checked });
     FlowRoom.setPlayMode("window");
   });
   $("#fromNow12").addEventListener("click", function(){ FlowRoom.setWindowFromNow(12*60); FlowRoom.setPlayMode("window"); });
   $("#fromNow20").addEventListener("click", function(){ FlowRoom.setWindowFromNow(20*60); FlowRoom.setPlayMode("window"); });
 
   /* Tap tempo */
-  const tapBtn = $("#tapBtn"), bpmOut = $("#bpmOut"), barsSel = $("#barsSel");
   const taps = [];
-  tapBtn.addEventListener("click", function(){
+  $("#tapBtn").addEventListener("click", function(){
     const now = performance.now();
     taps.push(now);
     if(taps.length>8) taps.shift();
@@ -1082,13 +1271,13 @@
       const intervals = taps.slice(1).map((t,i)=> t - taps[i]);
       const avgMs = intervals.reduce((a,b)=>a+b,0)/intervals.length;
       const bpm = 60000/avgMs;
-      bpmOut.textContent = Math.round(bpm);
+      $("#bpmOut").textContent = Math.round(bpm);
     }
   });
   $("#snapWindow").addEventListener("click", function(){
-    const bpm = parseInt(bpmOut.textContent,10);
+    const bpm = parseInt($("#bpmOut").textContent,10);
     if(!bpm || bpm<40 || bpm>220) return;
-    const bars = parseInt(barsSel.value,10)||16;
+    const bars = parseInt($("#barsSel").value,10)||16;
     const barLen = (60/bpm)*4; /* 4/4 bars */
     const secs = barLen * bars;
     FlowRoom.setWindowFromNow(secs);
@@ -1098,28 +1287,21 @@
   /* ===========================
      Sequence Editor
   =========================== */
-  const list = $("#cutsList");
-  const cutsModel = [];
+  const list = $("#cutsList"); const cutsModel = [];
   function renderCuts(){
     list.innerHTML = "";
     cutsModel.forEach((c,idx)=>{
       const row = document.createElement("div");
-      row.className = "row";
-      row.setAttribute("role","listitem");
-      row.style.justifyContent="space-between";
-      const left = document.createElement("div");
-      left.className = "row";
-      left.style.gap="10px";
-      const sw = document.createElement("div");
-      sw.className = "swatch";
+      row.className = "row"; row.setAttribute("role","listitem"); row.style.justifyContent="space-between";
+      const left = document.createElement("div"); left.className = "row"; left.style.gap="10px";
+      const sw = document.createElement("div"); sw.className = "swatch";
       sw.style.background = "color-mix(in sRGB, var(--accent) 35%, transparent)";
       left.appendChild(sw);
       const txt = document.createElement("div");
       const rep = c.loop ? "∞" : (c.repeats||0);
       txt.textContent = `${fmtTime(c.start)} → ${fmtTime(c.end)}  •  rep:${rep}  ${c.label? "• "+c.label: ""}`;
       left.appendChild(txt);
-      const right = document.createElement("div");
-      right.className="actions";
+      const right = document.createElement("div"); right.className="actions";
       const up  = document.createElement("button"); up.className="btn ghost"; up.textContent="↑"; up.setAttribute("aria-label","Move up"); up.title="Move cut up";
       const dn  = document.createElement("button"); dn.className="btn ghost"; dn.textContent="↓"; dn.setAttribute("aria-label","Move down"); dn.title="Move cut down";
       const del = document.createElement("button"); del.className="btn";       del.textContent="×"; del.setAttribute("aria-label","Delete"); del.title="Delete cut";
@@ -1144,6 +1326,134 @@
   $("#btnNextCut").addEventListener("click", ()=> FlowRoom.nextCut());
 
   /* ===========================
+     Pads (Columns A & B)
+  =========================== */
+  (function(){
+    const DAY   = "jTFE0dbQgdw";
+    const NIGHT = "fRWVeRIcYtE";
+    const Pads = {
+      A: {
+        track: DAY,
+        segments: [
+          {label:"A1 — Warm‑up Glide", start:120,  end:480,  loop:false, title:"Smooth entry, ~6m"},
+          {label:"A2 — Groove Pocket", start:900,  end:1620, loop:false, title:"Mid‑set pocket, ~12m"},
+          {label:"A3 — Jam Loop",      start:1500, end:1620, loop:true,  title:"Short loop for drills"}
+        ],
+        sequences: [
+          {label:"A‑Seq — Build→Pocket", loopSequence:false, title:"Intro build then pocket",
+           cuts:[
+            {start:120, end:300,  label:"Intro build"},
+            {start:900, end:1020, repeats:2, label:"Groove pocket"}
+          ]},
+          {label:"A‑Seq — Jam Looper",  loopSequence:true,  title:"Locked jam loop",
+           cuts:[{start:1500, end:1620, loop:true, label:"Jam loop"}]}
+        ]
+      },
+      B: {
+        track: NIGHT,
+        segments: [
+          {label:"B1 — Takeoff",          start:300,  end:540,  loop:false, title:"Launch window"},
+          {label:"B2 — Strobe Focus",     start:1200, end:1320, loop:false, title:"High‑energy, ~2m"},
+          {label:"B3 — Deep Finish Loop", start:2100, end:2220, loop:true,  title:"End loop, ~2m"}
+        ],
+        sequences: [
+          {label:"B‑Seq — Night Cycle", loopSequence:true, title:"Takeoff → Strobe → Finish",
+           cuts:[
+            {start:300, end:540,  label:"Takeoff"},
+            {start:1200, end:1320, repeats:3, label:"Strobe repeat"},
+            {start:2100, end:2220, label:"Deep finish"}
+          ]},
+          {label:"B‑Seq — Strobe Drill", loopSequence:false, title:"Focused repeats",
+           cuts:[{start:1200, end:1320, repeats:3, label:"Strobe repeat"}]}
+        ]
+      }
+    };
+    function mkPadRow(obj, onApply){
+      const row = document.createElement("div");
+      row.className = "pads-item";
+      const left = document.createElement("div"); left.className = "meta";
+      left.textContent = obj.label + (obj.start!=null ? `  •  ${fmt(obj.start)}→${fmt(obj.end)}${obj.loop?' • loop':''}` : "");
+      if(obj.title) row.title = obj.title;
+      const right = document.createElement("div"); right.className = "actions";
+      const btn = document.createElement("button"); btn.className = "btn"; btn.textContent = t("apply_btn");
+      btn.addEventListener("click", onApply);
+      right.appendChild(btn);
+      row.append(left,right);
+      return row;
+      function fmt(s){ const m=Math.floor(s/60), ss=s%60|0; return m+":"+(ss<10?"0"+ss:ss); }
+    }
+    function renderPads(){
+      const aSeg = $("#padsASeg"), aSeq = $("#padsASeq");
+      const bSeg = $("#padsBSeg"), bSeq = $("#padsBSeq");
+      if(!aSeg||!aSeq||!bSeg||!bSeq) return;
+      aSeg.innerHTML = ""; Pads.A.segments.forEach(seg=> aSeg.appendChild(mkPadRow(seg, ()=>{ ensureTrack(Pads.A.track); FlowRoom.setWindow({start:seg.start, end:seg.end, loop:!!seg.loop}); FlowRoom.setPlayMode("window"); })));
+      aSeq.innerHTML = ""; Pads.A.sequences.forEach(seq=> aSeq.appendChild(mkPadRow(seq, ()=>{ ensureTrack(Pads.A.track); FlowRoom.setSequence({cuts: seq.cuts, loopSequence: !!seq.loopSequence}); })));
+      bSeg.innerHTML = ""; Pads.B.segments.forEach(seg=> bSeg.appendChild(mkPadRow(seg, ()=>{ ensureTrack(Pads.B.track); FlowRoom.setWindow({start:seg.start, end:seg.end, loop:!!seg.loop}); FlowRoom.setPlayMode("window"); })));
+      bSeq.innerHTML = ""; Pads.B.sequences.forEach(seq=> bSeq.appendChild(mkPadRow(seq, ()=>{ ensureTrack(Pads.B.track); FlowRoom.setSequence({cuts: seq.cuts, loopSequence: !!seq.loopSequence}); })));
+    }
+    renderPads();
+  })();
+
+  /* ===========================
+     Guide (Questions) actions
+  =========================== */
+  (function(){
+    const DAY   = "jTFE0dbQgdw";
+    const NIGHT = "fRWVeRIcYtE";
+    $("#gQuick") && $("#gQuick").addEventListener("click", ()=> { document.querySelector('.preset[data-preset="quick"]').click(); });
+    $("#gDeep")  && $("#gDeep").addEventListener("click",  ()=> { document.querySelector('.preset[data-preset="deep"]').click();  });
+    $("#gNight") && $("#gNight").addEventListener("click", ()=> { document.querySelector('.preset[data-preset="night"]').click(); });
+
+    $("#gA1") && $("#gA1").addEventListener("click", ()=>{
+      ensureTrack(DAY); FlowRoom.setWindow({start:120, end:480, loop:false}); FlowRoom.setPlayMode("window");
+    });
+    $("#gB1") && $("#gB1").addEventListener("click", ()=>{
+      ensureTrack(NIGHT); FlowRoom.setWindow({start:300, end:540, loop:false}); FlowRoom.setPlayMode("window");
+    });
+
+    $("#gSnap16") && $("#gSnap16").addEventListener("click", ()=>{
+      const bpm = parseInt($("#bpmOut").textContent,10);
+      if(!bpm || bpm<40 || bpm>220){ showChip($("#guideMsg"), (LS.get("motion.lang","en")==="uk" ? "Спочатку натисніть TAP, щоб оцінити BPM" : "Tap to set BPM first")); return; }
+      const bars = 16, secs = (60/bpm)*4*bars; FlowRoom.setWindowFromNow(secs); FlowRoom.setPlayMode("window");
+      showChip($("#guideMsg"), (LS.get("motion.lang","en")==="uk" ? "Вікно прив’язано до 16 тактів" : "Window snapped to 16 bars"));
+    });
+
+    $("#gLoopOn") && $("#gLoopOn").addEventListener("click", ()=>{
+      const w = FlowRoom._state.window; FlowRoom.setWindow({start:w.start, end:w.end, loop:true}); FlowRoom.setPlayMode("window");
+    });
+    $("#gLoopOff") && $("#gLoopOff").addEventListener("click", ()=>{
+      const w = FlowRoom._state.window; FlowRoom.setWindow({start:w.start, end:w.end, loop:false}); FlowRoom.setPlayMode("window");
+    });
+
+    $("#gASeq") && $("#gASeq").addEventListener("click", ()=>{
+      ensureTrack(DAY);
+      FlowRoom.setSequence({ loopSequence:false, cuts:[
+        {start:120, end:300, label:"Intro build"},
+        {start:900, end:1020, repeats:2, label:"Groove pocket"}
+      ]});
+    });
+    $("#gBSeq") && $("#gBSeq").addEventListener("click", ()=>{
+      ensureTrack(NIGHT);
+      FlowRoom.setSequence({ loopSequence:true, cuts:[
+        {start:300, end:540, label:"Takeoff"},
+        {start:1200, end:1320, repeats:3, label:"Strobe repeat"},
+        {start:2100, end:2220, label:"Deep finish"}
+      ]});
+    });
+
+    $("#gFav")  && $("#gFav").addEventListener("click", ()=> { $("#saveFav") && $("#saveFav").click(); });
+    $("#gLink") && $("#gLink").addEventListener("click", ()=> { $("#copyLink") && $("#copyLink").click(); });
+
+    $("#gDisplay") && $("#gDisplay").addEventListener("click", ()=>{
+      if(document.body.getAttribute("data-view")!=="display"){ $("#displayToggle").click(); }
+    });
+    $("#gLock") && $("#gLock").addEventListener("click", ()=> { $("#lockBtn") && $("#lockBtn").click(); });
+    $("#gCheckin") && $("#gCheckin").addEventListener("click", ()=>{
+      const y = $(".checkin-panel"); if(y){ y.scrollIntoView({behavior:"smooth", block:"start"}); }
+    });
+  })();
+
+  /* ===========================
      Share Tools
   =========================== */
   $("#copyLink").addEventListener("click", function(){
@@ -1151,8 +1461,8 @@
     const b = b64Encode(s);
     const url = location.origin ? (location.origin + location.pathname + "#flow=" + b) : (location.pathname + "#flow=" + b);
     if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(url).then(()=> showChip($("#shareMsg"), "Link copied")).catch(()=> { showChip($("#shareMsg"), "Link ready in URL"); location.hash = "flow="+b; });
-    } else { location.hash = "flow="+b; showChip($("#shareMsg"), "Link in URL"); }
+      navigator.clipboard.writeText(url).then(()=> showChip($("#shareMsg"), t("link_copied"))).catch(()=> { showChip($("#shareMsg"), t("link_in_url")); location.hash = "flow="+b; });
+    } else { location.hash = "flow="+b; showChip($("#shareMsg"), t("link_in_url")); }
   });
   $("#exportState").addEventListener("click", function(){
     const s = FlowRoom.exportState(); download("flow_state.json", s);
@@ -1171,7 +1481,7 @@
         try{
           const obj = JSON.parse(String(r.result||"{}"));
           FlowRoom.importState(obj);
-          showChip(document.getElementById('shareMsg'), "Imported");
+          showChip(document.getElementById('shareMsg'), t("imported"));
         }catch(_){}
       };
       r.readAsText(f);
@@ -1193,6 +1503,14 @@
   =========================== */
   const FKEY = "motion.favorites";
   const favoritesEl = $("#favorites");
+  function themeColorFromToken(token){
+    const map = {
+      "emerald-drift":"#0bbf8a","teal-current":"#00c2a8","jade-pulse":"#15a87a","forest-glass":"#0a6a4e",
+      "verdigris-line":"#19e6cb","celadon-mist":"#a8e5d4","pine-shadow":"#093c31","mint-vapor":"#d6fff3",
+      "seafoam-glow":"#6dd9c5","neon-sprout":"#32ffbe"
+    };
+    return map[token] || "#0bbf8a";
+  }
   function renderFavorites(){
     favoritesEl.innerHTML = "";
     const favs = LS.get(FKEY, []);
@@ -1214,9 +1532,9 @@
       notes.style.fontSize=".92rem"; notes.style.opacity=".9"; notes.textContent = f.notes || "";
 
       const actions = document.createElement("div"); actions.className="actions";
-      const playBtn = document.createElement("button"); playBtn.className="btn"; playBtn.textContent="Play"; playBtn.title="Load this favorite";
-      const linkBtn = document.createElement("button"); linkBtn.className="btn ghost"; linkBtn.textContent="Link"; linkBtn.title="Copy share link to clipboard";
-      const delBtn = document.createElement("button"); delBtn.className="btn ghost"; delBtn.textContent="Delete"; delBtn.title="Remove this favorite";
+      const playBtn = document.createElement("button"); playBtn.className="btn"; playBtn.textContent = (LS.get("motion.lang","en")==="uk" ? "Відтворити" : "Play");
+      const linkBtn = document.createElement("button"); linkBtn.className="btn ghost"; linkBtn.textContent = (LS.get("motion.lang","en")==="uk" ? "Посилання" : "Link");
+      const delBtn = document.createElement("button"); delBtn.className="btn ghost"; delBtn.textContent = (LS.get("motion.lang","en")==="uk" ? "Видалити" : "Delete");
       playBtn.addEventListener("click", ()=> FlowRoom.importState(f.state));
       linkBtn.addEventListener("click", ()=>{
         const b = b64Encode(f.state);
@@ -1232,14 +1550,6 @@
       actions.append(playBtn, linkBtn, delBtn);
       favoritesEl.appendChild(card);
     });
-  }
-  function themeColorFromToken(token){
-    const map = {
-      "emerald-drift":"#0bbf8a","teal-current":"#00c2a8","jade-pulse":"#15a87a","forest-glass":"#0a6a4e",
-      "verdigris-line":"#19e6cb","celadon-mist":"#a8e5d4","pine-shadow":"#093c31","mint-vapor":"#d6fff3",
-      "seafoam-glow":"#6dd9c5","neon-sprout":"#32ffbe"
-    };
-    return map[token] || "#0bbf8a";
   }
   $("#saveFav").addEventListener("click", function(){
     const stateStr = FlowRoom.exportState();
@@ -1271,19 +1581,17 @@
 
   function applyDisplayHeader(){
     const cfg = window.MotionDisplay || {};
-    $("#displayName").textContent = cfg.name || "Guest";
+    $("#displayName").textContent = t("guest");
     const a = $("#displayAvatar");
     if(cfg.avatar){ a.style.backgroundImage = "url('"+cfg.avatar+"')"; }
-    if(cfg.theme_color){
-      document.documentElement.style.setProperty("--accent", cfg.theme_color);
-    }
+    if(cfg.theme_color){ document.documentElement.style.setProperty("--accent", cfg.theme_color); }
   }
   applyDisplayHeader();
 
   function setViewDisplay(flag){
     document.body.setAttribute("data-view", flag? "display": "");
     displayToggle.setAttribute("aria-pressed", String(!!flag));
-    displayToggle.textContent = flag? "Editor" : "Display";
+    displayToggle.textContent = flag? t("editor") : t("display");
     LS.set("motion.view", flag? "display":"editor");
   }
   displayToggle.addEventListener("click", function(){
@@ -1299,29 +1607,35 @@
 
   badge.addEventListener("pointerdown", function(){
     longPressTimer = setTimeout(()=>{
-      const pin = prompt("Enter PIN to unlock:");
+      const pin = prompt(t("enter_pin"));
       if(pin === PIN){ setLocked(false); }
     }, 600);
   });
   badge.addEventListener("pointerup", ()=> { if(longPressTimer){ clearTimeout(longPressTimer); longPressTimer=null; }});
   badge.addEventListener("pointerleave", ()=> { if(longPressTimer){ clearTimeout(longPressTimer); longPressTimer=null; }});
 
-  /* Restore persisted view + lock + theme */
+  /* Restore persisted view + lock + theme + lang */
   (function restoreUI(){
-    const view = LS.get("motion.view","editor");
-    setViewDisplay(view==="display");
+    const view = LS.get("motion.view","editor"); setViewDisplay(view==="display");
     setLocked(LS.get("motion.locked", false));
+    const savedTheme = LS.get("motion.theme","emerald-drift");
+    document.documentElement.setAttribute("data-theme", savedTheme);
+    $("#themePicker").value = savedTheme;
+
+    const savedLang = LS.get("motion.lang","en");
+    document.documentElement.setAttribute("lang", savedLang);
+    $("#langPicker").value = savedLang;
+    applyLang();
   })();
 
-  /* ===========================
-     Theme Picker
-  =========================== */
-  const themePicker = $("#themePicker");
-  const savedTheme = LS.get("motion.theme","emerald-drift");
-  document.documentElement.setAttribute("data-theme", savedTheme);
-  themePicker.value = savedTheme;
-  themePicker.addEventListener("change", function(){
+  /* Theme picker */
+  $("#themePicker").addEventListener("change", function(){
     const v = this.value; document.documentElement.setAttribute("data-theme", v); LS.set("motion.theme", v);
+  });
+
+  /* Language picker */
+  $("#langPicker").addEventListener("change", function(){
+    const v = this.value || "en"; LS.set("motion.lang", v); applyLang();
   });
 
   /* ===========================
@@ -1336,8 +1650,8 @@
       const h = document.createElement("div"); h.style.fontWeight="800";
       h.textContent = new Date(item.ts).toLocaleString();
       const d = document.createElement("div");
-      d.textContent = `Mood: ${item.mood || "—"} • Energy: ${item.energy} • Body: ${item.body}`;
-      const i = document.createElement("div"); i.textContent = `Intention: ${item.intent || "—"}`;
+      d.textContent = `${t("mood")}: ${item.mood || "—"} • ${t("energy")}: ${item.energy} • ${t("body")}: ${item.body}`;
+      const i = document.createElement("div"); i.textContent = `${t("intention")}: ${item.intent || "—"}`;
       const n = document.createElement("div"); n.textContent = item.notes || "";
       card.append(h,d,i,n); el.appendChild(card);
     });
@@ -1387,43 +1701,18 @@
     const isTyping = active && (active.tagName==="INPUT" || active.tagName==="TEXTAREA" || active.tagName==="SELECT" || active.isContentEditable);
     if(isTyping) return;
 
-    /* Space: toggle + keep timer in sync */
     if(e.key === ' ' || e.code === "Space"){
-      e.preventDefault();
-      FlowRoom.toggle();
-      FlowRoom._state.timerRunning = FlowRoom._state.playing;
-      return;
+      e.preventDefault(); FlowRoom.toggle(); FlowRoom._state.timerRunning = FlowRoom._state.playing; return;
     }
-
-    /* Extend +5m: '+' or Shift+=' */
     if(e.key === '+' || (e.code === 'Equal' && e.shiftKey)){
-      e.preventDefault();
-      FlowRoom._state.timerSec += 5*60;
-      document.getElementById("timerText").textContent = (function(t){ const m=Math.floor(t/60),s=t%60; return m+":"+(s<10?"0"+s:s); })(FlowRoom._state.timerSec);
-      return;
+      e.preventDefault(); FlowRoom._state.timerSec += 5*60; $("#timerText").textContent = fmtTime(FlowRoom._state.timerSec); return;
     }
-
-    /* Volume down: v, '-', ArrowDown */
     if(e.key === 'v' || e.key === '-' || e.key === 'ArrowDown'){
-      e.preventDefault();
-      const v = Math.max(0, FlowRoom._state.volume - 0.05);
-      document.getElementById("vol").value = String(v);
-      FlowRoom._post("setVolume",[Math.round(v*100)]);
-      FlowRoom._state.volume=v;
-      return;
+      e.preventDefault(); const v = Math.max(0, FlowRoom._state.volume - 0.05); $("#vol").value = String(v); FlowRoom._post("setVolume",[Math.round(v*100)]); FlowRoom._state.volume=v; return;
     }
-
-    /* Volume up: V (Shift+v), '=', ArrowUp */
     if(e.key === 'V' || e.key === '=' || e.key === 'ArrowUp'){
-      e.preventDefault();
-      const v = Math.min(1, FlowRoom._state.volume + 0.05);
-      document.getElementById("vol").value = String(v);
-      FlowRoom._post("setVolume",[Math.round(v*100)]);
-      FlowRoom._state.volume=v;
-      return;
+      e.preventDefault(); const v = Math.min(1, FlowRoom._state.volume + 0.05); $("#vol").value = String(v); FlowRoom._post("setVolume",[Math.round(v*100)]); FlowRoom._state.volume=v; return;
     }
-
-    /* Presets via same path as buttons */
     const btnQuick = document.querySelector('.preset[data-preset="quick"]');
     const btnDeep  = document.querySelector('.preset[data-preset="deep"]');
     const btnNight = document.querySelector('.preset[data-preset="night"]');
@@ -1436,23 +1725,20 @@
     if(e.key==="Q" || e.key==="q"){ e.preventDefault(); FlowRoom.prevCut(); return; }
     if(e.key==="E" || e.key==="e"){ e.preventDefault(); FlowRoom.nextCut(); return; }
   }
-  /* Listen on both window and document to catch more cases */
   window.addEventListener("keydown", handleKey, true);
   document.addEventListener("keydown", handleKey, true);
 
   /* ===========================
-     Apply initial preset + reduced motion
+     Initial preset, reduced motion, i18n
   =========================== */
   FlowRoom.setPlayMode(FlowRoom._state.mode);
   FlowRoom._state.timerSec = (FlowData.defaultPreset==="deep" ? 20*60 : 12*60);
-  document.getElementById("timerText").textContent = (FlowData.defaultPreset==="deep") ? "20:00" : "12:00";
-
+  $("#timerText").textContent = (FlowData.defaultPreset==="deep") ? "20:00" : "12:00";
   try{
     if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
       document.querySelectorAll("*").forEach(el=>{ el.style.transitionDuration = "0s"; });
     }
   }catch(e){}
-
 })();
 </script>
 </body>
