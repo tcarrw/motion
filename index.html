@@ -4,42 +4,28 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Motion — Home</title>
-<meta name="description" content="Motion Home: set BPM, trigger the green→pink wipe, and jump to Miss Monique or Dagny." />
+<meta name="description" content="Motion Home: set BPM, trigger the green→pink wipe, and jump to Miss Monique or Dagny. Auto-arm when Harbor is green." />
 <style>
   :root{
-    --bg:#070b0a;          /* dark base */
-    --ink:#ecfffb;         /* pearl-mint */
-    --muted:#a7c0ba;       /* mist */
-    --green:#79e0c8;       /* motion/monique */
-    --green2:#73e3c5;
-    --pink:#ff39a8;        /* dagny */
-    --pink2:#ff79c6;
-    --grid:#14211d;
-    --shadow:0 16px 40px rgba(0,0,0,.55);
+    --bg:#070b0a; --ink:#ecfffb; --muted:#a7c0ba;
+    --green:#79e0c8; --green2:#73e3c5; --pink:#ff39a8; --pink2:#ff79c6;
+    --grid:#14211d; --shadow:0 16px 40px rgba(0,0,0,.55);
   }
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
     margin:0; color:var(--ink);
-    background:
-      radial-gradient(1200px 900px at 70% 12%, #0a1412 0%, #070b0a 60%, #050807 100%);
-    font: 500 16px/1.45 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    background:radial-gradient(1200px 900px at 70% 12%, #0a1412 0%, #070b0a 60%, #050807 100%);
+    font:500 16px/1.45 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
   }
   .wrap{max-width:1100px; margin:0 auto; padding:22px; display:grid; gap:14px}
-
-  /* Header */
   .hdr{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
   .title{font-weight:900; font-size:24px; letter-spacing:.28px; text-transform:uppercase}
-  .tag{
-    font:700 11px ui-monospace, SFMono-Regular, Menlo, monospace; padding:4px 8px; border-radius:999px;
-    border:1px solid rgba(182,255,240,.35); color:#ddfff8; background:rgba(121,224,200,.07)
-  }
+  .tag{font:700 11px ui-monospace,SFMono-Regular,Menlo,monospace; padding:4px 8px; border-radius:999px; border:1px solid rgba(182,255,240,.35); color:#ddfff8; background:rgba(121,224,200,.07)}
 
-  /* Stage */
   .card{
     background:linear-gradient(180deg, rgba(10,18,16,.92), rgba(7,11,10,.92));
-    border:1px solid rgba(140,200,190,.22);
-    border-radius:16px; padding:16px; box-shadow:var(--shadow);
+    border:1px solid rgba(140,200,190,.22); border-radius:16px; padding:16px; box-shadow:var(--shadow);
     backdrop-filter:saturate(130%) blur(6px);
   }
   h2{margin:0 0 8px 0; font-size:18px; letter-spacing:.2px}
@@ -47,32 +33,20 @@
 
   .stage{
     position:relative; border:1px solid var(--grid); border-radius:16px; overflow:hidden; margin-top:8px;
-    background:
-      radial-gradient(800px 220px at 50% 105%, rgba(121,224,200,.08), transparent 60%),
-      linear-gradient(180deg, rgba(10,18,16,.6), rgba(5,8,7,.8));
+    background:radial-gradient(800px 220px at 50% 105%, rgba(121,224,200,.08), transparent 60%), linear-gradient(180deg, rgba(10,18,16,.6), rgba(5,8,7,.8));
     min-height:260px;
   }
-  .split{
-    position:absolute; inset:0; display:grid; grid-template-columns: 1fr 1fr;
+  .split{position:absolute; inset:0; display:grid; grid-template-columns:1fr 1fr}
+  .left,.right{position:relative; display:flex; align-items:center; justify-content:center; padding:18px}
+  .left::before,.right::before{
+    content:""; position:absolute; inset:0; opacity:.18; filter:blur(.6px); mix-blend-mode:screen;
   }
-  .left, .right{
-    position:relative; display:flex; align-items:center; justify-content:center; padding:18px;
-  }
-  .left::before, .right::before{
-    content:""; position:absolute; inset:0; opacity:.18;
-    background:radial-gradient(closest-side, rgba(121,224,200,.6), rgba(121,224,200,.25), transparent);
-    filter:blur(.6px); mix-blend-mode:screen;
-  }
-  .right::before{
-    background:radial-gradient(closest-side, rgba(255,121,198,.55), rgba(255,57,168,.25), transparent);
-  }
+  .left::before{ background:radial-gradient(closest-side, rgba(121,224,200,.6), rgba(121,224,200,.25), transparent) }
+  .right::before{ background:radial-gradient(closest-side, rgba(255,121,198,.55), rgba(255,57,168,.25), transparent) }
   .badge{
-    font:900 12px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing:.16em; text-transform:uppercase;
-    padding:8px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.28);
-    background:rgba(255,255,255,.06);
+    font:900 12px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.16em; text-transform:uppercase;
+    padding:8px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.28); background:rgba(255,255,255,.06);
   }
-
-  /* Wipe overlay */
   .wipe{
     position:absolute; inset:0; pointer-events:none;
     background:linear-gradient(90deg, rgba(121,224,200,.15) 0%, rgba(121,224,200,.0) 48%, rgba(255,57,168,.0) 52%, rgba(255,57,168,.18) 100%);
@@ -80,8 +54,7 @@
   }
   .wipe.on{ opacity:1; transform:translateX(0) }
 
-  /* Tiles */
-  .tiles{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:12px }
+  .tiles{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px }
   @media (max-width:880px){ .tiles{ grid-template-columns: 1fr } }
   .tile{
     display:flex; align-items:center; justify-content:space-between; gap:12px; text-decoration:none; color:var(--ink);
@@ -98,18 +71,38 @@
   }
   .btn.pink{ border-color:rgba(255,57,168,.55); background:linear-gradient(180deg, rgba(255,57,168,.16), rgba(255,57,168,.06)) }
 
-  /* Controls */
   .ctrl{
     display:grid; gap:10px; margin-top:10px; border:1px solid var(--grid); border-radius:12px; padding:12px; background:rgba(255,255,255,.03);
   }
   .row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
   .chip{
-    font:700 11px ui-monospace, SFMono-Regular, Menlo, monospace; padding:4px 8px; border-radius:999px; border:1px solid rgba(182,255,240,.35); color:#ddfff8
+    font:700 11px ui-monospace,SFMono-Regular,Menlo,monospace; padding:4px 8px; border-radius:999px; border:1px solid rgba(182,255,240,.35); color:#ddfff8
   }
   .chip.ok{ border-color:rgba(115,227,197,.85); color:#eafff8; background:rgba(121,224,200,.12) }
   .chip.warn{ border-color:rgba(255,208,137,.85); color:#fff3dc; background:rgba(255,208,137,.1) }
 
+  /* Auto-Arm switch */
+  .switch{ position:relative; width:52px; height:28px; border-radius:999px; border:1px solid rgba(182,255,240,.45); background:rgba(121,224,200,.1); cursor:pointer }
+  .switch .knob{ position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#ecfffb; box-shadow:0 2px 8px rgba(0,0,0,.35); transition:.15s }
+  .switch.on{ border-color:rgba(255,57,168,.6); background:linear-gradient(180deg, rgba(255,57,168,.18), rgba(255,57,168,.08)) }
+  .switch.on .knob{ left:27px }
+
   input[type=range]{ width:100% }
+
+  /* Now Playing tile */
+  .nowplay{
+    display:none; align-items:center; justify-content:space-between; gap:8px; margin-top:10px;
+    border:1px solid rgba(121,224,200,.45); border-left:4px solid var(--green); border-radius:12px; padding:10px;
+    background:linear-gradient(180deg, rgba(121,224,200,.12), rgba(121,224,200,.06));
+  }
+  .np-left{display:flex; flex-direction:column; gap:4px}
+  .np-title{font-weight:900; letter-spacing:.2px}
+  .np-sub{color:var(--muted); font-size:12px}
+  .np-btn{
+    display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px;
+    border:1px solid rgba(182,255,240,.45); background:rgba(121,224,200,.07); color:#ecfffb; text-decoration:none; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+  }
+
   .foot{ text-align:center; color:var(--muted); font-size:12px; padding:8px 0 16px }
 </style>
 </head>
@@ -142,7 +135,11 @@
             <span id="bpm-chip" class="chip">BPM 126</span>
             <span id="harbor-chip" class="chip warn">harbor: pending</span>
           </div>
-          <div class="row" style="gap:8px">
+          <div class="row" style="gap:12px">
+            <div class="chip" style="display:flex; align-items:center; gap:8px">
+              Auto-Arm
+              <span id="auto" class="switch" role="switch" aria-checked="false" tabindex="0"><span class="knob"></span></span>
+            </div>
             <button class="btn" id="set-124" type="button">124</button>
             <button class="btn" id="set-126" type="button">126</button>
             <button class="btn" id="set-127" type="button">127</button>
@@ -150,6 +147,15 @@
           </div>
         </div>
         <input id="bpm" type="range" min="120" max="132" value="126" step="1" aria-label="BPM">
+
+        <!-- Now Playing (appears only when wipe is ON ≥127) -->
+        <div id="nowplay" class="nowplay">
+          <div class="np-left">
+            <div class="np-title">Now Playing — Miss Monique</div>
+            <div class="np-sub">Progressive House Set · YouTube search</div>
+          </div>
+          <a class="np-btn" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Miss+Monique+Progressive+House+Set">Open</a>
+        </div>
       </div>
 
       <div class="tiles">
@@ -180,6 +186,8 @@
   var bpm = document.getElementById('bpm');
   var chip = document.getElementById('bpm-chip');
   var harborChip = document.getElementById('harbor-chip');
+  var np = document.getElementById('nowplay');
+  var auto = document.getElementById('auto');
 
   function truthy(v){
     if(v==null) return false;
@@ -191,22 +199,56 @@
   var credit  = truthy(localStorage.getItem('harbor.credit'));
   var consent = truthy(localStorage.getItem('harbor.consent'));
   var resource= truthy(localStorage.getItem('harbor.resource'));
-  var all = credit && consent && resource;
-  harborChip.textContent = all ? 'harbor: green' : 'harbor: pending';
-  harborChip.classList.toggle('ok', all);
-  harborChip.classList.toggle('warn', !all);
+  var harborAll = credit && consent && resource;
+  harborChip.textContent = harborAll ? 'harbor: green' : 'harbor: pending';
+  harborChip.classList.toggle('ok', harborAll);
+  harborChip.classList.toggle('warn', !harborAll);
+
+  // Auto-Arm persistence
+  var autoOn = localStorage.getItem('motion.home.autoArm') === 'true';
+  function renderAuto(){
+    auto.classList.toggle('on', autoOn);
+    auto.setAttribute('aria-checked', autoOn ? 'true' : 'false');
+  }
+  function saveAuto(){
+    try{ localStorage.setItem('motion.home.autoArm', autoOn ? 'true' : 'false'); }catch(e){}
+  }
+  function toggleAuto(){
+    autoOn = !autoOn; renderAuto(); saveAuto(); maybeAutoArm();
+  }
+  auto.addEventListener('click', toggleAuto, {passive:true});
+  auto.addEventListener('keydown', function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); toggleAuto(); }});
+  renderAuto();
 
   function setBPM(v){
     v = Math.max(120, Math.min(132, parseInt(v||126,10)));
     bpm.value = v;
     chip.textContent = 'BPM ' + v;
     try{ localStorage.setItem('motion.home.bpm', String(v)); }catch(e){}
-    if(v >= 127){ wipe.classList.add('on'); } else { wipe.classList.remove('on'); }
+    var on = v >= 127;
+    wipe.classList.toggle('on', on);
+    np.style.display = on ? 'flex' : 'none';
     return v;
   }
+  // initial BPM
   setBPM(localStorage.getItem('motion.home.bpm')||126);
 
-  bpm.addEventListener('input', function(e){ setBPM(e.target.value); }, {passive:true});
+  function maybeAutoArm(){
+    if(harborAll && autoOn){
+      var cur = parseInt(bpm.value,10);
+      if(cur < 127) setBPM(127);
+      // lock wipe on (visual), but still allow manual lowering if desired
+      wipe.classList.add('on');
+      np.style.display = 'flex';
+    }
+  }
+  maybeAutoArm();
+
+  bpm.addEventListener('input', function(e){
+    setBPM(e.target.value);
+    // if autoOn + harborAll and user drags below 127, we don't fight — we let them.
+  }, {passive:true});
+
   document.getElementById('set-124').addEventListener('click', function(){ setBPM(124); }, {passive:true});
   document.getElementById('set-126').addEventListener('click', function(){ setBPM(126); }, {passive:true});
   document.getElementById('set-127').addEventListener('click', function(){ setBPM(127); }, {passive:true});
