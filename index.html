@@ -1,1582 +1,217 @@
-
 <!DOCTYPE html>
-<html lang="en" data-theme="emerald-drift">
+<html lang="en">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Miss Monique · Motion — Flow Studio</title>
-<meta name="description" content="Flow Studio for Miss Monique sets — day/night presets, precise segment windows, sequence cuts, AirPlay toggle, share links, favorites, and check‑ins — all in one file." />
-<!-- Seed inspiration: earlier Flow Studio structure (internal reference). :contentReference[oaicite:0]{index=0} -->
-
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Motion — Home</title>
+<meta name="description" content="Motion Home: set BPM, trigger the green→pink wipe, and jump to Miss Monique or Dagny." />
 <style>
   :root{
-    --radius: 14px;
-    --pad: 12px;
-    --gap: 12px;
-    --fg: #e9fffa;
-    --fg-dim:#c7efe4;
-    --bg:#071a16;
-    --bg-panel: color-mix(in sRGB, var(--accent) 8%, #0a0f0e 78%);
-    --glass-border: color-mix(in sRGB, var(--accent) 55%, rgba(255,255,255,0));
-    --shadow: 0 8px 26px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.04);
-    --focus: color-mix(in sRGB, var(--accent) 70%, white 15%);
-    --muted: #a8e5d4;
-    --chip: #0d2d27;
-    --chip-border: color-mix(in sRGB, var(--accent) 55%, transparent);
-    --ok:#32ffbe;
-    --warn:#ffd166;
-    --danger:#ff6b6b;
-    --accent:#0bbf8a; /* Emerald Drift default — themes only change this */
+    --bg:#070b0a;          /* dark base */
+    --ink:#ecfffb;         /* pearl-mint */
+    --muted:#a7c0ba;       /* mist */
+    --green:#79e0c8;       /* motion/monique */
+    --green2:#73e3c5;
+    --pink:#ff39a8;        /* dagny */
+    --pink2:#ff79c6;
+    --grid:#14211d;
+    --shadow:0 16px 40px rgba(0,0,0,.55);
   }
-
-  /* THEME TOKENS (named greens) — override --accent only */
-  html[data-theme="emerald-drift"]{ --accent:#0bbf8a; }
-  html[data-theme="teal-current"]{ --accent:#00c2a8; }
-  html[data-theme="jade-pulse"]{ --accent:#15a87a; }
-  html[data-theme="forest-glass"]{ --accent:#0a6a4e; }
-  html[data-theme="verdigris-line"]{ --accent:#19e6cb; }
-  html[data-theme="celadon-mist"]{ --accent:#a8e5d4; }
-  html[data-theme="pine-shadow"]{ --accent:#093c31; }
-  html[data-theme="mint-vapor"]{ --accent:#d6fff3; }
-  html[data-theme="seafoam-glow"]{ --accent:#6dd9c5; }
-  html[data-theme="neon-sprout"]{ --accent:#32ffbe; }
-
-  @media (prefers-color-scheme: light){
-    :root{ --fg:#051510; --fg-dim:#12352c; --bg:#f0fffb; --bg-panel: color-mix(in sRGB, var(--accent) 8%, #ffffff 88%); --shadow: 0 8px 26px rgba(0,0,0,.09), inset 0 1px 0 rgba(0,0,0,.06); --chip:#eafff7; }
-  }
-
   *{box-sizing:border-box}
   html,body{height:100%}
   body{
-    margin:0; font:500 16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Apple Color Emoji","Segoe UI Emoji";
-    color:var(--fg); background:
-      radial-gradient(1200px 1200px at 15% -10%, color-mix(in sRGB,var(--accent) 22%, #000 0%), transparent 60%),
-      linear-gradient(180deg, #050b0a, var(--bg));
-    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    margin:0; color:var(--ink);
+    background:
+      radial-gradient(1200px 900px at 70% 12%, #0a1412 0%, #070b0a 60%, #050807 100%);
+    font: 500 16px/1.45 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
   }
-  a{ color: var(--muted); text-decoration:none; border-bottom:1px dotted color-mix(in sRGB, var(--accent) 40%, transparent) }
+  .wrap{max-width:1100px; margin:0 auto; padding:22px; display:grid; gap:14px}
 
-  .wrap{ max-width:1100px; margin:0 auto; padding:16px; display:grid; grid-template-columns: 1fr; gap:var(--gap); }
-  header.hero{
-    border:1px solid var(--glass-border);
-    background:var(--bg-panel);
-    box-shadow:var(--shadow);
-    border-radius:calc(var(--radius) + 6px);
-    padding:18px clamp(14px, 3vw, 24px);
-    position:sticky; top:0; z-index:5;
-    backdrop-filter: saturate(1.2) blur(10px);
-  }
-  .h1{font-weight:800;letter-spacing:.2px; font-size:clamp(22px, 3.3vw, 30px); margin:0 0 3px}
-  .sub{opacity:.9}
-  .why, .ritual{ color: var(--fg-dim); font-size:.95rem; margin-top:6px }
-
-  .panel{
-    border:1px solid var(--glass-border);
-    background:var(--bg-panel);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    padding: clamp(12px, 2.6vw, 18px);
-  }
-  .panel h2{ font-size:1.05rem; margin:.2rem 0 .6rem; letter-spacing:.2px }
-  .panel h3{ font-size:1rem; margin:.6rem 0 .3rem; }
-
-  .row{ display:flex; gap:var(--gap); align-items:center; flex-wrap:wrap }
-  .grow{ flex:1 1 auto }
-  .actions{ display:flex; gap:8px; flex-wrap:wrap }
-  button, .btn, input[type="text"], input[type="number"], input[type="time"], textarea, select{
-    appearance:none; border-radius:10px; border:1px solid color-mix(in sRGB, var(--accent) 55%, transparent);
-    background: color-mix(in sRGB, var(--accent) 10%, #07110f 70%); color:var(--fg);
-    padding:10px 12px; font-weight:600; transition: transform .16s ease, background .16s ease, border-color .16s ease, box-shadow .16s ease;
-    outline: none;
-  }
-  button:hover, .btn:hover{ transform: translateY(-1px); }
-  button:active{ transform: translateY(0) scale(.99); }
-  button.primary{
-    background: linear-gradient(180deg, color-mix(in sRGB, var(--accent) 70%, #fff 5%), color-mix(in sRGB, var(--accent) 45%, #000 12%));
-    color: #03241c; border-color: color-mix(in sRGB, var(--accent) 70%, #fff 10%);
-  }
-  button.ghost{ background: color-mix(in sRGB, var(--accent) 5%, transparent); }
-  .chip{
-    display:inline-flex; align-items:center; gap:6px; padding:5px 9px; border-radius:999px;
-    border:1px solid var(--chip-border); background:var(--chip); font-size:.86rem;
+  /* Header */
+  .hdr{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+  .title{font-weight:900; font-size:24px; letter-spacing:.28px; text-transform:uppercase}
+  .tag{
+    font:700 11px ui-monospace, SFMono-Regular, Menlo, monospace; padding:4px 8px; border-radius:999px;
+    border:1px solid rgba(182,255,240,.35); color:#ddfff8; background:rgba(121,224,200,.07)
   }
 
-  /* Focus ring */
-  :where(button, .btn, input, textarea, select, [tabindex]) :focus,
-  :where(button, .btn, input, textarea, select, [tabindex]):focus{
-    outline: 2px solid var(--focus); outline-offset:2px;
+  /* Stage */
+  .card{
+    background:linear-gradient(180deg, rgba(10,18,16,.92), rgba(7,11,10,.92));
+    border:1px solid rgba(140,200,190,.22);
+    border-radius:16px; padding:16px; box-shadow:var(--shadow);
+    backdrop-filter:saturate(130%) blur(6px);
+  }
+  h2{margin:0 0 8px 0; font-size:18px; letter-spacing:.2px}
+  .muted{color:var(--muted); font-size:14px}
+
+  .stage{
+    position:relative; border:1px solid var(--grid); border-radius:16px; overflow:hidden; margin-top:8px;
+    background:
+      radial-gradient(800px 220px at 50% 105%, rgba(121,224,200,.08), transparent 60%),
+      linear-gradient(180deg, rgba(10,18,16,.6), rgba(5,8,7,.8));
+    min-height:260px;
+  }
+  .split{
+    position:absolute; inset:0; display:grid; grid-template-columns: 1fr 1fr;
+  }
+  .left, .right{
+    position:relative; display:flex; align-items:center; justify-content:center; padding:18px;
+  }
+  .left::before, .right::before{
+    content:""; position:absolute; inset:0; opacity:.18;
+    background:radial-gradient(closest-side, rgba(121,224,200,.6), rgba(121,224,200,.25), transparent);
+    filter:blur(.6px); mix-blend-mode:screen;
+  }
+  .right::before{
+    background:radial-gradient(closest-side, rgba(255,121,198,.55), rgba(255,57,168,.25), transparent);
+  }
+  .badge{
+    font:900 12px ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing:.16em; text-transform:uppercase;
+    padding:8px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.28);
+    background:rgba(255,255,255,.06);
   }
 
-  /* Player */
-  .player-wrap{
-    position:relative; width:100%; aspect-ratio:16/9; border-radius:12px; overflow:hidden; background:#000; border:1px solid var(--glass-border);
-    /* iOS safe-area nudge for kiosk */
+  /* Wipe overlay */
+  .wipe{
+    position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(90deg, rgba(121,224,200,.15) 0%, rgba(121,224,200,.0) 48%, rgba(255,57,168,.0) 52%, rgba(255,57,168,.18) 100%);
+    opacity:0; transform:translateX(-12%); transition:opacity .35s ease, transform .6s cubic-bezier(.22,.61,.36,1);
   }
-  .player-wrap iframe{ width:100%; height:100%; border:0; display:block }
-  @supports (padding: max(0px)) {
-    .player-wrap { padding-bottom: env(safe-area-inset-bottom); }
+  .wipe.on{ opacity:1; transform:translateX(0) }
+
+  /* Tiles */
+  .tiles{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-top:12px }
+  @media (max-width:880px){ .tiles{ grid-template-columns: 1fr } }
+  .tile{
+    display:flex; align-items:center; justify-content:space-between; gap:12px; text-decoration:none; color:var(--ink);
+    border:1px solid rgba(140,200,190,.28); border-radius:14px; padding:14px; background:rgba(255,255,255,.04);
   }
-  .overlay-start{
-    position:absolute; inset:0; display:grid; place-items:center; background:linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.3));
-    opacity:1; transition: opacity .18s ease; z-index:2;
+  .tile:hover{ filter:brightness(1.06) }
+  .tleft{ display:flex; flex-direction:column; gap:6px }
+  .name{ font-weight:900; letter-spacing:.3px }
+  .sub{ color:var(--muted); font-size:12px }
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; padding:9px 12px; border-radius:10px; text-decoration:none; cursor:pointer;
+    border:1px solid rgba(182,255,240,.45); color:#ecfffb; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
+    background:linear-gradient(180deg, rgba(121,224,200,.18), rgba(121,224,200,.08));
   }
-  .overlay-start.hidden{ opacity:0; pointer-events:none }
-  .overlay-start .big{
-    font-size: clamp(15px, 2.6vw, 18px); letter-spacing:.3px;
-    padding:14px 16px; border-radius:999px; border:1px solid var(--glass-border); background:color-mix(in sRGB, var(--accent) 12%, #00130f 60%);
-  }
+  .btn.pink{ border-color:rgba(255,57,168,.55); background:linear-gradient(180deg, rgba(255,57,168,.16), rgba(255,57,168,.06)) }
 
   /* Controls */
-  .controls{ margin-top:10px; display:grid; grid-template-columns: 1fr; gap:10px }
-  .controls .bar{ display:flex; gap:10px; flex-wrap:wrap; align-items:center }
-  .timer{ font-feature-settings:"tnum"; font-variant-numeric:tabular-nums; padding:10px 12px; border-radius:10px; border:1px solid var(--glass-border); background:color-mix(in sRGB, var(--accent) 8%, #07110f 70%); min-width:84px; text-align:center }
-  .vol{ display:flex; align-items:center; gap:8px }
-  input[type="range"]{ width:160px; accent-color:var(--accent) }
-  .mode-tabs{ display:flex; gap:6px; }
-  .mode-tabs button{ padding:8px 10px; border-radius:10px }
-  .mode-tabs button[aria-pressed="true"]{ background:color-mix(in sRGB, var(--accent) 25%, #00130f 40%); border-color: color-mix(in sRGB, var(--accent) 70%, transparent) }
-
-  /* Studio layout */
-  .grid-2{ display:grid; grid-template-columns: 1fr; gap:var(--gap) }
-  @media (min-width: 800px){ .grid-2{ grid-template-columns: 1.06fr .94fr } }
-
-  .fields{ display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap:8px }
-  .fields .wide{ grid-column: 1 / -1 }
-  .fields .half{ grid-column: span 2 }
-  .fields label{ font-size:.8rem; opacity:.9; display:block; margin-bottom:4px }
-  textarea{ min-height:80px; resize:vertical }
-
-  /* Favorites grid */
-  .favorites{ display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:var(--gap) }
-  .fav{ border:1px solid var(--glass-border); background: color-mix(in sRGB, var(--accent) 7%, #091412 72%); border-radius:12px; padding:10px; display:grid; gap:8px }
-  .swatch{ width:18px; height:18px; border-radius:5px; border:1px solid color-mix(in sRGB, var(--accent) 70%, transparent) }
-
-  /* Display mode */
-  body[data-view="display"] .studio,
-  body[data-view="display"] .favorites-panel,
-  body[data-view="display"] .share-panel,
-  body[data-view="display"] .checkin-panel,
-  body[data-view="display"] .help-panel,
-  body[data-view="display"] .pads-panel { display:none !important }
-  .display-header{ display:none; }
-  body[data-view="display"] .display-header{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:12px }
-  .display-header .person{ display:flex; align-items:center; gap:12px }
-  .avatar{ width:40px; height:40px; border-radius:50%; border:1px solid var(--glass-border); background:#0d221d center/cover no-repeat }
-  .badge{ padding:6px 8px; border-radius:999px; border:1px solid var(--glass-border); background:color-mix(in sRGB, var(--accent) 10%, #07110f 70%); cursor:pointer }
-  body[data-view="display"] .controls .bar:first-child button.primary{ font-size:1.05rem; padding:12px 16px }
-  body[data-locked="true"] .editable{ pointer-events:none; opacity:.6; filter:grayscale(.1) }
-
-  /* Check-in cards */
-  .cards{ display:grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap:var(--gap) }
-  .card{ border:1px solid var(--glass-border); background: color-mix(in sRGB, var(--accent) 7%, #091412 72%); border-radius:12px; padding:10px }
-
-  /* Pads (lists) */
-  .pads-group .list{ display:grid; gap:8px }
-  .pads-item{ border:1px solid var(--glass-border); border-radius:10px; padding:10px; display:flex; align-items:center; justify-content:space-between; background: color-mix(in sRGB, var(--accent) 6%, #091412 72%) }
-  .pads-item .meta{ opacity:.92 }
-  .pads-item .actions{ display:flex; gap:8px }
-
-  /* Help list */
-  .kbd{ font-weight:800; padding:2px 7px; border:1px solid var(--glass-border); border-radius:7px; background:color-mix(in sRGB, var(--accent) 12%, transparent); }
-
-  @media (prefers-reduced-motion:no-preference){
-    .fade{ animation:fade .18s ease both }
-    @keyframes fade{ from{opacity:0; transform:translateY(2px)} to{opacity:1; transform:none} }
+  .ctrl{
+    display:grid; gap:10px; margin-top:10px; border:1px solid var(--grid); border-radius:12px; padding:12px; background:rgba(255,255,255,.03);
   }
-  .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+  .row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+  .chip{
+    font:700 11px ui-monospace, SFMono-Regular, Menlo, monospace; padding:4px 8px; border-radius:999px; border:1px solid rgba(182,255,240,.35); color:#ddfff8
+  }
+  .chip.ok{ border-color:rgba(115,227,197,.85); color:#eafff8; background:rgba(121,224,200,.12) }
+  .chip.warn{ border-color:rgba(255,208,137,.85); color:#fff3dc; background:rgba(255,208,137,.1) }
+
+  input[type=range]{ width:100% }
+  .foot{ text-align:center; color:var(--muted); font-size:12px; padding:8px 0 16px }
 </style>
 </head>
-<body tabindex="-1">
-  <div class="wrap">
-    <header class="hero" role="banner" aria-label="Motion Flow Studio header">
-      <div class="row" style="justify-content:space-between; align-items:flex-start">
-        <div>
-          <div class="h1">Motion — Flow Studio (Miss Monique)</div>
-          <div class="sub"><em>Pulse that steadies the mind. Movement before meaning.</em></div>
-          <div class="why"><strong>Why:</strong> <em>Dance first, think later. Warm body, clear head. Then choose your next page.</em></div>
-          <div class="ritual"><strong>Ritual:</strong> <em>Breath → Step → Release</em> (4‑2‑6 breathing; jaw unclench @6m; soft eyes at close)</div>
-          <!-- Bee note -->
-          <div class="chip" style="margin-top:8px">🐝 Bee says: think Carlsberg × CopenHill — and visit <a href="https://earth.plnt.earth" target="_blank" rel="noreferrer noopener">earth.plnt.earth</a>. Hi, Greta! (illumina‑resonant)</div>
-        </div>
-        <div class="actions" aria-label="Theme and view">
-          <button id="displayToggle" class="btn ghost" aria-pressed="false" aria-label="Toggle Display Mode" title="Toggle Display/Kiosk mode">Display</button>
-          <select id="themePicker" aria-label="Theme picker (named greens)" title="Theme picker — changes one accent color">
-            <option value="emerald-drift">Emerald Drift</option>
-            <option value="teal-current">Teal Current</option>
-            <option value="jade-pulse">Jade Pulse</option>
-            <option value="forest-glass">Forest Glass</option>
-            <option value="verdigris-line">Verdigris Line</option>
-            <option value="celadon-mist">Celadon Mist</option>
-            <option value="pine-shadow">Pine Shadow</option>
-            <option value="mint-vapor">Mint Vapor</option>
-            <option value="seafoam-glow">Seafoam Glow</option>
-            <option value="neon-sprout">Neon Sprout</option>
-          </select>
-          <select id="langPicker" aria-label="Language" title="Language">
-            <option value="en">English</option>
-            <option value="uk">Українська</option>
-          </select>
-        </div>
-      </div>
+<body>
+  <main class="wrap">
+    <header class="hdr">
+      <div class="title">Motion</div>
+      <div class="tag">green room · ready</div>
     </header>
 
-    <!-- Flow Room -->
-    <section class="panel flow-room" aria-label="Flow Room">
-      <div class="display-header">
-        <div class="person">
-          <div class="avatar" id="displayAvatar" aria-hidden="true"></div>
-          <div>
-            <div id="displayName" style="font-weight:800">Guest</div>
-            <div class="chip badge" id="displayBadge" tabindex="0" title="Long-press or press Enter to unlock editor (PIN)">
-              <span aria-hidden="true">🔒</span> <span>Locked</span>
-            </div>
+    <section class="card">
+      <h2>Green → Pink Wipe</h2>
+      <p class="muted">Slide the BPM. At <strong>127+</strong> the room flips — Motion (green) hands to Dagny (pink). Harbor status (if set here) shows below.</p>
+
+      <div class="stage">
+        <div class="split">
+          <div class="left">
+            <span class="badge" style="border-color:rgba(121,224,200,.65); color:#eafff8">Miss Monique · Motion</span>
+          </div>
+          <div class="right">
+            <span class="badge" style="border-color:rgba(255,57,168,.6); color:#ffe7f5">Dagny · Pink Floor</span>
           </div>
         </div>
-        <div class="actions">
-          <button id="lockBtn" class="btn ghost" aria-label="Lock Display quickly" title="Quick-lock the editor in Display mode">Lock Display</button>
-        </div>
+        <div class="wipe" id="wipe" aria-hidden="true"></div>
       </div>
 
-      <div class="player-wrap" aria-label="Video player area">
-        <div id="startOverlay" class="overlay-start" role="dialog" aria-modal="false" aria-live="polite">
-          <button id="startBtn" class="big primary" aria-label="Start playback" title="Start (iPhone: enables audio with one tap)">Start</button>
-        </div>
-        <iframe id="yt" title="Miss Monique — set player"
-          loading="lazy"
-          allow="autoplay; encrypted-media; picture-in-picture; fullscreen; web-share; accelerometer"
-          src=""
-          referrerpolicy="strict-origin-when-cross-origin">
-        </iframe>
-      </div>
-
-      <div class="controls editable" role="region" aria-label="Playback controls">
-        <div class="bar">
-          <button id="playPause" class="primary" aria-label="Start or Pause" title="Space to toggle">Start</button>
-          <div class="timer" id="timerText" role="timer" aria-live="polite" aria-atomic="true" title="Time remaining">12:00</div>
-          <button id="extend" class="btn" aria-label="Extend by 5 minutes" title="+ key extends by 5 minutes">+5m Extend</button>
-          <div class="actions">
-            <button class="btn ghost preset" data-preset="quick" aria-label="Quick 12 minutes" title="Preset: Quick 12m">Quick 12m</button>
-            <button class="btn ghost preset" data-preset="deep" aria-label="Deep 20 minutes" title="Preset: Deep 20m">Deep 20m</button>
-            <button class="btn ghost preset" data-preset="night" aria-label="Night 12 minutes" title="Preset: Night 12m">Night 12m</button>
-          </div>
-          <div class="vol" title="Volume: use – / = or Arrow keys">
-            <label for="vol" class="sr-only">Volume</label>
-            <span>🔊</span>
-            <input id="vol" type="range" min="0" max="1" step="0.01" value="0.8" aria-valuemin="0" aria-valuemax="1" aria-label="Volume slider"/>
-          </div>
-          <button id="airplayBtn" class="btn ghost" aria-label="AirPlay (Safari)" title="Send to AirPlay via native controls">AirPlay</button>
-          <span id="airplayHint" class="chip" style="display:none">Tap the AirPlay icon in the player controls.</span>
-          <div id="iosHint" class="chip" style="display:none">iPhone tip: use PiP if audio stops after lock.</div>
-        </div>
-
-        <div class="bar">
-          <div class="mode-tabs" role="tablist" aria-label="Play mode">
-            <button id="modeWhole"   role="tab" aria-selected="true"  aria-pressed="true"  class="btn ghost" title="Play the whole set">Whole</button>
-            <button id="modeWindow"  role="tab" aria-selected="false" aria-pressed="false" class="btn ghost" title="Play a defined segment window">Segment</button>
-            <button id="modeSeq"     role="tab" aria-selected="false" aria-pressed="false" class="btn ghost" title="Play a sequence of cuts">Sequence</button>
-          </div>
-          <div class="actions">
-            <button id="prevCut" class="btn ghost" aria-label="Previous cut (Q)" title="Previous cut (Q)">◀ Prev</button>
-            <button id="nextCut" class="btn ghost" aria-label="Next cut (E)" title="Next cut (E)">Next ▶</button>
-            <span id="cutLabel" class="chip" aria-live="polite" title="Current cut label" style="display:none"></span>
-          </div>
-          <div class="grow"></div>
-          <div class="actions">
-            <select id="trackPicker" aria-label="Select track" title="Choose set"></select>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Studio + Advanced Playback -->
-    <section class="panel studio editable" aria-label="Flow Studio (Editor)">
-      <div class="grid-2">
-        <!-- Segment editor -->
-        <div>
-          <h2>Segment Editor</h2>
-          <div class="fields">
-            <div class="half">
-              <label for="segStart">Start (mm:ss or sec)</label>
-              <input id="segStart" type="text" inputmode="numeric" placeholder="0:00" />
-            </div>
-            <div class="half">
-              <label for="segEnd">End (mm:ss or sec)</label>
-              <input id="segEnd" type="text" inputmode="numeric" placeholder="12:00" />
-            </div>
-            <div class="half" style="display:flex;align-items:end;gap:8px">
-              <input id="segLoop" type="checkbox" aria-label="Loop segment" /> <label for="segLoop">Loop</label>
-            </div>
-            <div class="half" style="display:flex;align-items:end;gap:8px">
-              <button id="applySeg" class="btn" title="Apply this window">Apply</button>
-            </div>
-            <div class="half">
-              <button id="fromNow12" class="btn ghost" aria-label="From now plus 12 minutes" title="Create a 12‑min window from the current playhead">From now +12m</button>
-            </div>
-            <div class="half">
-              <button id="fromNow20" class="btn ghost" aria-label="From now plus 20 minutes" title="Create a 20‑min window from the current playhead">From now +20m</button>
-            </div>
-            <div class="wide"><hr style="border:none;border-top:1px solid var(--glass-border)" /></div>
-            <div class="wide">
-              <h3>Tap‑Tempo</h3>
-              <div class="row">
-                <button id="tapBtn" class="btn" aria-label="Tap to estimate BPM" title="Tap to estimate BPM (averages last 3–8 taps)">Tap</button>
-                <div class="chip">BPM: <span id="bpmOut">—</span></div>
-                <label class="sr-only" for="barsSel">Bars</label>
-                <select id="barsSel" aria-label="Choose bars" title="How many bars to snap">
-                  <option value="8">8 bars</option>
-                  <option value="16" selected>16 bars</option>
-                  <option value="32">32 bars</option>
-                </select>
-                <button id="snapWindow" class="btn ghost" aria-label="Create bar‑aligned segment" title="Create a bar‑aligned window from 'now'">Snap window</button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sequence editor -->
-        <div>
-          <h2>Sequence Editor</h2>
-          <div class="fields">
-            <div>
-              <label for="cutStart">Start (mm:ss or sec)</label>
-              <input id="cutStart" type="text" placeholder="e.g., 1:20" />
-            </div>
-            <div>
-              <label for="cutEnd">End (mm:ss or sec)</label>
-              <input id="cutEnd" type="text" placeholder="e.g., 2:40" />
-            </div>
-            <div>
-              <label for="cutRepeats">Repeats</label>
-              <input id="cutRepeats" type="number" min="0" step="1" value="0" />
-            </div>
-            <div style="display:flex;gap:8px;align-items:end">
-              <input id="cutLoop" type="checkbox" /> <label for="cutLoop">Loop ∞</label>
-            </div>
-            <div class="wide">
-              <label for="cutLabel">Label</label>
-              <input id="cutLabelInput" type="text" placeholder="Jam loop / Build / etc." />
-            </div>
-            <div class="wide">
-              <button id="addCut" class="btn" title="Add this cut to the list">Add cut</button>
-            </div>
-          </div>
-
-          <div id="cutsList" class="fade" role="list" aria-label="Current cuts" style="margin-top:8px; display:grid; gap:8px"></div>
-
-          <div class="row" style="margin-top:8px">
-            <label class="chip" style="gap:8px">Loop sequence
-              <input id="loopSeq" type="checkbox" aria-label="Loop entire sequence" style="margin-left:8px" />
-            </label>
-            <button id="applySeq" class="btn" title="Apply this sequence">Apply sequence</button>
-            <div class="grow"></div>
-            <button id="btnPrevCut" class="btn ghost" aria-label="Previous cut">Prev</button>
-            <button id="btnNextCut" class="btn ghost" aria-label="Next cut">Next ▶</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Preset Pads — Columns A & B -->
-    <section class="panel pads-panel editable" aria-label="Preset Pads">
-      <h2>Preset Pads — Columns A & B</h2>
-      <div class="grid-2">
-        <!-- Column A (Day Flow) -->
-        <div>
-          <h3>Column A — Day Flow</h3>
-          <div role="group" aria-label="Segments A" class="pads-group">
-            <div class="row"><span class="chip">Segments</span></div>
-            <div id="padsASeg" class="list"></div>
-          </div>
-          <div role="group" aria-label="Sequences A" class="pads-group" style="margin-top:8px">
-            <div class="row"><span class="chip">Sequences</span></div>
-            <div id="padsASeq" class="list"></div>
-          </div>
-        </div>
-
-        <!-- Column B (Night Flow) -->
-        <div>
-          <h3>Column B — Night Flow</h3>
-          <div role="group" aria-label="Segments B" class="pads-group">
-            <div class="row"><span class="chip">Segments</span></div>
-            <div id="padsBSeg" class="list"></div>
-          </div>
-          <div role="group" aria-label="Sequences B" class="pads-group" style="margin-top:8px">
-            <div class="row"><span class="chip">Sequences</span></div>
-            <div id="padsBSeq" class="list"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Share & Favorites -->
-    <section class="panel share-panel editable" aria-label="Share & Export">
-      <h2>Share Tools</h2>
-      <div class="row">
-        <button id="copyLink" class="btn" title="Copy a URL with #flow=…">Copy share link</button>
-        <button id="exportState" class="btn ghost" title="Download current state as JSON">Export .json</button>
-        <button id="importState" class="btn ghost" title="Import state from a JSON file">Import .json</button>
-        <div id="shareMsg" class="chip" aria-live="polite" style="display:none"></div>
-      </div>
-    </section>
-
-    <section class="panel favorites-panel editable" aria-label="Favorites with DJ Notes">
-      <div class="row" style="justify-content:space-between; align-items:flex-end">
-        <h2>Favorites <span class="chip" title="Save exact playback state with notes">⭐ Save + DJ Notes</span></h2>
+      <div class="ctrl">
         <div class="row">
-          <select id="favColor" aria-label="Favorite color tag" title="Color tag (green token)">
-            <option value="emerald-drift">Emerald Drift</option>
-            <option value="teal-current">Teal Current</option>
-            <option value="jade-pulse">Jade Pulse</option>
-            <option value="forest-glass">Forest Glass</option>
-            <option value="verdigris-line">Verdigris Line</option>
-            <option value="celadon-mist">Celadon Mist</option>
-            <option value="pine-shadow">Pine Shadow</option>
-            <option value="mint-vapor">Mint Vapor</option>
-            <option value="seafoam-glow">Seafoam Glow</option>
-            <option value="neon-sprout">Neon Sprout</option>
-          </select>
-          <input id="favTitle" type="text" placeholder="Title (optional)" aria-label="Favorite title" />
-          <input id="favNotes" type="text" placeholder="DJ Notes (optional)" aria-label="DJ Notes" />
-          <button id="saveFav" class="btn">⭐ Save Favorite</button>
-        </div>
-      </div>
-      <div id="favorites" class="favorites" style="margin-top:10px"></div>
-    </section>
-
-    <!-- Check-In -->
-    <section class="panel checkin-panel editable" aria-label="Check-In">
-      <h2>Check‑In (MirrorHoney‑style)</h2>
-      <div class="fields">
-        <div>
-          <label for="ciMood">Mood</label>
-          <input id="ciMood" type="text" placeholder="One word" title="Mood word" />
-        </div>
-        <div>
-          <label for="ciEnergy">Energy (0–10)</label>
-          <div class="row" title="Drag or use keyboard to adjust">
-            <input id="ciEnergy" type="range" min="0" max="10" step="1" value="5" aria-valuemin="0" aria-valuemax="10" aria-valuenow="5" />
-            <span id="ciEnergyVal" class="chip" title="Current energy">5</span>
+          <div class="row" style="gap:8px">
+            <span id="bpm-chip" class="chip">BPM 126</span>
+            <span id="harbor-chip" class="chip warn">harbor: pending</span>
+          </div>
+          <div class="row" style="gap:8px">
+            <button class="btn" id="set-124" type="button">124</button>
+            <button class="btn" id="set-126" type="button">126</button>
+            <button class="btn" id="set-127" type="button">127</button>
+            <button class="btn" id="set-128" type="button">128</button>
           </div>
         </div>
-        <div>
-          <label for="ciBody">Body</label>
-          <select id="ciBody" title="Body feel">
-            <option>Loose</option>
-            <option selected>Neutral</option>
-            <option>Tight</option>
-          </select>
-        </div>
-        <div class="wide">
-          <label for="ciIntent">Intention</label>
-          <input id="ciIntent" type="text" placeholder="One‑liner intention" title="Your intention for this session" />
-        </div>
-        <div class="wide">
-          <label for="ciNotes">Notes</label>
-          <textarea id="ciNotes" placeholder="Session reflections" title="Notes about the session"></textarea>
-        </div>
+        <input id="bpm" type="range" min="120" max="132" value="126" step="1" aria-label="BPM">
       </div>
-      <div class="row" style="margin-top:10px">
-        <button id="ciLog" class="btn">Log</button>
-        <button id="ciExport" class="btn ghost">Export .json</button>
-        <button id="ciClear" class="btn ghost">Clear log</button>
-      </div>
-      <div id="ciCards" class="cards" style="margin-top:10px"></div>
-    </section>
 
-    <!-- Help -->
-    <section class="panel help-panel" aria-label="Keyboard shortcuts">
-      <h2>Shortcuts</h2>
-      <div class="row" style="flex-wrap:wrap; gap:10px">
-        <span class="kbd">Space</span> Start/Pause
-        <span class="kbd">+</span> +5m
-        <span class="kbd">–</span>/<span class="kbd">=</span>/<span class="kbd">⬇</span>/<span class="kbd">⬆</span> volume
-        <span class="kbd">1</span>/<span class="kbd">2</span>/<span class="kbd">3</span> Quick/Deep/Night
-        <span class="kbd">W</span> Whole
-        <span class="kbd">S</span> Sequence
-        <span class="kbd">Q</span>/<span class="kbd">E</span> Prev/Next cut
+      <div class="tiles">
+        <a class="tile" href="https://motion.plnt.earth/monique" rel="noopener">
+          <div class="tleft">
+            <div class="name">Miss Monique — Flow Deck</div>
+            <div class="sub">Pump the beats · Green room</div>
+          </div>
+          <span class="btn">Open</span>
+        </a>
+
+        <a class="tile" href="https://dagny.plnt.earth" rel="noopener">
+          <div class="tleft">
+            <div class="name">Dagny — Joy in Motion</div>
+            <div class="sub">Pink floor · Harbor-linked</div>
+          </div>
+          <span class="btn pink">Open</span>
+        </a>
       </div>
     </section>
 
-    <!-- Builder data (YOUR sets wired) -->
-    <script type="application/json" id="flow-builder-data">
-    {
-      "defaultPreset": "quick",
-      "pick": "first",
-      "entries": [
-        {
-          "label": "Day Flow (NYC set)",
-          "youtubeId": "PXQcEIM4su0",
-          "starts": { "quick": 898, "deep": 898, "night": 898 },
-          "mode": "window",
-          "segmentByPreset": {
-            "quick": { "start": 898,  "end": 1618, "loop": false },
-            "deep":  { "start": 898,  "end": 2098, "loop": false },
-            "night": { "start": 1498, "end": 2218, "loop": true  }
-          },
-          "sequence": {
-            "loopSequence": false,
-            "cuts": [
-              { "start": 898,  "end": 1060, "label":"Intro build" },
-              { "start": 1205, "end": 1340, "repeats": 2, "label":"Groove pocket" },
-              { "start": 1498, "end": 1618, "loop": true, "label":"Jam loop" }
-            ]
-          }
-        },
-        {
-          "label": "Night Flow (WOW set)",
-          "youtubeId": "DdgyifI5k9o",
-          "starts": { "quick": 4197, "deep": 4197, "night": 4197 },
-          "mode": "window",
-          "segmentByPreset": {
-            "quick": { "start": 4197, "end": 4917, "loop": false },
-            "deep":  { "start": 4197, "end": 5397, "loop": false },
-            "night": { "start": 4197, "end": 5097, "loop": true  }
-          },
-          "sequence": {
-            "loopSequence": true,
-            "cuts": [
-              { "start": 4197, "end": 4397, "label":"Takeoff" },
-              { "start": 4560, "end": 4680, "repeats": 3, "label":"Strobe repeat" },
-              { "start": 5050, "end": 5097, "label":"Deep finish" }
-            ]
-          }
-        }
-      ]
-    }
-    </script>
-
-    <footer style="opacity:.8; font-size:.9rem; padding:8px"></footer>
-  </div>
+    <footer class="foot">Motion hands to Dagny when the field is ready. Wipe at 127+ is a hint, not a rule.</footer>
+  </main>
 
 <script>
-/* ===========================
-   Utilities (no console logs)
-=========================== */
 (function(){
-  const $  = sel => document.querySelector(sel);
-  const $$ = sel => Array.from(document.querySelectorAll(sel));
+  var wipe = document.getElementById('wipe');
+  var bpm = document.getElementById('bpm');
+  var chip = document.getElementById('bpm-chip');
+  var harborChip = document.getElementById('harbor-chip');
 
-  /* Keep shortcuts active: gently refocus body when interacting outside iframe */
-  function focusForShortcuts(){ try{ document.body.focus({preventScroll:true}); }catch(e){} }
-  document.addEventListener('pointerdown', (e)=>{ if(e.target.id !== 'yt') focusForShortcuts(); }, true);
-
-  /* Time parse/format */
-  function parseTime(v){
-    if(typeof v === "number") return v;
-    if(!v) return 0;
-    if(/^\d+(\.\d+)?$/.test(v.trim())) return parseFloat(v);
-    const parts = v.split(":").map(x=>x.trim());
-    if(parts.length===2){
-      const m = parseFloat(parts[0]||"0"), s = parseFloat(parts[1]||"0");
-      return m*60 + s;
-    } else if(parts.length===3){
-      const h=parseFloat(parts[0]||"0"), m=parseFloat(parts[1]||"0"), s=parseFloat(parts[2]||"0");
-      return h*3600 + m*60 + s;
-    }
-    return 0;
-  }
-  function fmtTime(secs){
-    secs = Math.max(0, Math.round(secs));
-    const m = Math.floor(secs/60), s = secs%60;
-    return m + ":" + (s<10 ? "0"+s : s);
+  function truthy(v){
+    if(v==null) return false;
+    var s = String(v).toLowerCase().trim();
+    return !(s===""||s==="0"||s==="false"||s==="null"||s==="undefined");
   }
 
-  /* Base64 (Unicode safe) */
-  function b64Encode(obj){
-    const str = (typeof obj === 'string') ? obj : JSON.stringify(obj);
-    const bytes = new TextEncoder().encode(str);
-    let bin = "";
-    bytes.forEach(b=> bin += String.fromCharCode(b));
-    return btoa(bin);
+  // Harbor status
+  var credit  = truthy(localStorage.getItem('harbor.credit'));
+  var consent = truthy(localStorage.getItem('harbor.consent'));
+  var resource= truthy(localStorage.getItem('harbor.resource'));
+  var all = credit && consent && resource;
+  harborChip.textContent = all ? 'harbor: green' : 'harbor: pending';
+  harborChip.classList.toggle('ok', all);
+  harborChip.classList.toggle('warn', !all);
+
+  function setBPM(v){
+    v = Math.max(120, Math.min(132, parseInt(v||126,10)));
+    bpm.value = v;
+    chip.textContent = 'BPM ' + v;
+    try{ localStorage.setItem('motion.home.bpm', String(v)); }catch(e){}
+    if(v >= 127){ wipe.classList.add('on'); } else { wipe.classList.remove('on'); }
+    return v;
   }
-  function b64DecodeToObj(b64){
-    try{
-      const bin = atob(b64);
-      const bytes = new Uint8Array([...bin].map(ch=> ch.charCodeAt(0)));
-      const txt = new TextDecoder().decode(bytes);
-      return JSON.parse(txt);
-    }catch(e){ return null; }
-  }
-
-  /* Local storage helpers */
-  const LS = {
-    get(k, d){ try{ const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } },
-    set(k, v){ try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} },
-    del(k){ try{ localStorage.removeItem(k);}catch(e){} }
-  };
-
-  /* Volume ramp (soft jump) */
-  function rampVolume(setVol, from, to, ms){
-    return new Promise(resolve=>{
-      const t0 = performance.now();
-      const dur = Math.max(60, ms||120);
-      function step(t){
-        const k = Math.min(1, (t - t0)/dur);
-        const v = from + (to - from) * k;
-        setVol(v);
-        if(k < 1) requestAnimationFrame(step);
-        else resolve();
-      }
-      requestAnimationFrame(step);
-    });
-  }
-
-  /* Download helper */
-  function download(name, data){
-    const blob = new Blob([data], {type:"application/json"});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = name; document.body.appendChild(a); a.click(); a.remove();
-    setTimeout(()=> URL.revokeObjectURL(url), 1000);
-  }
-
-  /* Accessible notify */
-  function showChip(el, msg){
-    if(!el) return; el.textContent = msg; el.style.display = "inline-flex";
-    setTimeout(()=> { el.style.display="none"; }, 2400);
-  }
-
-  /* ===========================
-     FlowRoom (Public API) with robust handshake + AirPlay persist + timer intelligence
-  =========================== */
-  const FlowRoom = (function(){
-    const yt = $("#yt");
-    const startOverlay = $("#startOverlay");
-    const startBtn = $("#startBtn");
-    const playPause = $("#playPause");
-    const timerText = $("#timerText");
-    const extendBtn = $("#extend");
-    const volSlider = $("#vol");
-    const presetBtns = $$(".preset");
-    const trackPicker = $("#trackPicker");
-    const cutLabel = $("#cutLabel");
-    const airBtn  = $("#airplayBtn");
-    const airHint = $("#airplayHint");
-
-    /* Modes UI */
-    const modeBtns = {
-      whole: $("#modeWhole"),
-      window: $("#modeWindow"),
-      sequence: $("#modeSeq")
-    };
-
-    /* Persisted keys */
-    const AK = "motion.airplay.controls"; /* AirPlay/native controls */
-
-    /* State */
-    const state = {
-      playerReady:false,
-      listening:false,
-      currentTime:0,
-      duration:0,
-      playing:false,
-      youtubeId:"",
-      trackLabel:"",
-      starts:{quick:0, deep:0, night:0},
-      preset: LS.get("flow.preset","quick"),
-      mode: LS.get("flow.mode","whole"),
-      volume: LS.get("flow.vol", 0.8),
-      timerSec: (LS.get("flow.preset","quick")==="deep" ? 20*60 : 12*60),
-      timerRunning:false,
-      lastTick:0,
-
-      /* Segment window */
-      window:{ start:0, end:12*60, loop:false },
-      segmentByPreset:null,
-
-      /* Sequence */
-      sequence:{ cuts:[], loopSequence:false },
-      seqIndex:0,
-      seqRepeatsLeft:0,
-
-      softSeekInFlight:false,
-      startedOnce:false,
-      showNativeControls: LS.get(AK, false)
-    };
-
-    /* Build the YouTube src */
-    function buildSrc(id, opts){
-      const p = new URLSearchParams({
-        enablejsapi:"1",
-        playsinline:"1",
-        rel:"0",
-        modestbranding:"1",
-        iv_load_policy:"3",
-        controls: (opts && typeof opts.controls === "number") ? String(opts.controls) : (state.showNativeControls ? "1" : "0")
-      });
-      if(opts && opts.autoplay) p.set("autoplay","1");
-      if(opts && typeof opts.start === "number") p.set("start", String(Math.max(0, Math.floor(opts.start))));
-      if(opts && typeof opts.end === "number") p.set("end", String(Math.max(0, Math.floor(opts.end))));
-      if(opts && opts.loop){
-        p.set("loop","1");
-        p.set("playlist", id);
-      }
-      try{
-        if(/^https?:$/.test(location.protocol)) p.set("origin", location.origin);
-      }catch(_){}
-      return "https://www.youtube-nocookie.com/embed/" + encodeURIComponent(id) + "?" + p.toString();
-    }
-
-    function post(cmd, args){
-      const payload = JSON.stringify({event:"command", func:cmd, args:args || []});
-      if(yt && yt.contentWindow) yt.contentWindow.postMessage(payload, "*");
-    }
-
-    function sendListening(){
-      if(!yt.contentWindow) return;
-      const msg = JSON.stringify({event:"listening", id:"flow-studio"});
-      yt.contentWindow.postMessage(msg, "*");
-      ["onReady","onStateChange","onPlaybackQualityChange","onPlaybackRateChange","onError"].forEach(evt=>{
-        yt.contentWindow.postMessage(JSON.stringify({event:"command", func:"addEventListener", args:[evt]}), "*");
-      });
-    }
-
-    /* Handshake pump */
-    let handshakeIv=null, tries=0;
-    function ensureHandshake(){
-      if(handshakeIv) return;
-      handshakeIv = setInterval(()=>{
-        if(state.playerReady){ clearInterval(handshakeIv); handshakeIv=null; return; }
-        sendListening();
-        if(++tries>60){ clearInterval(handshakeIv); handshakeIv=null; }
-      }, 120);
-    }
-
-    function onMessage(e){
-      const src = (typeof e.data === "string") ? e.data : "";
-      if(!src) return;
-      let data;
-      try { data = JSON.parse(src); } catch(err){ return; }
-      if(data.event === "onReady"){
-        state.playerReady = true;
-        post("setVolume", [Math.round(state.volume*100)]);
-        post("unMute");
-      }
-      if(data.event === "infoDelivery" && data.info){
-        if(typeof data.info.currentTime === "number") state.currentTime = data.info.currentTime;
-        if(typeof data.info.duration === "number") state.duration = data.info.duration;
-        enforceWindows();
-      }
-      if(data.event === "onStateChange"){
-        if(data.info === 1){ state.playing = true; startOverlay.classList.add("hidden"); playPause.textContent = "Pause"; }
-        if(data.info === 2){ state.playing = false; playPause.textContent = "Start"; }
-        if(data.info === 0){ state.playing = false; playPause.textContent = "Start"; }
-      }
-    }
-    window.addEventListener("message", onMessage);
-
-    yt.addEventListener("load", function(){
-      ensureHandshake();
-      sendListening();
-    });
-
-    function setVolume(v){
-      state.volume = Math.max(0, Math.min(1, v));
-      post("setVolume", [Math.round(state.volume*100)]);
-      if(state.volume > 0) post("unMute");
-      LS.set("flow.vol", state.volume);
-    }
-
-    function softSeek(to){
-      if(state.softSeekInFlight){ post("seekTo",[to,true]); return; }
-      state.softSeekInFlight = true;
-      const prevVol = state.volume;
-      const dip = Math.max(0, prevVol * 0.15);
-      rampVolume(setVolume, prevVol, dip, 120).then(()=>{
-        post("seekTo", [to, true]);
-        return rampVolume(setVolume, dip, prevVol, 140);
-      }).then(()=>{ state.softSeekInFlight=false; });
-    }
-
-    function enforceWindows(){
-      if(!state.playing) return;
-      const guard = 0.12; /* ~2–3 frames of headroom */
-      if(state.mode === "window"){
-        const w = state.window;
-        if(state.currentTime < w.start - 0.35){ softSeek(w.start); }
-        if(state.currentTime >= (w.end - guard)){
-          if(w.loop){ softSeek(w.start); }
-          else { endFlow("window_end"); }
-        }
-      } else if(state.mode === "sequence"){
-        const cuts = state.sequence.cuts;
-        if(!cuts.length) return;
-        const c = cuts[state.seqIndex] || cuts[0];
-        if(typeof c === "undefined") return;
-        showCutLabel(c.label);
-        if(state.currentTime < c.start - 0.35){ softSeek(c.start); }
-        if(state.currentTime >= (c.end - guard)){
-          if(c.loop){ softSeek(c.start); return; }
-          if(state.seqRepeatsLeft > 0){ state.seqRepeatsLeft--; softSeek(c.start); return; }
-          nextCut();
-        }
-      }
-    }
-
-    function showCutLabel(label){
-      if(label){ cutLabel.style.display="inline-flex"; cutLabel.textContent = label; }
-      else { cutLabel.style.display = "none"; }
-    }
-
-    function endFlow(reason){
-      pause();
-      document.dispatchEvent(new CustomEvent("flow:end",{detail:{reason}}));
-    }
-
-    function play(){ post("playVideo",[]); state.playing = true; startOverlay.classList.add("hidden"); playPause.textContent = "Pause"; }
-    function pause(){ post("pauseVideo",[]); state.playing = false; playPause.textContent = "Start"; }
-    function toggle(){ if(state.playing) pause(); else play(); }
-
-    /* Timer loop ~1s via rAF */
-    function tick(t){
-      if(!state.lastTick) state.lastTick = t;
-      if(t - state.lastTick >= 950){
-        state.lastTick = t;
-        if(state.timerRunning && state.timerSec > 0){
-          state.timerSec--;
-          timerText.textContent = fmtTime(state.timerSec);
-          timerText.setAttribute("aria-label", "Timer " + fmtTime(state.timerSec) + " remaining");
-          if(state.timerSec <= 0){
-            state.timerRunning = false;
-            endFlow("timer");
-          }
-        }
-      }
-      requestAnimationFrame(tick);
-    }
-    requestAnimationFrame(tick);
-
-    /* Public API & Wiring */
-    function applyPreset(p){
-      state.preset = p;
-      LS.set("flow.preset", p);
-      const mins = (p==="deep") ? 20 : 12;
-      state.timerSec = mins*60;
-      timerText.textContent = fmtTime(state.timerSec);
-      if(state.segmentByPreset && state.segmentByPreset[p]){
-        const w = state.segmentByPreset[p];
-        setWindow(w);
-      }
-      for(const k in modeBtns){ modeBtns[k].setAttribute("aria-pressed", String(state.mode===k)); modeBtns[k].setAttribute("aria-selected", String(state.mode===k)); }
-    }
-
-    function setMode(m){
-      state.mode = m;
-      LS.set("flow.mode", m);
-      for(const k in modeBtns){
-        const pressed = (k===m);
-        modeBtns[k].setAttribute("aria-pressed", String(pressed));
-        modeBtns[k].setAttribute("aria-selected", String(pressed));
-      }
-    }
-
-    function setWindow(obj){
-      state.window = {
-        start: parseTime(obj.start),
-        end: parseTime(obj.end),
-        loop: !!obj.loop
-      };
-      setMode("window");
-      /* Timer intelligence: match window span when meaningful */
-      const span = Math.max(0, Math.floor(state.window.end - state.window.start));
-      if(span >= 10){ state.timerSec = span; timerText.textContent = fmtTime(state.timerSec); }
-    }
-
-    function setWindowByPreset(map){
-      state.segmentByPreset = {
-        quick:{start:parseTime(map.quick.start), end:parseTime(map.quick.end), loop:!!map.quick.loop},
-        deep:{start:parseTime(map.deep.start), end:parseTime(map.deep.end), loop:!!map.deep.loop},
-        night:{start:parseTime(map.night.start), end:parseTime(map.night.end), loop:!!map.night.loop}
-      };
-    }
-
-    function setSequence(seq){
-      const cuts = (seq.cuts||[]).map(c=>({
-        start: parseTime(c.start),
-        end: parseTime(c.end),
-        loop: !!c.loop,
-        repeats: Math.max(0, parseInt(c.repeats||0,10)),
-        label: c.label||""
-      })).filter(c=> c.end>c.start);
-      state.sequence = { cuts, loopSequence: !!seq.loopSequence };
-      state.seqIndex = 0;
-      state.seqRepeatsLeft = (cuts[0] && cuts[0].repeats) || 0;
-      setMode("sequence");
-      if(cuts[0]){ softSeek(cuts[0].start); showCutLabel(cuts[0].label); }
-
-      /* Timer intelligence for sequences */
-      const hasLoop = cuts.some(c => c.loop || (c.repeats|0)>0) || state.sequence.loopSequence;
-      if(!hasLoop){
-        const total = cuts.reduce((s,c)=> s + (c.end - c.start) * (1 + (c.repeats|0)), 0);
-        if(total >= 10){ state.timerSec = Math.floor(total); timerText.textContent = fmtTime(state.timerSec); }
-      } else {
-        state.timerSec = 0; /* don't count down */
-        timerText.textContent = "∞";
-      }
-    }
-
-    function nextCut(){
-      const cuts = state.sequence.cuts;
-      if(!cuts.length){ endFlow("sequence_end"); return; }
-      if(state.seqIndex < cuts.length - 1){
-        state.seqIndex++;
-      } else {
-        if(state.sequence.loopSequence){ state.seqIndex = 0; }
-        else { endFlow("sequence_end"); return; }
-      }
-      const c = cuts[state.seqIndex];
-      state.seqRepeatsLeft = c.repeats || 0;
-      showCutLabel(c.label);
-      softSeek(c.start);
-    }
-
-    function prevCut(){
-      const cuts = state.sequence.cuts;
-      if(!cuts.length) return;
-      if(state.seqIndex > 0){ state.seqIndex--; }
-      else {
-        if(state.sequence.loopSequence){ state.seqIndex = cuts.length - 1; }
-      }
-      const c = cuts[state.seqIndex];
-      state.seqRepeatsLeft = c.repeats || 0;
-      showCutLabel(c.label);
-      softSeek(c.start);
-    }
-
-    function loadTrack({ youtubeId, starts, defaultPreset, label, segmentByPreset, sequence }){
-      state.youtubeId = youtubeId;
-      state.trackLabel = label || "";
-      state.starts = starts || {quick:0, deep:0, night:0};
-      yt.src = buildSrc(youtubeId, { controls: state.showNativeControls ? 1 : 0 });
-      /* ensure overlay visible and timer stopped initially */
-      startOverlay.classList.remove("hidden");
-      state.timerRunning = false;
-      state.playerReady = false; tries = 0; ensureHandshake();
-      /* per‑preset windows/sequence */
-      if(segmentByPreset) setWindowByPreset(segmentByPreset);
-      if(sequence) state.sequence = { cuts: sequence.cuts || [], loopSequence: !!sequence.loopSequence };
-      if(defaultPreset) applyPreset(defaultPreset);
-    }
-
-    function exportState(){
-      const out = {
-        youtubeId: state.youtubeId,
-        trackLabel: state.trackLabel,
-        starts: state.starts,
-        preset: state.preset,
-        mode: state.mode,
-        window: state.window,
-        sequence: state.sequence,
-        segmentByPreset: state.segmentByPreset
-      };
-      return JSON.stringify(out);
-    }
-
-    function importState(jsonOrObj){
-      let obj = jsonOrObj;
-      if(typeof jsonOrObj === "string"){
-        try{ obj = JSON.parse(jsonOrObj); }catch(e){ return; }
-      }
-      if(!obj || !obj.youtubeId) return;
-      loadTrack({
-        youtubeId: obj.youtubeId,
-        starts: obj.starts,
-        defaultPreset: obj.preset || "quick",
-        label: obj.trackLabel || "",
-        segmentByPreset: obj.segmentByPreset || null,
-        sequence: obj.sequence || null
-      });
-      setMode(obj.mode || "whole");
-      if(obj.mode === "window" && obj.window) setWindow(obj.window);
-      if(obj.mode === "sequence" && obj.sequence) setSequence(obj.sequence);
-    }
-
-    function getTime(){ return state.currentTime || 0; }
-
-    function preferredStart(){
-      if(state.mode === "sequence" && state.sequence.cuts.length){ return state.sequence.cuts[0].start; }
-      if(state.mode === "window"){ return state.window.start; }
-      return state.starts?.[state.preset] || 0;
-    }
-
-    function setWindowFromNow(seconds){
-      const now = getTime();
-      setWindow({start: now, end: now + (seconds||0), loop:false});
-    }
-
-    /* AirPlay helper — toggles native controls so Safari shows the AirPlay icon */
-    (function wireAirPlay(){
-      if(!airBtn) return;
-      const ua = navigator.userAgent || "";
-      const isSafari = /Safari/i.test(ua) && !/Chrome|Chromium|CriOS/i.test(ua);
-
-      airBtn.addEventListener("click", ()=>{
-        state.showNativeControls = !state.showNativeControls;
-        LS.set(AK, state.showNativeControls);
-
-        const baseStart = preferredStart();
-        const current = Math.floor(state.currentTime || baseStart || 0);
-        const end = (state.mode === "window") ? state.window.end : undefined;
-        const src = buildSrc(state.youtubeId, {
-          autoplay: state.playing,
-          start: current,
-          end,
-          loop: (state.mode === "window" && state.window.loop),
-          controls: state.showNativeControls ? 1 : 0
-        });
-        yt.src = src;
-        state.playerReady=false; tries=0; ensureHandshake();
-
-        airBtn.textContent = state.showNativeControls ? "Exit AirPlay UI" : "AirPlay";
-        if(airHint) airHint.style.display = (state.showNativeControls && isSafari) ? "inline-flex" : "none";
-      });
-
-      /* Restore button state on first load */
-      airBtn.textContent = state.showNativeControls ? "Exit AirPlay UI" : "AirPlay";
-      if(airHint) airHint.style.display = "none";
-    })();
-
-    /* Wiring controls */
-    startBtn.addEventListener("click", function(){
-      focusForShortcuts();
-      /* Start at window/sequence start if present, else preset */
-      const startAt = preferredStart();
-      if(!state.startedOnce){
-        yt.src = buildSrc(state.youtubeId, {autoplay:true, start:startAt, controls: state.showNativeControls?1:0});
-        state.startedOnce = true;
-      }else{
-        post("seekTo",[startAt,true]);
-        post("playVideo",[]);
-      }
-      state.playing = true;
-      state.timerRunning = true;
-      startOverlay.classList.add("hidden");
-      playPause.textContent = "Pause";
-    });
-
-    playPause.addEventListener("click", function(){
-      focusForShortcuts();
-      if(state.playing){ pause(); state.timerRunning = false; }
-      else { play(); state.timerRunning = true; }
-    });
-
-    extendBtn.addEventListener("click", function(){ state.timerSec += 5*60; timerText.textContent = fmtTime(state.timerSec); });
-
-    volSlider.value = String(state.volume);
-    volSlider.addEventListener("input", function(){ setVolume(parseFloat(this.value||"0")); });
-
-    presetBtns.forEach(btn=>{
-      btn.addEventListener("click", function(){
-        const p = this.getAttribute("data-preset");
-        applyPreset(p);
-      });
-    });
-
-    modeBtns.whole.addEventListener("click", ()=> setMode("whole"));
-    modeBtns.window.addEventListener("click", ()=> setMode("window"));
-    modeBtns.sequence.addEventListener("click", ()=> setMode("sequence"));
-    $("#prevCut").addEventListener("click", prevCut);
-    $("#nextCut").addEventListener("click", nextCut);
-
-    /* Track picker */
-    trackPicker.addEventListener("change", function(){
-      const idx = parseInt(this.value,10);
-      const entry = FlowData.entries[idx];
-      if(entry){
-        loadTrack({
-          youtubeId: entry.youtubeId,
-          starts: entry.starts,
-          defaultPreset: FlowData.defaultPreset || "quick",
-          label: entry.label,
-          segmentByPreset: entry.segmentByPreset,
-          sequence: entry.sequence
-        });
-      }
-    });
-
-    return {
-      play, pause, toggle,
-      loadTrack,
-      setPlayMode: setMode,
-      setWindow,
-      setWindowByPreset,
-      setSequence,
-      nextCut, prevCut,
-      exportState,
-      importState,
-      getTime,
-      setWindowFromNow,
-      _state: state,
-      _post: post,
-      _softSeek: softSeek
-    };
-  })();
-
-  window.FlowRoom = FlowRoom;
-
-  /* ===========================
-     Builder Data & Initialization
-  =========================== */
-  const FlowData = (function(){
-    let data = null;
-    if(window.FlowTracks && window.FlowTracks.entries){ data = window.FlowTracks; }
-    if(!data){
-      try{
-        const raw = document.getElementById("flow-builder-data").textContent.trim();
-        data = JSON.parse(raw);
-      }catch(e){ data = { defaultPreset:"quick", pick:"first", entries:[] }; }
-    }
-    return data;
-  })();
-  window.FlowData = FlowData;
-
-  /* Populate track picker */
-  const trackPicker = document.getElementById("trackPicker");
-  FlowData.entries.forEach((e,i)=>{
-    const opt = document.createElement("option");
-    opt.value = String(i);
-    opt.textContent = e.label || ("Track "+(i+1));
-    trackPicker.appendChild(opt);
-  });
-
-  /* Default pick */
-  (function initLoad(){
-    const entry = FlowData.entries[0];
-    if(entry){
-      FlowRoom.loadTrack({
-        youtubeId: entry.youtubeId,
-        starts: entry.starts,
-        defaultPreset: FlowData.defaultPreset || "quick",
-        label: entry.label,
-        segmentByPreset: entry.segmentByPreset,
-        sequence: entry.sequence
-      });
-      trackPicker.value = "0";
-    }
-  })();
-
-  /* ===========================
-     Segment Editor
-  =========================== */
-  const segStart = $("#segStart"), segEnd = $("#segEnd"), segLoop = $("#segLoop");
-  $("#applySeg").addEventListener("click", function(){
-    FlowRoom.setWindow({ start: parseTime(segStart.value), end: parseTime(segEnd.value), loop: segLoop.checked });
-    FlowRoom.setPlayMode("window");
-  });
-  $("#fromNow12").addEventListener("click", function(){ FlowRoom.setWindowFromNow(12*60); FlowRoom.setPlayMode("window"); });
-  $("#fromNow20").addEventListener("click", function(){ FlowRoom.setWindowFromNow(20*60); FlowRoom.setPlayMode("window"); });
-
-  /* Tap tempo */
-  const tapBtn = $("#tapBtn"), bpmOut = $("#bpmOut"), barsSel = $("#barsSel");
-  const taps = [];
-  tapBtn.addEventListener("click", function(){
-    const now = performance.now();
-    taps.push(now);
-    if(taps.length>8) taps.shift();
-    if(taps.length>=3){
-      const intervals = taps.slice(1).map((t,i)=> t - taps[i]);
-      const avgMs = intervals.reduce((a,b)=>a+b,0)/intervals.length;
-      const bpm = 60000/avgMs;
-      bpmOut.textContent = Math.round(bpm);
-    }
-  });
-  $("#snapWindow").addEventListener("click", function(){
-    const bpm = parseInt(bpmOut.textContent,10);
-    if(!bpm || bpm<40 || bpm>220) return;
-    const bars = parseInt(barsSel.value,10)||16;
-    const barLen = (60/bpm)*4; /* 4/4 bars */
-    const secs = barLen * bars;
-    FlowRoom.setWindowFromNow(secs);
-    FlowRoom.setPlayMode("window");
-  });
-
-  /* ===========================
-     Sequence Editor
-  =========================== */
-  const list = $("#cutsList");
-  const cutsModel = [];
-  function renderCuts(){
-    list.innerHTML = "";
-    cutsModel.forEach((c,idx)=>{
-      const row = document.createElement("div");
-      row.className = "row";
-      row.setAttribute("role","listitem");
-      row.style.justifyContent="space-between";
-      const left = document.createElement("div");
-      left.className = "row";
-      left.style.gap="10px";
-      const sw = document.createElement("div");
-      sw.className = "swatch";
-      sw.style.background = "color-mix(in sRGB, var(--accent) 35%, transparent)";
-      left.appendChild(sw);
-      const txt = document.createElement("div");
-      const rep = c.loop ? "∞" : (c.repeats||0);
-      txt.textContent = `${fmtTime(c.start)} → ${fmtTime(c.end)}  •  rep:${rep}  ${c.label? "• "+c.label: ""}`;
-      left.appendChild(txt);
-      const right = document.createElement("div");
-      right.className="actions";
-      const up = document.createElement("button"); up.className="btn ghost"; up.textContent="↑"; up.title="Move up";
-      const dn = document.createElement("button"); dn.className="btn ghost"; dn.textContent="↓"; dn.title="Move down";
-      const del = document.createElement("button"); del.className="btn"; del.textContent="×"; del.title="Delete";
-      up.addEventListener("click", ()=>{ if(idx>0){ const t=cutsModel[idx-1]; cutsModel[idx-1]=cutsModel[idx]; cutsModel[idx]=t; renderCuts(); }});
-      dn.addEventListener("click", ()=>{ if(idx<cutsModel.length-1){ const t=cutsModel[idx+1]; cutsModel[idx+1]=cutsModel[idx]; cutsModel[idx]=t; renderCuts(); }});
-      del.addEventListener("click", ()=>{ cutsModel.splice(idx,1); renderCuts(); });
-      right.append(up,dn,del);
-      row.append(left,right);
-      list.appendChild(row);
-    });
-  }
-  $("#addCut").addEventListener("click", function(){
-    const s = parseTime($("#cutStart").value), e = parseTime($("#cutEnd").value);
-    if(!(e>s)) return;
-    cutsModel.push({ start:s, end:e, repeats: Math.max(0, parseInt($("#cutRepeats").value||"0",10)), loop: $("#cutLoop").checked, label: $("#cutLabelInput").value.trim() });
-    renderCuts();
-  });
-  $("#applySeq").addEventListener("click", function(){
-    FlowRoom.setSequence({ cuts: cutsModel.slice(), loopSequence: $("#loopSeq").checked });
-  });
-  $("#btnPrevCut").addEventListener("click", ()=> FlowRoom.prevCut());
-  $("#btnNextCut").addEventListener("click", ()=> FlowRoom.nextCut());
-
-  /* ===========================
-     Pads (Columns A & B) — wired to your Day/Night IDs
-  =========================== */
-  (function(){
-    const DAY   = "PXQcEIM4su0";  // NYC
-    const NIGHT = "DdgyifI5k9o";  // WOW
-
-    const Pads = {
-      A: {
-        track: DAY,
-        segments: [
-          {label:"A1 — NYC Intro Build", start:898,  end:1060, loop:false, title:"Settle in (~2m42s)"},
-          {label:"A2 — NYC Quick‑12",    start:898,  end:1618, loop:false, title:"12‑min quick window"},
-          {label:"A3 — NYC Jam Loop",    start:1498, end:1618, loop:true,  title:"Short loop for drills"}
-        ],
-        sequences: [
-          {label:"A‑Seq — Build→Pocket", loopSequence:false, title:"Intro build then pocket", cuts:[
-            {start:898, end:1060,  label:"Intro build"},
-            {start:1205, end:1340, repeats:2, label:"Groove pocket"}
-          ]},
-          {label:"A‑Seq — Jam Looper",  loopSequence:true,  title:"Locked jam loop", cuts:[
-            {start:1498, end:1618, loop:true, label:"Jam loop"}
-          ]}
-        ]
-      },
-      B: {
-        track: NIGHT,
-        segments: [
-          {label:"B1 — WOW Takeoff",      start:4197, end:4397, loop:false, title:"Launch window (~3m20s)"},
-          {label:"B2 — WOW Quick‑12",     start:4197, end:4917, loop:false, title:"12‑min quick window"},
-          {label:"B3 — WOW Night Loop",   start:4197, end:5097, loop:true,  title:"15‑min looping night"}
-        ],
-        sequences: [
-          {label:"B‑Seq — Night Cycle", loopSequence:true,  title:"Takeoff → Strobe → Finish", cuts:[
-            {start:4197, end:4397, label:"Takeoff"},
-            {start:4560, end:4680, repeats:3, label:"Strobe repeat"},
-            {start:5050, end:5097, label:"Deep finish"}
-          ]},
-          {label:"B‑Seq — Strobe Drill", loopSequence:false, title:"Focused repeats", cuts:[
-            {start:4560, end:4680, repeats:3, label:"Strobe repeat"}
-          ]}
-        ]
-      }
-    };
-
-    function ensureTrack(id){
-      const idx = (FlowData.entries||[]).findIndex(e=> e.youtubeId===id);
-      if(idx<0) return;
-      const entry = FlowData.entries[idx];
-      if(FlowRoom._state.youtubeId !== id){
-        FlowRoom.loadTrack({
-          youtubeId: entry.youtubeId,
-          starts: entry.starts,
-          defaultPreset: FlowData.defaultPreset || "quick",
-          label: entry.label,
-          segmentByPreset: entry.segmentByPreset,
-          sequence: entry.sequence
-        });
-        $("#trackPicker").value = String(idx);
-      }
-    }
-
-    function mkPadRow(obj, onApply){
-      const row = document.createElement("div"); row.className = "pads-item";
-      const left = document.createElement("div"); left.className = "meta";
-      left.textContent = obj.label + (obj.start!=null ? `  •  ${fmt(obj.start)}→${fmt(obj.end)}${obj.loop?' • loop':''}` : "");
-      if(obj.title) row.title = obj.title;
-      const right = document.createElement("div"); right.className = "actions";
-      const btn = document.createElement("button"); btn.className = "btn"; btn.textContent = "Apply"; btn.addEventListener("click", onApply);
-      right.appendChild(btn); row.append(left,right); return row;
-      function fmt(s){ const m=Math.floor(s/60), ss=s%60|0; return m+":"+(ss<10?"0"+ss:ss); }
-    }
-
-    function renderPads(){
-      const aSeg = $("#padsASeg"), aSeq = $("#padsASeq"), bSeg = $("#padsBSeg"), bSeq = $("#padsBSeq");
-      if(!aSeg||!aSeq||!bSeg||!bSeq) return;
-      aSeg.innerHTML = ""; Pads.A.segments.forEach(seg=> aSeg.appendChild(mkPadRow(seg, ()=>{ ensureTrack(Pads.A.track); FlowRoom.setWindow({start:seg.start, end:seg.end, loop:!!seg.loop}); FlowRoom.setPlayMode("window"); focusForShortcuts(); })));
-      aSeq.innerHTML = ""; Pads.A.sequences.forEach(seq=> aSeq.appendChild(mkPadRow(seq, ()=>{ ensureTrack(Pads.A.track); FlowRoom.setSequence({cuts: seq.cuts, loopSequence: !!seq.loopSequence}); focusForShortcuts(); })));
-      bSeg.innerHTML = ""; Pads.B.segments.forEach(seg=> bSeg.appendChild(mkPadRow(seg, ()=>{ ensureTrack(Pads.B.track); FlowRoom.setWindow({start:seg.start, end:seg.end, loop:!!seg.loop}); FlowRoom.setPlayMode("window"); focusForShortcuts(); })));
-      bSeq.innerHTML = ""; Pads.B.sequences.forEach(seq=> bSeq.appendChild(mkPadRow(seq, ()=>{ ensureTrack(Pads.B.track); FlowRoom.setSequence({cuts: seq.cuts, loopSequence: !!seq.loopSequence}); focusForShortcuts(); })));
-    }
-    renderPads();
-  })();
-
-  /* ===========================
-     Share Tools
-  =========================== */
-  $("#copyLink").addEventListener("click", function(){
-    const s = FlowRoom.exportState();
-    const b = b64Encode(s);
-    const url = location.origin ? (location.origin + location.pathname + "#flow=" + b) : (location.pathname + "#flow=" + b);
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(url).then(()=> showChip($("#shareMsg"), "Link copied")).catch(()=> { showChip($("#shareMsg"), "Link in URL"); location.hash = "flow="+b; });
-    } else { location.hash = "flow="+b; showChip($("#shareMsg"), "Link in URL"); }
-  });
-  $("#exportState").addEventListener("click", function(){
-    const s = FlowRoom.exportState(); download("flow_state.json", s);
-  });
-  (function attachImport(){
-    const btn = document.getElementById('importState'); if(!btn) return;
-    const input = document.createElement('input'); input.type = 'file'; input.accept = 'application/json'; input.style.display = 'none'; document.body.appendChild(input);
-    btn.addEventListener('click', ()=> input.click());
-    input.addEventListener('change', ()=>{ const f = input.files && input.files[0]; if(!f) return; const r = new FileReader(); r.onload = ()=>{ try{ const obj = JSON.parse(String(r.result||"{}")); FlowRoom.importState(obj); showChip(document.getElementById('shareMsg'), "Imported"); }catch(_){ } }; r.readAsText(f); input.value=""; });
-  })();
-
-  /* Import from URL hash + optional display=1 */
-  (function importFromHash(){
-    const href = new URL(location.href);
-    if(href.hash && href.hash.startsWith("#flow=")){
-      const b64 = href.hash.replace("#flow=","").trim();
-      const obj = b64DecodeToObj(b64);
-      if(obj) FlowRoom.importState(obj);
-    }
-    if(href.searchParams.get("display")==="1"){
-      const t = document.getElementById("displayToggle"); if(t) t.click();
-    }
-  })();
-
-  /* ===========================
-     Favorites with DJ Notes
-  =========================== */
-  const FKEY = "motion.favorites";
-  const favoritesEl = $("#favorites");
-  function themeColorFromToken(token){
-    const map = {
-      "emerald-drift":"#0bbf8a","teal-current":"#00c2a8","jade-pulse":"#15a87a","forest-glass":"#0a6a4e",
-      "verdigris-line":"#19e6cb","celadon-mist":"#a8e5d4","pine-shadow":"#093c31","mint-vapor":"#d6fff3",
-      "seafoam-glow":"#6dd9c5","neon-sprout":"#32ffbe"
-    };
-    return map[token] || "#0bbf8a";
-  }
-  function renderFavorites(){
-    favoritesEl.innerHTML = "";
-    const favs = LS.get(FKEY, []);
-    favs.forEach((f,idx)=>{
-      const card = document.createElement("div");
-      card.className = "fav";
-      const row1 = document.createElement("div"); row1.className="row"; row1.style.justifyContent="space-between";
-      const title = document.createElement("div"); title.style.fontWeight="800"; title.textContent = f.title || f.trackLabel || "Untitled";
-      const sw = document.createElement("div"); sw.className="swatch"; sw.style.background = themeColorFromToken(f.colorTag||"emerald-drift"); sw.style.borderColor = "rgba(0,0,0,.2)";
-      row1.append(title, sw);
-
-      const meta = document.createElement("div");
-      meta.style.opacity=".85";
-      meta.textContent = `${f.mode.toUpperCase()} • ${f.preset || "quick"} • ${new Date(f.created_at).toLocaleString()}`;
-
-      const notes = document.createElement("div");
-      notes.style.fontSize=".92rem"; notes.style.opacity=".9"; notes.textContent = f.notes || "";
-
-      const actions = document.createElement("div"); actions.className="actions";
-      const playBtn = document.createElement("button"); playBtn.className="btn"; playBtn.textContent = "Play";
-      const linkBtn = document.createElement("button"); linkBtn.className="btn ghost"; linkBtn.textContent = "Link";
-      const delBtn = document.createElement("button"); delBtn.className="btn ghost"; delBtn.textContent = "Delete";
-      playBtn.addEventListener("click", ()=> FlowRoom.importState(f.state));
-      linkBtn.addEventListener("click", ()=>{
-        const b = b64Encode(f.state);
-        const url = location.origin ? (location.origin + location.pathname + "#flow=" + b) : (location.pathname + "#flow=" + b);
-        if(navigator.clipboard && navigator.clipboard.writeText){ navigator.clipboard.writeText(url); }
-      });
-      delBtn.addEventListener("click", ()=>{
-        const fv = LS.get(FKEY,[]);
-        fv.splice(idx,1); LS.set(FKEY,fv); renderFavorites();
-      });
-
-      card.append(row1, meta, notes, actions);
-      actions.append(playBtn, linkBtn, delBtn);
-      favoritesEl.appendChild(card);
-    });
-  }
-  $("#saveFav").addEventListener("click", function(){
-    const stateStr = FlowRoom.exportState();
-    const fav = {
-      state: stateStr,
-      youtubeId: FlowRoom._state.youtubeId,
-      starts: FlowRoom._state.starts,
-      trackLabel: FlowRoom._state.trackLabel,
-      mode: FlowRoom._state.mode,
-      preset: FlowRoom._state.preset,
-      colorTag: $("#favColor").value,
-      title: $("#favTitle").value.trim(),
-      notes: $("#favNotes").value.trim(),
-      created_at: Date.now()
-    };
-    const lst = LS.get(FKEY,[]); lst.unshift(fav); LS.set(FKEY,lst); renderFavorites();
-    $("#favTitle").value = ""; $("#favNotes").value = "";
-  });
-  renderFavorites();
-
-  /* ===========================
-     Display Mode + PIN Lock + Theme/Language
-  =========================== */
-  const displayToggle = $("#displayToggle");
-  const lockBtn = $("#lockBtn");
-  const badge = $("#displayBadge");
-  const PIN = "4242";
-  let longPressTimer = null;
-
-  function applyDisplayHeader(){
-    const cfg = window.MotionDisplay || {};
-    $("#displayName").textContent = cfg.name || "Guest";
-    const a = $("#displayAvatar");
-    if(cfg.avatar){ a.style.backgroundImage = "url('"+cfg.avatar+"')"; }
-    if(cfg.theme_color){ document.documentElement.style.setProperty("--accent", cfg.theme_color); }
-  }
-  applyDisplayHeader();
-
-  function setViewDisplay(flag){
-    document.body.setAttribute("data-view", flag? "display": "");
-    displayToggle.setAttribute("aria-pressed", String(!!flag));
-    displayToggle.textContent = flag? "Editor" : "Display";
-    LS.set("motion.view", flag? "display":"editor");
-  }
-  displayToggle.addEventListener("click", function(){
-    const isDisplay = document.body.getAttribute("data-view")==="display";
-    setViewDisplay(!isDisplay);
-  });
-
-  function setLocked(flag){
-    document.body.setAttribute("data-locked", String(!!flag));
-    LS.set("motion.locked", !!flag);
-  }
-  lockBtn.addEventListener("click", ()=> setLocked(true));
-
-  function promptUnlock(){
-    const pin = prompt("Enter PIN to unlock:");
-    if(pin === PIN){ setLocked(false); }
-  }
-  badge.addEventListener("pointerdown", function(){
-    longPressTimer = setTimeout(promptUnlock, 600);
-  });
-  badge.addEventListener("pointerup", ()=> { if(longPressTimer){ clearTimeout(longPressTimer); longPressTimer=null; }});
-  badge.addEventListener("pointerleave", ()=> { if(longPressTimer){ clearTimeout(longPressTimer); longPressTimer=null; }});
-  badge.addEventListener("keydown", (e)=>{ if(e.key==="Enter" || e.key===" "){ e.preventDefault(); promptUnlock(); } });
-
-  /* Restore persisted view + lock + theme + language */
-  (function restoreUI(){
-    const view = LS.get("motion.view","editor");
-    setViewDisplay(view==="display");
-    setLocked(LS.get("motion.locked", false));
-    const savedTheme = LS.get("motion.theme","emerald-drift");
-    document.documentElement.setAttribute("data-theme", savedTheme);
-    $("#themePicker").value = savedTheme;
-    const savedLang = LS.get("motion.lang","en");
-    document.documentElement.setAttribute("lang", savedLang);
-    $("#langPicker").value = savedLang;
-  })();
-
-  $("#themePicker").addEventListener("change", function(){
-    const v = this.value; document.documentElement.setAttribute("data-theme", v); LS.set("motion.theme", v);
-  });
-  $("#langPicker").addEventListener("change", function(){
-    const v = this.value || "en"; LS.set("motion.lang", v); document.documentElement.setAttribute("lang", v);
-  });
-
-  /* ===========================
-     Check-In
-  =========================== */
-  const CKEY = "motion.checkins";
-  function renderCheckins(){
-    const c = LS.get(CKEY,[]);
-    const el = $("#ciCards"); el.innerHTML = "";
-    c.forEach(item=>{
-      const card = document.createElement("div"); card.className="card";
-      const h = document.createElement("div"); h.style.fontWeight="800";
-      h.textContent = new Date(item.ts).toLocaleString();
-      const d = document.createElement("div");
-      d.textContent = `Mood: ${item.mood || "—"} • Energy: ${item.energy} • Body: ${item.body}`;
-      const i = document.createElement("div"); i.textContent = `Intention: ${item.intent || "—"}`;
-      const n = document.createElement("div"); n.textContent = item.notes || "";
-      card.append(h,d,i,n); el.appendChild(card);
-    });
-  }
-  renderCheckins();
-
-  const ciEnergy = $("#ciEnergy"); const ciEnergyVal = $("#ciEnergyVal");
-  if(ciEnergy && ciEnergyVal){ ciEnergy.addEventListener("input", function(){ ciEnergyVal.textContent = String(this.value); this.setAttribute("aria-valuenow", String(this.value)); }); }
-  $("#ciLog").addEventListener("click", function(){
-    const rec = {
-      ts: Date.now(),
-      mood: $("#ciMood").value.trim(),
-      energy: parseInt($("#ciEnergy").value,10),
-      body: $("#ciBody").value,
-      intent: $("#ciIntent").value.trim(),
-      notes: $("#ciNotes").value.trim()
-    };
-    const arr = LS.get(CKEY,[]); arr.unshift(rec); LS.set(CKEY, arr); renderCheckins();
-    $("#ciMood").value=""; $("#ciIntent").value=""; $("#ciNotes").value="";
-  });
-  $("#ciExport").addEventListener("click", function(){
-    const arr = LS.get(CKEY,[]); download("motion_checkins.json", JSON.stringify(arr,null,2));
-  });
-  $("#ciClear").addEventListener("click", function(){ LS.set(CKEY, []); renderCheckins(); });
-
-  /* Auto-open Check-In on end, prefill note */
-  document.addEventListener("flow:end", function(ev){
-    const reason = (ev && ev.detail && ev.detail.reason) || "end";
-    const note = `Close: ${FlowRoom._state.mode} • ${FlowRoom._state.preset}`;
-    $("#ciNotes").value = note + (reason==="timer" ? " • timer" : "");
-    if(document.body.getAttribute("data-view")==="display"){ setViewDisplay(false); }
-    window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
-  });
-
-  /* ===========================
-     Keyboard Shortcuts (– / = / arrows for volume)
-  =========================== */
-  function handleKey(e){
-    const active = document.activeElement;
-    const isTyping = active && (active.tagName==="INPUT" || active.tagName==="TEXTAREA" || active.tagName==="SELECT" || active.isContentEditable);
-    if(isTyping) return;
-
-    if(e.key === ' ' || e.code === "Space"){ e.preventDefault(); FlowRoom.toggle(); FlowRoom._state.timerRunning = FlowRoom._state.playing; return; }
-    if(e.key === '+' || (e.code === 'Equal' && e.shiftKey)){ e.preventDefault(); FlowRoom._state.timerSec += 5*60; $("#timerText").textContent = fmtTime(FlowRoom._state.timerSec); return; }
-    if(e.key === '-' || e.key === 'ArrowDown'){ e.preventDefault(); const v = Math.max(0, FlowRoom._state.volume - 0.05); $("#vol").value = String(v); FlowRoom._post("setVolume",[Math.round(v*100)]); FlowRoom._state.volume=v; return; }
-    if((e.key === '=' && !e.shiftKey) || e.key === 'ArrowUp'){ e.preventDefault(); const v = Math.min(1, FlowRoom._state.volume + 0.05); $("#vol").value = String(v); FlowRoom._post("setVolume",[Math.round(v*100)]); FlowRoom._state.volume=v; return; }
-    const btnQuick = document.querySelector('.preset[data-preset="quick"]'); const btnDeep  = document.querySelector('.preset[data-preset="deep"]'); const btnNight = document.querySelector('.preset[data-preset="night"]');
-    if(e.key==="1" && btnQuick){ e.preventDefault(); btnQuick.click(); return; }
-    if(e.key==="2" && btnDeep ){ e.preventDefault(); btnDeep.click();  return; }
-    if(e.key==="3" && btnNight){ e.preventDefault(); btnNight.click(); return; }
-    if(e.key==="W" || e.key==="w"){ e.preventDefault(); FlowRoom.setPlayMode("whole"); return; }
-    if(e.key==="S" || e.key==="s"){ e.preventDefault(); FlowRoom.setPlayMode("sequence"); return; }
-    if(e.key==="Q" || e.key==="q"){ e.preventDefault(); FlowRoom.prevCut(); return; }
-    if(e.key==="E" || e.key==="e"){ e.preventDefault(); FlowRoom.nextCut(); return; }
-  }
-  window.addEventListener("keydown", handleKey, true);
-
-  /* ===========================
-     Initial preset + reduced motion
-  =========================== */
-  FlowRoom.setPlayMode(FlowRoom._state.mode);
-  FlowRoom._state.timerSec = (FlowData.defaultPreset==="deep" ? 20*60 : 12*60);
-  $("#timerText").textContent = (FlowData.defaultPreset==="deep") ? "20:00" : "12:00";
-
-  try{
-    if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-      document.querySelectorAll("*").forEach(el=>{ el.style.transitionDuration = "0s"; });
-    }
-  }catch(e){}
+  setBPM(localStorage.getItem('motion.home.bpm')||126);
+
+  bpm.addEventListener('input', function(e){ setBPM(e.target.value); }, {passive:true});
+  document.getElementById('set-124').addEventListener('click', function(){ setBPM(124); }, {passive:true});
+  document.getElementById('set-126').addEventListener('click', function(){ setBPM(126); }, {passive:true});
+  document.getElementById('set-127').addEventListener('click', function(){ setBPM(127); }, {passive:true});
+  document.getElementById('set-128').addEventListener('click', function(){ setBPM(128); }, {passive:true});
 })();
 </script>
 </body>
 </html>
-
