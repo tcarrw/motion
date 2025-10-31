@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Miss Monique — Flow Deck</title>
+<meta name="description" content="Motion studio for Miss Monique: pump the beats, set BPM, and jump into a green flow queue." />
+<style>
+  :root{
+    --bg:#050807;           /* deep club */
+    --ink:#eafff8;          /* pearl-mint */
+    --muted:#a7c0ba;        /* mist */
+    --grid:#0f1a17;         /* panel edge */
+    --line:#16332e;         /* outlines */
+    --mint:#79e0c8;         /* main glow */
+    --mint2:#73e3c5;        /* brighter glow */
+    --accent:#b6fff0;       /* beam */
+    --warn:#ffd089;         /* warm-up */
+    --pink:#ff39a8;         /* crossover to Dagny */
+    --shadow:0 16px 40px rgba(0,0,0,.55);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; color:var(--ink);
+    background:
+      radial-gradient(1200px 900px at 70% 12%, #0a1210 0%, #050807 60%, #030504 100%);
+    font: 500 16px/1.45 ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding:22px; display:grid; gap:14px}
+
+  /* Header */
+  .hdr{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+  .title{font-weight:900; font-size:24px; letter-spacing:.28px; text-transform:uppercase}
+  .tag{
+    font:700 11px ui-monospace, SFMono-Regular, Menlo, monospace; padding:4px 8px; border-radius:999px;
+    border:1px solid rgba(182,255,240,.35); color:#ddfff8; background:rgba(121,224,200,.07)
+  }
+
+  /* Card */
+  .card{
+    background:linear-gradient(180deg, rgba(10,18,16,.92), rgba(5,8,7,.92));
+    border:1px solid rgba(140,200,190,.22);
+    border-radius:16px; padding:16px; box-shadow:var(--shadow);
+    backdrop-filter:saturate(130%) blur(6px);
+  }
+  h2{margin:0 0 8px 0; font-size:18px; letter-spacing:.2px}
+  .muted{color:var(--muted); font-size:14px}
+
+  /* Deck layout */
+  .deck{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+  @media (max-width:900px){ .deck{grid-template-columns: 1fr} }
+
+  /* Visualizer */
+  .viz{
+    position:relative; border:1px solid var(--grid); border-radius:16px; padding:12px; overflow:hidden;
+    background:
+      radial-gradient(600px 220px at 50% 110%, rgba(121,224,200,.08), transparent 60%),
+      linear-gradient(180deg, rgba(10,18,16,.6), rgba(5,8,7,.8));
+  }
+  .beam{
+    position:absolute; inset:-40% -20% auto -20%; height:60%;
+    background:radial-gradient(closest-side, rgba(182,255,240,.25), rgba(182,255,240,.08), transparent);
+    filter:blur(.4px); mix-blend-mode:screen; pointer-events:none; animation:pan 18s linear infinite;
+  }
+  @keyframes pan{ 0%{transform:translateX(-20%) rotate(-6deg)} 50%{transform:translateX(20%) rotate(6deg)} 100%{transform:translateX(-20%) rotate(-6deg)} }
+
+  .bars{ display:grid; grid-template-columns: repeat(16, 1fr); gap:6px; align-items:end; height:180px; margin-top:8px }
+  .bar{
+    width:100%; height:8px; border-radius:6px; background:linear-gradient(180deg, var(--mint2), var(--mint));
+    box-shadow:0 0 16px rgba(121,224,200,.28), inset 0 -10px 18px rgba(0,0,0,.35);
+    transform-origin:bottom center; transform:scaleY(.2);
+  }
+  .ring{
+    display:flex; align-items:center; justify-content:center; gap:10px; margin-top:10px;
+    border:1px solid var(--line); border-radius:12px; padding:10px; background:rgba(255,255,255,.03);
+    text-transform:uppercase; font-weight:800; letter-spacing:.12em; font-size:12px;
+  }
+  .ring.ok{ border-color:rgba(115,227,197,.65); box-shadow:0 0 22px rgba(115,227,197,.18) inset }
+  .ring.warn{ border-color:rgba(255,208,137,.7) }
+
+  /* Controls */
+  .ctrl{
+    border:1px solid var(--grid); border-radius:16px; padding:12px; background:rgba(255,255,255,.03);
+  }
+  .row{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .btn{
+    display:inline-flex; align-items:center; gap:8px; padding:10px 14px; border-radius:12px; text-decoration:none; cursor:pointer;
+    border:1px solid rgba(182,255,240,.45); color:#ecfffb; font-weight:900; letter-spacing:.14em; text-transform:uppercase;
+    background:linear-gradient(180deg, rgba(121,224,200,.2), rgba(121,224,200,.08));
+    transition:transform .12s ease, filter .12s ease, border-color .12s ease;
+  }
+  .btn:hover{ transform:translateY(-1px); filter:brightness(1.06) }
+  .btn.dim{ opacity:.6 }
+  .chip{
+    font:700 11px ui-monospace, SFMono-Regular, Menlo, monospace; padding:4px 8px; border-radius:999px; border:1px solid rgba(182,255,240,.35); color:#ddfff8
+  }
+  .chip.ok{ border-color:rgba(115,227,197,.85); color:#eafff8; background:rgba(121,224,200,.12) }
+  .chip.warn{ border-color:rgba(255,208,137,.85); color:#fff3dc; background:rgba(255,208,137,.1) }
+
+  /* Queue */
+  .queue{
+    border:1px solid var(--grid); border-radius:16px; padding:12px; background:rgba(255,255,255,.03);
+  }
+  .trk{
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+    border:1px solid var(--line); border-radius:12px; padding:10px; margin:8px 0; background:linear-gradient(180deg, rgba(15,26,23,.65), rgba(10,18,16,.65));
+  }
+  .trk .name{ font-weight:700; letter-spacing:.2px }
+  .play{ display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px; border:1px solid rgba(182,255,240,.45); text-decoration:none; color:#ecfffb; background:rgba(121,224,200,.07)}
+  .play:hover{ filter:brightness(1.06) }
+  .sub{color:var(--muted); font-size:12px}
+
+  /* Footer links */
+  .foot{ text-align:center; color:var(--muted); font-size:12px; padding:8px 0 16px }
+  .links{ display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:8px }
+</style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="hdr">
+      <div class="title">Miss Monique — Flow Deck</div>
+      <div class="tag">motion · green room</div>
+    </header>
+
+    <section class="card">
+      <h2>Pump the Beats</h2>
+      <p class="muted">Set your BPM and hit <em>Pump</em>. Visualizer runs locally — links jump to full sets. Harbor status (if set on this device) will auto-arm the deck.</p>
+
+      <div class="deck">
+        <!-- Left: Visualizer -->
+        <div class="viz">
+          <div class="beam" aria-hidden="true"></div>
+          <div class="bars" id="bars">
+            <!-- 16 bars -->
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+          </div>
+          <div class="ring warn" id="ring">
+            <span id="ring-copy">warm-up</span>
+            <span class="chip warn" id="harbor-chip">harbor: pending</span>
+          </div>
+        </div>
+
+        <!-- Right: Controls + Queue -->
+        <div class="ctrl">
+          <div class="row" style="justify-content:space-between">
+            <div class="row">
+              <button id="pump" class="btn" type="button">Pump</button>
+              <button id="pause" class="btn dim" type="button">Pause</button>
+            </div>
+            <div class="row">
+              <span class="chip" id="bpm-readout">128 BPM</span>
+            </div>
+          </div>
+
+          <div class="row" style="margin-top:10px">
+            <input id="bpm" type="range" min="118" max="132" value="128" step="1" aria-label="BPM" style="width:100%">
+          </div>
+          <div class="row" style="margin-top:6px">
+            <button data-p="124" class="btn" type="button">124</button>
+            <button data-p="126" class="btn" type="button">126</button>
+            <button data-p="128" class="btn" type="button">128</button>
+            <button data-p="130" class="btn" type="button">130</button>
+          </div>
+
+          <div class="queue" style="margin-top:12px">
+            <div class="sub">Green queue · opens in new tabs</div>
+            <div class="trk">
+              <div>
+                <div class="name">Miss Monique — Progressive House set</div>
+                <div class="sub">YouTube search</div>
+              </div>
+              <a class="play" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Miss+Monique+Progressive+House+Set">Play</a>
+            </div>
+            <div class="trk">
+              <div>
+                <div class="name">Mind Games podcast (Miss Monique)</div>
+                <div class="sub">YouTube search</div>
+              </div>
+              <a class="play" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Miss+Monique+Mind+Games+Podcast">Play</a>
+            </div>
+            <div class="trk">
+              <div>
+                <div class="name">Live DJ set — Miss Monique</div>
+                <div class="sub">YouTube search</div>
+              </div>
+              <a class="play" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Miss+Monique+Live+Set">Play</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="foot">
+      Motion (Green) ↔ Dagny (Pink) · Flow without chase
+      <div class="links">
+        <a class="btn" href="https://harbor.plnt.earth" rel="noopener">Harbor</a>
+        <a class="btn" href="https://dagny.plnt.earth" rel="noopener" style="border-color:rgba(255,57,168,.55); background:linear-gradient(180deg, rgba(255,57,168,.16), rgba(255,57,168,.06))">Dagny</a>
+        <a class="btn" href="https://earth.plnt.earth" rel="noopener">Earth</a>
+        <a class="btn" href="https://bridge.plnt.earth" rel="noopener">Bridge</a>
+      </div>
+    </footer>
+  </main>
+
+<script>
+(function(){
+  // --- Elements ---
+  var bars = Array.prototype.slice.call(document.querySelectorAll('.bar'));
+  var bpmSlider = document.getElementById('bpm');
+  var bpmRead = document.getElementById('bpm-readout');
+  var pump = document.getElementById('pump');
+  var pauseBtn = document.getElementById('pause');
+  var ring = document.getElementById('ring');
+  var copy = document.getElementById('ring-copy');
+  var harborChip = document.getElementById('harbor-chip');
+
+  // --- Harbor status (optional auto-arm) ---
+  function truthy(v){
+    if(v==null) return false;
+    var s = String(v).toLowerCase().trim();
+    return !(s===""||s==="0"||s==="false"||s==="null"||s==="undefined");
+  }
+  var Hcredit  = truthy(localStorage.getItem('harbor.credit'));
+  var Hconsent = truthy(localStorage.getItem('harbor.consent'));
+  var Hres     = truthy(localStorage.getItem('harbor.resource'));
+  var harborAll = Hcredit && Hconsent && Hres;
+
+  harborChip.textContent = harborAll ? 'harbor: green' : 'harbor: pending';
+  harborChip.classList.toggle('ok', harborAll);
+  harborChip.classList.toggle('warn', !harborAll);
+  ring.classList.toggle('ok', harborAll);
+  ring.classList.toggle('warn', !harborAll);
+  copy.textContent = harborAll ? 'armed' : 'warm-up';
+
+  // --- BPM & animation loop ---
+  var running = false;
+  var lastT = 0;
+  var beatAccum = 0;
+  var beat = 0; // 0..15 step index
+
+  function setBPM(val){
+    var v = Math.max(118, Math.min(132, parseInt(val||128,10)));
+    bpmSlider.value = v;
+    bpmRead.textContent = v + ' BPM';
+    try{ localStorage.setItem('monique.bpm', String(v)); }catch(e){}
+    return v;
+  }
+  setBPM(localStorage.getItem('monique.bpm')||128);
+
+  // ease function for bar height feel
+  function easeOutQuad(x){ return 1 - (1 - x) * (1 - x); }
+
+  function step(ts){
+    if(!running){ return; }
+    if(!lastT) lastT = ts;
+    var dt = ts - lastT; lastT = ts;
+
+    var bpm = parseInt(bpmSlider.value,10);
+    var msPerBeat = 60000 / bpm;           // quarter note
+    var sixteenth = msPerBeat / 4;         // 16th grid (progressive house swing-ish)
+    beatAccum += dt;
+
+    // Advance 16th steps
+    while(beatAccum >= sixteenth){
+      beatAccum -= sixteenth;
+      beat = (beat + 1) % 16;
+
+      // Kick on 1,5,9,13 | Hat on every other | Accent on 4/12
+      for(var i=0;i<bars.length;i++){
+        var h = 0.22; // base
+        if(i===0||i===4||i===8||i===12){ h = (beat===i)? 1.0 : 0.28; }        // kicks
+        else if(i%2===0){ h = (beat===i)? 0.66 : 0.26; }                       // hats
+        if(i===3||i===11){ h = (beat===i)? 0.86 : h; }                         // accents
+        // apply instantaneous height, then decay via CSS transform
+        bars[i].style.transform = 'scaleY(' + (0.18 + 0.82*easeOutQuad(h)) + ')';
+      }
+    }
+
+    // small passive decay each frame for smoothness
+    for(var j=0;j<bars.length;j++){
+      var m = bars[j].style.transform;
+      var cur = 0.2;
+      if(m){
+        var v = /scaleY\(([^)]+)\)/.exec(m);
+        if(v){ cur = parseFloat(v[1]); }
+      }
+      var dec = Math.max(0.2, cur*0.92);
+      bars[j].style.transform = 'scaleY(' + dec + ')';
+    }
+
+    requestAnimationFrame(step);
+  }
+
+  function start(){
+    if(running) return;
+    running = true;
+    lastT = 0; beatAccum = 0;
+    requestAnimationFrame(step);
+    pump.classList.add('dim');
+    pauseBtn.classList.remove('dim');
+  }
+  function stop(){
+    running = false;
+    pump.classList.remove('dim');
+    pauseBtn.classList.add('dim');
+  }
+
+  pump.addEventListener('click', start, {passive:true});
+  pauseBtn.addEventListener('click', stop, {passive:true});
+  bpmSlider.addEventListener('input', function(e){ setBPM(e.target.value); }, {passive:true});
+  Array.prototype.slice.call(document.querySelectorAll('button[data-p]')).forEach(function(b){
+    b.addEventListener('click', function(){ setBPM(this.getAttribute('data-p')); }, {passive:true});
+  });
+
+  // Auto-arm if Harbor green
+  if(harborAll){ start(); }
+
+})();
+</script>
+</body>
+</html>
