@@ -1,259 +1,163 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Motion — Home</title>
-<meta name="description" content="Motion Home: set BPM, trigger the green→pink wipe, and jump to Miss Monique or Dagny. Auto-arm when Harbor is green." />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Motion · O-Tone (128 Hz)</title>
+
+<!-- Open Graph -->
+<meta property="og:title" content="Motion · O-Tone (128 Hz)">
+<meta property="og:description" content="Hot To Go field trainer · 64 / 128 / 256 Hz · BPM-synced honey ring. One tap to feel the hive.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://motion.plnt.earth/">
+<meta property="og:image" content="https://motion.plnt.earth/og/otone_og_1200x630.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Motion · O-Tone (128 Hz)">
+<meta name="twitter:description" content="Hot To Go field trainer · 64 / 128 / 256 Hz · BPM-synced honey ring. One tap to feel the hive.">
+<meta name="twitter:image" content="https://motion.plnt.earth/og/otone_og_1200x630.jpg">
+
+<!-- Mobile + Theme -->
+<meta name="theme-color" content="#0b1110">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
 <style>
-  :root{
-    --bg:#070b0a; --ink:#ecfffb; --muted:#a7c0ba;
-    --green:#79e0c8; --green2:#73e3c5; --pink:#ff39a8; --pink2:#ff79c6;
-    --grid:#14211d; --shadow:0 16px 40px rgba(0,0,0,.55);
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{
-    margin:0; color:var(--ink);
-    background:radial-gradient(1200px 900px at 70% 12%, #0a1412 0%, #070b0a 60%, #050807 100%);
-    font:500 16px/1.45 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;
-  }
-  .wrap{max-width:1100px; margin:0 auto; padding:22px; display:grid; gap:14px}
-  .hdr{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
-  .title{font-weight:900; font-size:24px; letter-spacing:.28px; text-transform:uppercase}
-  .tag{font:700 11px ui-monospace,SFMono-Regular,Menlo,monospace; padding:4px 8px; border-radius:999px; border:1px solid rgba(182,255,240,.35); color:#ddfff8; background:rgba(121,224,200,.07)}
-
-  .card{
-    background:linear-gradient(180deg, rgba(10,18,16,.92), rgba(7,11,10,.92));
-    border:1px solid rgba(140,200,190,.22); border-radius:16px; padding:16px; box-shadow:var(--shadow);
-    backdrop-filter:saturate(130%) blur(6px);
-  }
-  h2{margin:0 0 8px 0; font-size:18px; letter-spacing:.2px}
-  .muted{color:var(--muted); font-size:14px}
-
-  .stage{
-    position:relative; border:1px solid var(--grid); border-radius:16px; overflow:hidden; margin-top:8px;
-    background:radial-gradient(800px 220px at 50% 105%, rgba(121,224,200,.08), transparent 60%), linear-gradient(180deg, rgba(10,18,16,.6), rgba(5,8,7,.8));
-    min-height:260px;
-  }
-  .split{position:absolute; inset:0; display:grid; grid-template-columns:1fr 1fr}
-  .left,.right{position:relative; display:flex; align-items:center; justify-content:center; padding:18px}
-  .left::before,.right::before{
-    content:""; position:absolute; inset:0; opacity:.18; filter:blur(.6px); mix-blend-mode:screen;
-  }
-  .left::before{ background:radial-gradient(closest-side, rgba(121,224,200,.6), rgba(121,224,200,.25), transparent) }
-  .right::before{ background:radial-gradient(closest-side, rgba(255,121,198,.55), rgba(255,57,168,.25), transparent) }
-  .badge{
-    font:900 12px ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.16em; text-transform:uppercase;
-    padding:8px 10px; border-radius:999px; border:1px solid rgba(255,255,255,.28); background:rgba(255,255,255,.06);
-  }
-  .wipe{
-    position:absolute; inset:0; pointer-events:none;
-    background:linear-gradient(90deg, rgba(121,224,200,.15) 0%, rgba(121,224,200,.0) 48%, rgba(255,57,168,.0) 52%, rgba(255,57,168,.18) 100%);
-    opacity:0; transform:translateX(-12%); transition:opacity .35s ease, transform .6s cubic-bezier(.22,.61,.36,1);
-  }
-  .wipe.on{ opacity:1; transform:translateX(0) }
-
-  .tiles{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:12px }
-  @media (max-width:880px){ .tiles{ grid-template-columns: 1fr } }
-  .tile{
-    display:flex; align-items:center; justify-content:space-between; gap:12px; text-decoration:none; color:var(--ink);
-    border:1px solid rgba(140,200,190,.28); border-radius:14px; padding:14px; background:rgba(255,255,255,.04);
-  }
-  .tile:hover{ filter:brightness(1.06) }
-  .tleft{ display:flex; flex-direction:column; gap:6px }
-  .name{ font-weight:900; letter-spacing:.3px }
-  .sub{ color:var(--muted); font-size:12px }
-  .btn{
-    display:inline-flex; align-items:center; gap:8px; padding:9px 12px; border-radius:10px; text-decoration:none; cursor:pointer;
-    border:1px solid rgba(182,255,240,.45); color:#ecfffb; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
-    background:linear-gradient(180deg, rgba(121,224,200,.18), rgba(121,224,200,.08));
-  }
-  .btn.pink{ border-color:rgba(255,57,168,.55); background:linear-gradient(180deg, rgba(255,57,168,.16), rgba(255,57,168,.06)) }
-
-  .ctrl{
-    display:grid; gap:10px; margin-top:10px; border:1px solid var(--grid); border-radius:12px; padding:12px; background:rgba(255,255,255,.03);
-  }
-  .row{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
-  .chip{
-    font:700 11px ui-monospace,SFMono-Regular,Menlo,monospace; padding:4px 8px; border-radius:999px; border:1px solid rgba(182,255,240,.35); color:#ddfff8
-  }
-  .chip.ok{ border-color:rgba(115,227,197,.85); color:#eafff8; background:rgba(121,224,200,.12) }
-  .chip.warn{ border-color:rgba(255,208,137,.85); color:#fff3dc; background:rgba(255,208,137,.1) }
-
-  /* Auto-Arm switch */
-  .switch{ position:relative; width:52px; height:28px; border-radius:999px; border:1px solid rgba(182,255,240,.45); background:rgba(121,224,200,.1); cursor:pointer }
-  .switch .knob{ position:absolute; top:3px; left:3px; width:22px; height:22px; border-radius:50%; background:#ecfffb; box-shadow:0 2px 8px rgba(0,0,0,.35); transition:.15s }
-  .switch.on{ border-color:rgba(255,57,168,.6); background:linear-gradient(180deg, rgba(255,57,168,.18), rgba(255,57,168,.08)) }
-  .switch.on .knob{ left:27px }
-
-  input[type=range]{ width:100% }
-
-  /* Now Playing tile */
-  .nowplay{
-    display:none; align-items:center; justify-content:space-between; gap:8px; margin-top:10px;
-    border:1px solid rgba(121,224,200,.45); border-left:4px solid var(--green); border-radius:12px; padding:10px;
-    background:linear-gradient(180deg, rgba(121,224,200,.12), rgba(121,224,200,.06));
-  }
-  .np-left{display:flex; flex-direction:column; gap:4px}
-  .np-title{font-weight:900; letter-spacing:.2px}
-  .np-sub{color:var(--muted); font-size:12px}
-  .np-btn{
-    display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius:10px;
-    border:1px solid rgba(182,255,240,.45); background:rgba(121,224,200,.07); color:#ecfffb; text-decoration:none; font-weight:800; letter-spacing:.14em; text-transform:uppercase;
-  }
-
-  .foot{ text-align:center; color:var(--muted); font-size:12px; padding:8px 0 16px }
+:root { --bg:#0b1110; --fg:#d7ffe1; --gold:#ffdd66; --mint:#bfffd0; }
+html,body{margin:0;height:100%;background:linear-gradient(180deg,#0b1110,#0e1715 40%,#0b1110);
+color:var(--fg);font-family:ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial}
+.wrap{max-width:720px;margin:0 auto;padding:20px 16px 48px;display:flex;flex-direction:column;gap:18px}
+h1{font-weight:700;letter-spacing:.3px;font-size:20px;margin:6px 0 0}
+.tag{font-size:12px;opacity:.8}
+.pill{padding:8px 10px;border-radius:999px;background:#12201c;font-size:12px}
+.panel{display:flex;flex-wrap:wrap;gap:10px}
+button,input[type="range"]{-webkit-appearance:none;appearance:none;border:none;
+background:#182521;color:var(--fg);padding:12px 14px;border-radius:12px;font-size:14px;cursor:pointer}
+button:active{transform:translateY(1px)}
+.small{font-size:12px;opacity:.9}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.card{background:#101c18;border-radius:16px;padding:14px}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.meter{height:8px;background:#12201c;border-radius:999px;overflow:hidden}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),#ffeaa6,var(--gold))}
+canvas{width:100%;aspect-ratio:1/1;border-radius:24px;
+background:radial-gradient(120% 120% at 50% 56%,#0d1a17 0%,#0b1110 60%,#09100e 100%)}
+.hint{font-size:12px;opacity:.72}
 </style>
 </head>
 <body>
-  <main class="wrap">
-    <header class="hdr">
-      <div class="title">Motion</div>
-      <div class="tag">green room · ready</div>
-    </header>
+<div class="wrap">
+  <div>
+    <div class="tag">motion.plnt.earth</div>
+    <h1>O-Tone 128 Hz Swarm</h1>
+    <div class="pill">Hot To Go field · 64 / 128 / 256 Hz</div>
+  </div>
 
-    <section class="card">
-      <h2>Green → Pink Wipe</h2>
-      <p class="muted">Slide the BPM. At <strong>127+</strong> the room flips — Motion (green) hands to Dagny (pink). Harbor status (if set here) shows below.</p>
+  <canvas id="viz" aria-label="O-tone visual"></canvas>
 
-      <div class="stage">
-        <div class="split">
-          <div class="left">
-            <span class="badge" style="border-color:rgba(121,224,200,.65); color:#eafff8">Miss Monique · Motion</span>
-          </div>
-          <div class="right">
-            <span class="badge" style="border-color:rgba(255,57,168,.6); color:#ffe7f5">Dagny · Pink Floor</span>
-          </div>
-        </div>
-        <div class="wipe" id="wipe" aria-hidden="true"></div>
+  <div class="panel">
+    <button id="start">Activate O-Tone</button>
+    <button id="stop" disabled>Stop</button>
+    <button id="airplay">AirPlay</button>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="row">
+        <label for="bpm" class="small">BPM</label>
+        <input id="bpm" type="range" min="120" max="128" step="1" value="126"/>
+        <div id="bpmOut" class="small">126</div>
       </div>
-
-      <div class="ctrl">
-        <div class="row">
-          <div class="row" style="gap:8px">
-            <span id="bpm-chip" class="chip">BPM 126</span>
-            <span id="harbor-chip" class="chip warn">harbor: pending</span>
-          </div>
-          <div class="row" style="gap:12px">
-            <div class="chip" style="display:flex; align-items:center; gap:8px">
-              Auto-Arm
-              <span id="auto" class="switch" role="switch" aria-checked="false" tabindex="0"><span class="knob"></span></span>
-            </div>
-            <button class="btn" id="set-124" type="button">124</button>
-            <button class="btn" id="set-126" type="button">126</button>
-            <button class="btn" id="set-127" type="button">127</button>
-            <button class="btn" id="set-128" type="button">128</button>
-          </div>
-        </div>
-        <input id="bpm" type="range" min="120" max="132" value="126" step="1" aria-label="BPM">
-
-        <!-- Now Playing (appears only when wipe is ON ≥127) -->
-        <div id="nowplay" class="nowplay">
-          <div class="np-left">
-            <div class="np-title">Now Playing — Miss Monique</div>
-            <div class="np-sub">Progressive House Set · YouTube search</div>
-          </div>
-          <a class="np-btn" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=Miss+Monique+Progressive+House+Set">Open</a>
-        </div>
+      <div class="row">
+        <label for="gain" class="small">Field</label>
+        <input id="gain" type="range" min="0" max="1" step="0.01" value="0.35"/>
+        <div id="gainOut" class="small">0.35</div>
       </div>
-
-      <div class="tiles">
-        <a class="tile" href="https://motion.plnt.earth/monique" rel="noopener">
-          <div class="tleft">
-            <div class="name">Miss Monique — Flow Deck</div>
-            <div class="sub">Pump the beats · Green room</div>
-          </div>
-          <span class="btn">Open</span>
-        </a>
-
-        <a class="tile" href="https://dagny.plnt.earth" rel="noopener">
-          <div class="tleft">
-            <div class="name">Dagny — Joy in Motion</div>
-            <div class="sub">Pink floor · Harbor-linked</div>
-          </div>
-          <span class="btn pink">Open</span>
-        </a>
+      <div class="row">
+        <label for="brightness" class="small">Shimmer</label>
+        <input id="brightness" type="range" min="0" max="1" step="0.01" value="0.25"/>
+        <div id="brightOut" class="small">0.25</div>
       </div>
-    </section>
+    </div>
 
-    <footer class="foot">Motion hands to Dagny when the field is ready. Wipe at 127+ is a hint, not a rule.</footer>
-  </main>
+    <div class="card">
+      <div class="small">
+        Fundamental 128 Hz · Half 64 Hz · Harmonic 256 Hz
+      </div>
+      <div class="hint" style="margin-top:8px">
+        Pulse = kick. Each beat opens the field then settles. Keep 124–128 BPM for entrainment.
+      </div>
+      <div class="meter" style="margin-top:12px"><div id="beatBar" class="bar"></div></div>
+    </div>
+  </div>
+
+  <div class="hint">
+    Tip: start around 126 BPM. Nudge to 128 for lift during the chorus. AirPlay to room speakers for swarm tests.
+  </div>
+</div>
+
+<video id="airplayVideo" playsinline airplay="allow" style="display:none"></video>
 
 <script>
-(function(){
-  var wipe = document.getElementById('wipe');
-  var bpm = document.getElementById('bpm');
-  var chip = document.getElementById('bpm-chip');
-  var harborChip = document.getElementById('harbor-chip');
-  var np = document.getElementById('nowplay');
-  var auto = document.getElementById('auto');
-
-  function truthy(v){
-    if(v==null) return false;
-    var s = String(v).toLowerCase().trim();
-    return !(s===""||s==="0"||s==="false"||s==="null"||s==="undefined");
-  }
-
-  // Harbor status
-  var credit  = truthy(localStorage.getItem('harbor.credit'));
-  var consent = truthy(localStorage.getItem('harbor.consent'));
-  var resource= truthy(localStorage.getItem('harbor.resource'));
-  var harborAll = credit && consent && resource;
-  harborChip.textContent = harborAll ? 'harbor: green' : 'harbor: pending';
-  harborChip.classList.toggle('ok', harborAll);
-  harborChip.classList.toggle('warn', !harborAll);
-
-  // Auto-Arm persistence
-  var autoOn = localStorage.getItem('motion.home.autoArm') === 'true';
-  function renderAuto(){
-    auto.classList.toggle('on', autoOn);
-    auto.setAttribute('aria-checked', autoOn ? 'true' : 'false');
-  }
-  function saveAuto(){
-    try{ localStorage.setItem('motion.home.autoArm', autoOn ? 'true' : 'false'); }catch(e){}
-  }
-  function toggleAuto(){
-    autoOn = !autoOn; renderAuto(); saveAuto(); maybeAutoArm();
-  }
-  auto.addEventListener('click', toggleAuto, {passive:true});
-  auto.addEventListener('keydown', function(e){ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); toggleAuto(); }});
-  renderAuto();
-
-  function setBPM(v){
-    v = Math.max(120, Math.min(132, parseInt(v||126,10)));
-    bpm.value = v;
-    chip.textContent = 'BPM ' + v;
-    try{ localStorage.setItem('motion.home.bpm', String(v)); }catch(e){}
-    var on = v >= 127;
-    wipe.classList.toggle('on', on);
-    np.style.display = on ? 'flex' : 'none';
-    return v;
-  }
-  // initial BPM
-  setBPM(localStorage.getItem('motion.home.bpm')||126);
-
-  function maybeAutoArm(){
-    if(harborAll && autoOn){
-      var cur = parseInt(bpm.value,10);
-      if(cur < 127) setBPM(127);
-      // lock wipe on (visual), but still allow manual lowering if desired
-      wipe.classList.add('on');
-      np.style.display = 'flex';
-    }
-  }
-  maybeAutoArm();
-
-  bpm.addEventListener('input', function(e){
-    setBPM(e.target.value);
-    // if autoOn + harborAll and user drags below 127, we don't fight — we let them.
-  }, {passive:true});
-
-  document.getElementById('set-124').addEventListener('click', function(){ setBPM(124); }, {passive:true});
-  document.getElementById('set-126').addEventListener('click', function(){ setBPM(126); }, {passive:true});
-  document.getElementById('set-127').addEventListener('click', function(){ setBPM(127); }, {passive:true});
-  document.getElementById('set-128').addEventListener('click', function(){ setBPM(128); }, {passive:true});
-})();
+let ctx, started=false, pulseGain, baseGain, subGain, fundGain, harmGain, shimmer, beatTimer, rafId;
+function resize(){const w=canvas.clientWidth;canvas.width=w*2;canvas.height=w*2}
+const canvas=document.getElementById('viz');const c=canvas.getContext('2d');resize();window.addEventListener('resize',resize);
+function createAudio(){
+  ctx=new (window.AudioContext||window.webkitAudioContext)({latencyHint:'interactive'});
+  const dest=ctx.createMediaStreamDestination();document.getElementById('airplayVideo').srcObject=dest.stream;
+  baseGain=ctx.createGain();pulseGain=ctx.createGain();shimmer=ctx.createGain();
+  const sub=ctx.createOscillator(),fund=ctx.createOscillator(),harm=ctx.createOscillator();
+  sub.type=fund.type=harm.type='sine';sub.frequency.value=64;fund.frequency.value=128;harm.frequency.value=256;
+  subGain=ctx.createGain();fundGain=ctx.createGain();harmGain=ctx.createGain();
+  subGain.gain.value=0.35;fundGain.gain.value=0.6;harmGain.gain.value=0.12;
+  const shimmerOsc=ctx.createOscillator();shimmerOsc.type='triangle';shimmerOsc.frequency.value=6;
+  const shimmerDepth=ctx.createGain();shimmerDepth.gain.value=0.03;shimmerOsc.connect(shimmerDepth).connect(fundGain.gain);
+  sub.connect(subGain);fund.connect(fundGain);harm.connect(harmGain);
+  const sum=ctx.createGain();subGain.connect(sum);fundGain.connect(sum);harmGain.connect(sum);
+  sum.connect(shimmer).connect(pulseGain).connect(baseGain).connect(ctx.destination);baseGain.connect(dest);
+  baseGain.gain.value=parseFloat(gain.value);shimmer.gain.value=parseFloat(brightness.value);
+  sub.start();fund.start();harm.start();shimmerOsc.start();
+}
+function scheduleBeats(){
+  clearInterval(beatTimer);
+  const bpm=parseInt(bpmEl.value,10);const interval=60000/bpm;
+  beatTimer=setInterval(()=>{
+    const t=ctx.currentTime;const up=0.01,down=0.18;
+    pulseGain.gain.cancelScheduledValues(t);
+    pulseGain.gain.setValueAtTime(1.0,t);
+    pulseGain.gain.linearRampToValueAtTime(1.65,t+up);
+    pulseGain.gain.exponentialRampToValueAtTime(1.0,t+up+down);
+    beatBar.style.transition='none';beatBar.style.width='0%';
+    requestAnimationFrame(()=>{beatBar.style.transition=`width ${down*1000}ms linear`;beatBar.style.width='100%'});
+  },interval);
+}
+function draw(){
+  const w=canvas.width,h=canvas.height,t=performance.now()*0.001;
+  c.clearRect(0,0,w,h);const cx=w/2,cy=h/2;
+  const minR=Math.min(w,h)*0.22,bpm=parseInt(bpmEl.value,10);
+  const beat=(t*(bpm/60))%1,ease=1-Math.pow(1-beat,3),r=minR+ease*minR*0.55;
+  const grd=c.createRadialGradient(cx,cy,r*0.45,cx,cy,r*1.05);
+  grd.addColorStop(0,'rgba(255,221,102,0.35)');grd.addColorStop(1,'rgba(154,243,194,0.06)');
+  c.fillStyle=grd;c.beginPath();c.arc(cx,cy,r,0,Math.PI*2);c.fill();
+  const alpha=0.55+Math.sin(t*2)*0.1+parseFloat(brightness.value)*0.2;
+  c.lineWidth=Math.max(2,r*0.03);c.strokeStyle=`rgba(186,255,210,${alpha})`;
+  c.beginPath();c.arc(cx,cy,r*0.86,0,Math.PI*2);c.stroke();
+  rafId=requestAnimationFrame(draw);
+}
+const bpmEl=bpm,gainEl=gain,brightEl=brightness,beatBar=document.getElementById('beatBar');
+start.onclick=async()=>{if(started)return;if(!ctx)createAudio();await ctx.resume();started=true;
+start.disabled=true;stop.disabled=false;scheduleBeats();draw()};
+stop.onclick=()=>{if(!started)return;started=false;start.disabled=false;stop.disabled=true;
+clearInterval(beatTimer);if(rafId)cancelAnimationFrame(rafId);if(ctx&&ctx.state!=='closed')ctx.suspend()};
+airplay.onclick=()=>{const v=document.getElementById('airplayVideo');
+if(v&&typeof v.webkitShowPlaybackTargetPicker==='function')v.webkitShowPlaybackTargetPicker()};
+bpmEl.oninput=()=>{bpmOut.textContent=bpmEl.value;if(started)scheduleBeats()};
+gainEl.oninput=()=>{gainOut.textContent=gainEl.value;if(baseGain)baseGain.gain.value=parseFloat(gainEl.value)};
+brightEl.oninput=()=>{brightOut.textContent=brightEl.value;if(shimmer)shimmer.gain.value=parseFloat(brightEl.value)};
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&ctx&&ctx.state==='running')ctx.suspend()});
 </script>
 </body>
 </html>
