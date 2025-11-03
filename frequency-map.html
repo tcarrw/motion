@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Motion · Frequency Map</title>
+<style>
+:root{--bg:#06070b;--ink:#fff;--line:rgba(255,255,255,.12);--pane:rgba(255,255,255,.08)}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(1200px 800px at 50% 20%,#0e1220,#06070b 70%);color:var(--ink);font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial}
+.wrap{min-height:100%;display:flex;flex-direction:column}
+.head{display:flex;align-items:center;justify-content:space-between;padding:14px}
+.title{font-weight:600}
+.badge{background:var(--pane);border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:.9rem}
+.grid{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;padding:14px}
+.card{background:rgba(10,12,18,.65);border:1px solid var(--line);border-radius:14px;padding:14px;backdrop-filter:blur(8px)}
+.row{display:flex;gap:8px;align-items:center;margin:8px 0}
+.btn{background:var(--pane);border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--ink);cursor:pointer}
+.select{background:transparent;border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--ink)}
+.input{background:transparent;border:1px solid var(--line);border-radius:10px;padding:8px 10px;color:var(--ink);width:90px;text-align:center}
+.big{font-size:1.1rem}
+.list{max-height:240px;overflow:auto;border-top:1px dashed var(--line);margin-top:10px;padding-top:10px}
+.pill{display:inline-flex;gap:8px;align-items:center;background:var(--pane);border:1px solid var(--line);border-radius:999px;padding:6px 10px;margin:4px 6px 0 0}
+.canvas{position:relative;height:360px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+#field{position:absolute;inset:0;filter:blur(24px) saturate(120%)}
+.legend{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.note{opacity:.75;font-size:.9rem}
+.links{position:fixed;left:14px;top:14px;display:flex;gap:8px;z-index:60}
+.link{background:var(--pane);border:1px solid var(--line);backdrop-filter:blur(8px);padding:8px 10px;border-radius:999px;color:#fff;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="links">
+  <a class="link" href="https://center.plnt.earth" target="_blank">⬅️ Center</a>
+  <a class="link" id="schoolLink" href="https://school.plnt.earth" target="_blank" style="display:none">🎓 School</a>
+</div>
+<div class="wrap">
+  <div class="head">
+    <div class="title">Motion · Frequency Map</div>
+    <div class="badge">color = function(frequency)</div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="row big">Generator</div>
+      <div class="row">
+        <select id="wave" class="select">
+          <option value="sine">sine</option>
+          <option value="square">square</option>
+          <option value="sawtooth">saw</option>
+          <option value="triangle">triangle</option>
+        </select>
+        <input id="freq" class="input" value="128">
+        <button id="play" class="btn">play</button>
+        <button id="stop" class="btn">stop</button>
+        <input id="gain" class="input" value="0.2">
+        <span class="note">Hz · gain</span>
+      </div>
+      <div class="row">
+        <button data-p="128" class="btn">Honey 128</button>
+        <button data-p="160" class="btn">Clarity 160</button>
+        <button data-p="432" class="btn">Moon 432</button>
+        <button data-p="256" class="btn">Voice 256</button>
+        <button data-p="288" class="btn">Wonder 288</button>
+        <button data-p="320" class="btn">Hot 320</button>
+        <button data-p="216" class="btn">Earth 216</button>
+      </div>
+      <div class="row">
+        <button id="stackAdd" class="btn">add to stack</button>
+        <button id="stackStop" class="btn">stop stack</button>
+        <span class="note">layer multiple tones</span>
+      </div>
+      <div id="stackList" class="list"></div>
+    </div>
+
+    <div class="card">
+      <div class="row big">Field</div>
+      <div class="canvas"><canvas id="field"></canvas></div>
+      <div class="legend" id="legend"></div>
+      <div class="note" style="margin-top:8px">Frequency → hue map (log scale). Brightness tracks gain; radius tracks frequency.</div>
+    </div>
+  </div>
+
+  <div class="grid" style="grid-template-columns:1fr 1fr">
+    <div class="card">
+      <div class="row big">Artist presets</div>
+      <div class="row">
+        <button data-artist="marina" class="btn">Marina · Honey 128</button>
+        <button data-artist="sigrid" class="btn">Sigrid · Clarity 160</button>
+        <button data-artist="ariana" class="btn">Ariana · Voice 256</button>
+      </div>
+      <div class="row">
+        <button data-artist="dua" class="btn">Dua · Wonder 288</button>
+        <button data-artist="dagny" class="btn">Dagny · Hot 320</button>
+        <button data-artist="greta" class="btn">Greta · Earth 216</button>
+      </div>
+    </div>
+    <div class="card">
+      <div class="row big">Profiles</div>
+      <div class="row">
+        <input id="profName" class="input" placeholder="profile name" style="width:140px">
+        <button id="saveProf" class="btn">save</button>
+        <button id="loadProf" class="btn">load</button>
+        <button id="clearProf" class="btn">clear</button>
+      </div>
+      <div id="profList" class="list"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){try{if(localStorage.getItem("school.key.set"))document.getElementById("schoolLink").style.display="inline-flex"}catch(e){}})();
+const ctx=new (window.AudioContext||window.webkitAudioContext)()
+let osc=null,gainNode=null
+let stack=[]
+const wave=document.getElementById("wave"),freq=document.getElementById("freq"),play=document.getElementById("play"),stopBtn=document.getElementById("stop"),gain=document.getElementById("gain"),stackAdd=document.getElementById("stackAdd"),stackStop=document.getElementById("stackStop"),stackList=document.getElementById("stackList")
+const field=document.getElementById("field"),legend=document.getElementById("legend");resize()
+function resize(){field.width=field.parentElement.clientWidth;field.height=field.parentElement.clientHeight}
+window.addEventListener("resize",resize)
+function startTone(f,w,g){stopTone();osc=ctx.createOscillator();gainNode=ctx.createGain();osc.type=w;osc.frequency.value=Number(f);gainNode.gain.value=Number(g);osc.connect(gainNode);gainNode.connect(ctx.destination);osc.start()}
+function stopTone(){try{if(osc){osc.stop();osc.disconnect();osc=null}if(gainNode){gainNode.disconnect();gainNode=null}}catch(e){}}
+function colorForFreq(f){const min=20,max=2000;const t=Math.log(f/min)/Math.log(max/min);const hue=(t*300+300)%360;const sat=80;const light=45;return "hsl("+hue+","+sat+"%,"+light+"%)"}
+function drawPulse(f,g){const c=field.getContext("2d");const w=field.width,h=field.height;c.fillStyle="rgba(0,0,0,0.08)";c.fillRect(0,0,w,h);const r=Math.max(8,Math.min(160,Math.sqrt(f)*2));c.beginPath();c.arc(w/2,h/2,r,0,Math.PI*2);c.fillStyle=colorForFreq(f);c.globalAlpha=Math.max(0.1,Math.min(0.9,Number(g)*1.5));c.fill();c.globalAlpha=1}
+function addLegend(label,f,g){const chip=document.createElement("div");chip.className="pill";const dot=document.createElement("span");dot.style.width="10px";dot.style.height="10px";dot.style.borderRadius="50%";dot.style.background=colorForFreq(f);const txt=document.createElement("span");txt.textContent=label+" · "+f+"Hz";chip.appendChild(dot);chip.appendChild(txt);legend.appendChild(chip)}
+function clearLegend(){legend.innerHTML=""}
+function addStack(f,w,g,label){const n=ctx.createOscillator(),gn=ctx.createGain();n.type=w;n.frequency.value=Number(f);gn.gain.value=Number(g);n.connect(gn);gn.connect(ctx.destination);n.start();stack.push({n,gn,f,w,g,label});renderStack()}
+function stopStack(){stack.forEach(s=>{try{s.n.stop();s.n.disconnect();s.gn.disconnect()}catch(e){}});stack=[];renderStack()}
+function renderStack(){stackList.innerHTML="";clearLegend();if(!stack.length){stackList.innerHTML='<div class="note">stack is empty</div>';return}stack.forEach((s,i)=>{const row=document.createElement("div");row.className="row";const left=document.createElement("div");left.textContent=(s.label||"tone")+" · "+s.f+"Hz · "+s.w;const r=document.createElement("div");const b=document.createElement("button");b.className="btn";b.textContent="remove";b.onclick=function(){try{s.n.stop();s.n.disconnect();s.gn.disconnect()}catch(e){};stack.splice(i,1);renderStack()};r.appendChild(b);row.appendChild(left);row.appendChild(r);stackList.appendChild(row);addLegend(s.label||"tone",s.f,s.g)})}
+function applyPreset(hz,label){freq.value=hz;drawPulse(Number(hz),Number(gain.value));addLegend(label,hz,Number(gain.value))}
+play.addEventListener("click",function(){if(ctx.state==="suspended")ctx.resume();startTone(freq.value,wave.value,gain.value);drawPulse(Number(freq.value),Number(gain.value))})
+stopBtn.addEventListener("click",stopTone)
+document.querySelectorAll('button[data-p]').forEach(b=>b.addEventListener("click",function(){applyPreset(Number(b.getAttribute("data-p")),b.textContent.split(" · ")[0])}))
+stackAdd.addEventListener("click",function(){addStack(Number(freq.value),wave.value,Number(gain.value),"tone")})
+stackStop.addEventListener("click",stopStack)
+const artistMap={marina:128,sigrid:160,ariana:256,dua:288,dagny:320,greta:216}
+document.querySelectorAll('button[data-artist]').forEach(b=>b.addEventListener("click",function(){const a=b.getAttribute("data-artist"),hz=artistMap[a];applyPreset(hz,b.textContent);addStack(hz,"sine",Number(gain.value),a)}))
+const profName=document.getElementById("profName"),saveProf=document.getElementById("saveProf"),loadProf=document.getElementById("loadProf"),clearProf=document.getElementById("clearProf"),profList=document.getElementById("profList")
+function listProfiles(){const all=JSON.parse(localStorage.getItem("motion.profiles")||"{}");profList.innerHTML="";Object.keys(all).forEach(k=>{const row=document.createElement("div");row.className="row";const left=document.createElement("div");left.textContent=k+" · "+all[k].length+" tones";const r=document.createElement("div");const b=document.createElement("button");b.className="btn";b.textContent="load";b.onclick=function(){stopStack();all[k].forEach(t=>addStack(t.f,t.w,t.g,t.label));};r.appendChild(b);row.appendChild(left);row.appendChild(r);profList.appendChild(row)})}
+saveProf.addEventListener("click",function(){const name=(profName.value||"").trim();if(!name)return;const all=JSON.parse(localStorage.getItem("motion.profiles")||"{}");all[name]=stack.map(s=>({f:s.f,w:s.w,g:s.g,label:s.label}));localStorage.setItem("motion.profiles",JSON.stringify(all));listProfiles();profName.value=""})
+loadProf.addEventListener("click",listProfiles)
+clearProf.addEventListener("click",function(){localStorage.removeItem("motion.profiles");profList.innerHTML=""})
+listProfiles()
+</script>
+</body>
+</html>
