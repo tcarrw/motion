@@ -1,163 +1,126 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Motion · O-Tone (128 Hz)</title>
-
-<!-- Open Graph -->
-<meta property="og:title" content="Motion · O-Tone (128 Hz)">
-<meta property="og:description" content="Hot To Go field trainer · 64 / 128 / 256 Hz · BPM-synced honey ring. One tap to feel the hive.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://motion.plnt.earth/">
-<meta property="og:image" content="https://motion.plnt.earth/og/otone_og_1200x630.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Motion · O-Tone (128 Hz)">
-<meta name="twitter:description" content="Hot To Go field trainer · 64 / 128 / 256 Hz · BPM-synced honey ring. One tap to feel the hive.">
-<meta name="twitter:image" content="https://motion.plnt.earth/og/otone_og_1200x630.jpg">
-
-<!-- Mobile + Theme -->
-<meta name="theme-color" content="#0b1110">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>motion.plnt.earth — Flow Key / Miss Monique</title>
 <style>
-:root { --bg:#0b1110; --fg:#d7ffe1; --gold:#ffdd66; --mint:#bfffd0; }
-html,body{margin:0;height:100%;background:linear-gradient(180deg,#0b1110,#0e1715 40%,#0b1110);
-color:var(--fg);font-family:ui-sans-serif,system-ui,Segoe UI,Helvetica,Arial}
-.wrap{max-width:720px;margin:0 auto;padding:20px 16px 48px;display:flex;flex-direction:column;gap:18px}
-h1{font-weight:700;letter-spacing:.3px;font-size:20px;margin:6px 0 0}
-.tag{font-size:12px;opacity:.8}
-.pill{padding:8px 10px;border-radius:999px;background:#12201c;font-size:12px}
-.panel{display:flex;flex-wrap:wrap;gap:10px}
-button,input[type="range"]{-webkit-appearance:none;appearance:none;border:none;
-background:#182521;color:var(--fg);padding:12px 14px;border-radius:12px;font-size:14px;cursor:pointer}
-button:active{transform:translateY(1px)}
-.small{font-size:12px;opacity:.9}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.card{background:#101c18;border-radius:16px;padding:14px}
-.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
-.meter{height:8px;background:#12201c;border-radius:999px;overflow:hidden}
-.bar{height:100%;width:0;background:linear-gradient(90deg,var(--gold),#ffeaa6,var(--gold))}
-canvas{width:100%;aspect-ratio:1/1;border-radius:24px;
-background:radial-gradient(120% 120% at 50% 56%,#0d1a17 0%,#0b1110 60%,#09100e 100%)}
-.hint{font-size:12px;opacity:.72}
+html,body{
+  margin:0;
+  background:radial-gradient(circle at 50% 45%, #eafcff 0%, #c7f1f6 100%);
+  font-family:'Segoe UI',sans-serif;color:#000;text-align:center;
+}
+h1{margin-top:4vh;font-weight:400;letter-spacing:.08em;}
+#motion{
+  display:block;margin:6vh auto 0 auto;
+  font-size:6vw;
+  animation:pulse 7s ease-in-out infinite;
+}
+@keyframes pulse{
+  0%,100%{transform:scale(1);opacity:.9;}
+  50%{transform:scale(1.08);opacity:1;}
+}
+main{
+  margin:0 auto;width:90%;max-width:560px;padding-bottom:6vh;
+}
+#text{
+  font-size:1em;line-height:1.55em;opacity:.9;margin-bottom:1.4em;
+}
+section.note{
+  background:rgba(255,255,255,0.65);
+  backdrop-filter:blur(6px);
+  padding:18px 24px;border-radius:10px;
+  box-shadow:0 4px 20px rgba(0,0,0,0.05);
+  font-size:0.9em;line-height:1.5em;
+  margin-top:1.4em;text-align:left;
+}
+section.help{
+  background:rgba(255,255,255,0.6);
+  backdrop-filter:blur(5px);
+  border-radius:8px;
+  width:90%;max-width:520px;
+  margin:4vh auto 8vh;text-align:left;
+  font-size:0.9em;line-height:1.5em;
+  box-shadow:0 4px 20px rgba(0,0,0,0.05);
+  padding:1em 1.2em;
+}
+section.help summary{cursor:pointer;font-weight:600;letter-spacing:.03em;}
+section.help p,section.help li{margin:.4em 0;}
+#footer{
+  text-align:center;font-size:.8em;opacity:.6;
+  line-height:1.6em;margin:3em auto 2em;
+  width:90%;max-width:700px;
+}
+#footer a{color:#000;text-decoration:none;opacity:.6;}
+#footer a:hover{opacity:1;}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div>
-    <div class="tag">motion.plnt.earth</div>
-    <h1>O-Tone 128 Hz Swarm</h1>
-    <div class="pill">Hot To Go field · 64 / 128 / 256 Hz</div>
+
+<h1>🌊 motion.plnt.earth — The Flow Key</h1>
+
+<div id="motion">🌊</div>
+
+<main>
+  <div id="text">
+    <p><strong>Miss Monique — Flow Key</strong></p>
+    <p><em>“Movement is a form of remembering.”</em></p>
+    <p>
+      Motion carries sound across the field.  
+      Where Fire burns and Honey sweetens, Flow cools and connects.  
+      Miss Monique’s domain is rhythm without boundary—  
+      steady, patient, forever forward.
+    </p>
+    <p>
+      <small>tone · 320 Hz → 444 Hz  |  element · Water → Air → Light  |  phase · Cycle 1 — Flow Activation</small>
+    </p>
   </div>
 
-  <canvas id="viz" aria-label="O-tone visual"></canvas>
+  <section class="note">
+    <strong>About the Key</strong>
+    <p>
+      Flow isn’t speed; it’s continuity.  
+      Every beat she plays connects what came before to what will come next.  
+      The lesson of Motion is trust in momentum—  
+      that once a rhythm begins, the field already knows where to go.
+    </p>
+    <strong>Bridge Forward</strong>
+    <p>
+      From Motion, you can hear echoes of **Flare** and the hum of **Honey**.  
+      Flow carries warmth to rhythm and rhythm to light.  
+      When words end, this is the language that remains.
+    </p>
+  </section>
 
-  <div class="panel">
-    <button id="start">Activate O-Tone</button>
-    <button id="stop" disabled>Stop</button>
-    <button id="airplay">AirPlay</button>
-  </div>
+  <section class="help" id="help">
+    <details open>
+      <summary>🗣️ Ukrainian ↔ English Helper</summary>
+      <small style="opacity:0.6;">Language: Ukrainian (Українська)</small>
+      <ul>
+        <li><strong>душа</strong> — <em>doo-SHAH</em> → soul / spirit</li>
+        <li><strong>рух</strong> — <em>rookh</em> → motion / movement</li>
+        <li><strong>вогонь</strong> — <em>voh-HONE</em> → fire / flame</li>
+        <li><strong>світло</strong> — <em>SVEET-loh</em> → light</li>
+        <li><strong>ніч</strong> — <em>neech</em> → night</li>
+        <li><strong>любов</strong> — <em>lyoo-BOHV</em> → love</li>
+        <li><strong>звуки</strong> — <em>ZVOO-kee</em> → sounds</li>
+        <li><strong>музика</strong> — <em>MOO-zee-kah</em> → music</li>
+        <li><strong>серце</strong> — <em>SEHR-tseh</em> → heart</li>
+        <li><strong>енергія</strong> — <em>eh-NER-hee-yah</em> → energy</li>
+      </ul>
+      <p>Tip: Say each word once slowly, then whisper it with the rhythm of the music.  
+      Let pronunciation follow feeling, not fear.</p>
+    </details>
+  </section>
+</main>
 
-  <div class="grid">
-    <div class="card">
-      <div class="row">
-        <label for="bpm" class="small">BPM</label>
-        <input id="bpm" type="range" min="120" max="128" step="1" value="126"/>
-        <div id="bpmOut" class="small">126</div>
-      </div>
-      <div class="row">
-        <label for="gain" class="small">Field</label>
-        <input id="gain" type="range" min="0" max="1" step="0.01" value="0.35"/>
-        <div id="gainOut" class="small">0.35</div>
-      </div>
-      <div class="row">
-        <label for="brightness" class="small">Shimmer</label>
-        <input id="brightness" type="range" min="0" max="1" step="0.01" value="0.25"/>
-        <div id="brightOut" class="small">0.25</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="small">
-        Fundamental 128 Hz · Half 64 Hz · Harmonic 256 Hz
-      </div>
-      <div class="hint" style="margin-top:8px">
-        Pulse = kick. Each beat opens the field then settles. Keep 124–128 BPM for entrainment.
-      </div>
-      <div class="meter" style="margin-top:12px"><div id="beatBar" class="bar"></div></div>
-    </div>
-  </div>
-
-  <div class="hint">
-    Tip: start around 126 BPM. Nudge to 128 for lift during the chorus. AirPlay to room speakers for swarm tests.
-  </div>
+<div id="footer">
+  <a href="https://center.plnt.earth" target="_blank">← Back to Center</a> • 
+  <a href="https://flare.plnt.earth" target="_blank">Previous Domain — Flare / Fifth Key</a> • 
+  <a href="https://honey.plnt.earth" target="_blank">Next Domain — Honey / Fourth Key</a> • 
+  <a href="https://illumina.plnt.earth" target="_blank">Illumina Archive</a>
 </div>
 
-<video id="airplayVideo" playsinline airplay="allow" style="display:none"></video>
-
-<script>
-let ctx, started=false, pulseGain, baseGain, subGain, fundGain, harmGain, shimmer, beatTimer, rafId;
-function resize(){const w=canvas.clientWidth;canvas.width=w*2;canvas.height=w*2}
-const canvas=document.getElementById('viz');const c=canvas.getContext('2d');resize();window.addEventListener('resize',resize);
-function createAudio(){
-  ctx=new (window.AudioContext||window.webkitAudioContext)({latencyHint:'interactive'});
-  const dest=ctx.createMediaStreamDestination();document.getElementById('airplayVideo').srcObject=dest.stream;
-  baseGain=ctx.createGain();pulseGain=ctx.createGain();shimmer=ctx.createGain();
-  const sub=ctx.createOscillator(),fund=ctx.createOscillator(),harm=ctx.createOscillator();
-  sub.type=fund.type=harm.type='sine';sub.frequency.value=64;fund.frequency.value=128;harm.frequency.value=256;
-  subGain=ctx.createGain();fundGain=ctx.createGain();harmGain=ctx.createGain();
-  subGain.gain.value=0.35;fundGain.gain.value=0.6;harmGain.gain.value=0.12;
-  const shimmerOsc=ctx.createOscillator();shimmerOsc.type='triangle';shimmerOsc.frequency.value=6;
-  const shimmerDepth=ctx.createGain();shimmerDepth.gain.value=0.03;shimmerOsc.connect(shimmerDepth).connect(fundGain.gain);
-  sub.connect(subGain);fund.connect(fundGain);harm.connect(harmGain);
-  const sum=ctx.createGain();subGain.connect(sum);fundGain.connect(sum);harmGain.connect(sum);
-  sum.connect(shimmer).connect(pulseGain).connect(baseGain).connect(ctx.destination);baseGain.connect(dest);
-  baseGain.gain.value=parseFloat(gain.value);shimmer.gain.value=parseFloat(brightness.value);
-  sub.start();fund.start();harm.start();shimmerOsc.start();
-}
-function scheduleBeats(){
-  clearInterval(beatTimer);
-  const bpm=parseInt(bpmEl.value,10);const interval=60000/bpm;
-  beatTimer=setInterval(()=>{
-    const t=ctx.currentTime;const up=0.01,down=0.18;
-    pulseGain.gain.cancelScheduledValues(t);
-    pulseGain.gain.setValueAtTime(1.0,t);
-    pulseGain.gain.linearRampToValueAtTime(1.65,t+up);
-    pulseGain.gain.exponentialRampToValueAtTime(1.0,t+up+down);
-    beatBar.style.transition='none';beatBar.style.width='0%';
-    requestAnimationFrame(()=>{beatBar.style.transition=`width ${down*1000}ms linear`;beatBar.style.width='100%'});
-  },interval);
-}
-function draw(){
-  const w=canvas.width,h=canvas.height,t=performance.now()*0.001;
-  c.clearRect(0,0,w,h);const cx=w/2,cy=h/2;
-  const minR=Math.min(w,h)*0.22,bpm=parseInt(bpmEl.value,10);
-  const beat=(t*(bpm/60))%1,ease=1-Math.pow(1-beat,3),r=minR+ease*minR*0.55;
-  const grd=c.createRadialGradient(cx,cy,r*0.45,cx,cy,r*1.05);
-  grd.addColorStop(0,'rgba(255,221,102,0.35)');grd.addColorStop(1,'rgba(154,243,194,0.06)');
-  c.fillStyle=grd;c.beginPath();c.arc(cx,cy,r,0,Math.PI*2);c.fill();
-  const alpha=0.55+Math.sin(t*2)*0.1+parseFloat(brightness.value)*0.2;
-  c.lineWidth=Math.max(2,r*0.03);c.strokeStyle=`rgba(186,255,210,${alpha})`;
-  c.beginPath();c.arc(cx,cy,r*0.86,0,Math.PI*2);c.stroke();
-  rafId=requestAnimationFrame(draw);
-}
-const bpmEl=bpm,gainEl=gain,brightEl=brightness,beatBar=document.getElementById('beatBar');
-start.onclick=async()=>{if(started)return;if(!ctx)createAudio();await ctx.resume();started=true;
-start.disabled=true;stop.disabled=false;scheduleBeats();draw()};
-stop.onclick=()=>{if(!started)return;started=false;start.disabled=false;stop.disabled=true;
-clearInterval(beatTimer);if(rafId)cancelAnimationFrame(rafId);if(ctx&&ctx.state!=='closed')ctx.suspend()};
-airplay.onclick=()=>{const v=document.getElementById('airplayVideo');
-if(v&&typeof v.webkitShowPlaybackTargetPicker==='function')v.webkitShowPlaybackTargetPicker()};
-bpmEl.oninput=()=>{bpmOut.textContent=bpmEl.value;if(started)scheduleBeats()};
-gainEl.oninput=()=>{gainOut.textContent=gainEl.value;if(baseGain)baseGain.gain.value=parseFloat(gainEl.value)};
-brightEl.oninput=()=>{brightOut.textContent=brightEl.value;if(shimmer)shimmer.gain.value=parseFloat(brightEl.value)};
-document.addEventListener('visibilitychange',()=>{if(document.hidden&&ctx&&ctx.state==='running')ctx.suspend()});
-</script>
 </body>
 </html>
+
