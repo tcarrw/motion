@@ -14,11 +14,12 @@ h1{margin-top:4vh;font-weight:400;letter-spacing:.08em;}
 #motion{
   display:block;margin:6vh auto 0 auto;
   font-size:6vw;
-  animation:pulse 7s ease-in-out infinite;
+  animation:glow 6s ease-in-out infinite;
+  transform-origin:center;
 }
-@keyframes pulse{
-  0%,100%{transform:scale(1);opacity:.9;}
-  50%{transform:scale(1.08);opacity:1;}
+@keyframes glow{
+  0%,100%{opacity:.9;filter:brightness(1);}
+  50%{opacity:1;filter:brightness(1.25);}
 }
 main{margin:0 auto;width:90%;max-width:560px;padding-bottom:6vh;}
 #text{font-size:1em;line-height:1.55em;opacity:.9;margin-bottom:1.4em;}
@@ -41,6 +42,16 @@ section.help li{margin:0.3em 0;}
 }
 #footer a{color:#000;text-decoration:none;opacity:.6;}
 #footer a:hover{opacity:1;}
+#toggle{
+  margin-top:1em;
+  background:rgba(255,255,255,0.7);
+  border:1px solid rgba(0,0,0,0.2);
+  border-radius:6px;
+  padding:6px 12px;
+  font-size:.9em;
+  cursor:pointer;
+}
+#toggle:hover{background:rgba(255,255,255,0.9);}
 </style>
 </head>
 <body>
@@ -56,11 +67,10 @@ section.help li{margin:0.3em 0;}
     <p>
       Motion carries sound across the field.  
       Where Fire burns and Honey sweetens, Flow cools and connects.  
-      Miss Monique’s domain is rhythm without boundary—steady, patient, forever forward.
+      Miss Monique’s domain is rhythm without boundary — steady, patient, forever forward.
     </p>
-    <p>
-      <small>tone · 320 → 444 Hz  |  element · Water → Air → Light  |  phase · Cycle 1 — Flow Activation</small>
-    </p>
+    <p><small>tone · 320 → 444 Hz | element · Water → Air → Light | phase · Cycle 1 — Flow Activation</small></p>
+    <button id="toggle">Start Flow</button>
   </div>
 
   <section class="note">
@@ -68,11 +78,11 @@ section.help li{margin:0.3em 0;}
     <p>
       Flow isn’t speed; it’s continuity.  
       Every beat she plays connects what came before to what will come next.  
-      The lesson of Motion is trust in momentum—once a rhythm begins, the field already knows where to go.
+      The lesson of Motion is trust in momentum — once a rhythm begins, the field already knows where to go.
     </p>
     <strong>Bridge Forward</strong>
     <p>
-      From Motion, heat meets clarity and spreads to the rest of the Cube.  
+      From Motion, heat meets clarity and spreads through the Cube.  
       Flow is the return current that keeps Illumina alive.
     </p>
   </section>
@@ -93,17 +103,64 @@ section.help li{margin:0.3em 0;}
         <li><strong>серце</strong> — <em>SEHR-tseh</em> → heart</li>
         <li><strong>енергія</strong> — <em>eh-NER-hee-yah</em> → energy</li>
       </ul>
-      <p>Tip: Say each word once slowly, then whisper it with the rhythm of the music.  
-      Let pronunciation follow feeling, not fear.</p>
+      <p>Tip: Say each word once slowly, then whisper it with the rhythm of the music. Let pronunciation follow feeling, not fear.</p>
     </details>
   </section>
 </main>
 
 <div id="footer">
-  <a href="https://center.plnt.earth" target="_blank">← Back to Center</a> • 
-  <a href="https://flare.plnt.earth" target="_blank">Previous Domain — Flare / Fifth Key</a> • 
-  <a href="https://illumina.plnt.earth" target="_blank">Illumina Archive</a>
+  <a href="https://center.plnt.earth">← Back to Center</a> • 
+  <a href="https://flare.plnt.earth">Previous Domain — Flare / Fifth Key</a> • 
+  <a href="https://illumina.plnt.earth">Illumina Archive</a>
 </div>
+
+<script>
+/* Motion Tone Field with Start/Stop */
+let ctx, masterGain, tones = [], running = false;
+const freqs = [320, 360, 432, 444];
+const button = document.getElementById('toggle');
+
+function makeTone(freq){
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type='sine'; osc.frequency.value=freq;
+  gain.gain.value=0;
+  osc.connect(gain).connect(masterGain);
+  osc.start();
+  // subtle breathing
+  const now = ctx.currentTime;
+  gain.gain.linearRampToValueAtTime(0.03, now+4);
+  gain.gain.linearRampToValueAtTime(0.01, now+12);
+  return {osc,gain};
+}
+
+function startFlow(){
+  if(!ctx){
+    ctx = new (window.AudioContext||window.webkitAudioContext)();
+    masterGain = ctx.createGain();
+    masterGain.gain.value = 0.05;
+    masterGain.connect(ctx.destination);
+  }
+  if(ctx.state==='suspended') ctx.resume();
+  tones = freqs.map(f=>makeTone(f));
+  running=true;
+  button.textContent='Stop Flow';
+}
+
+function stopFlow(){
+  if(!ctx) return;
+  tones.forEach(t=>{
+    try{t.osc.stop(ctx.currentTime+0.5);}catch(e){}
+  });
+  tones=[];
+  running=false;
+  button.textContent='Start Flow';
+}
+
+button.addEventListener('click',()=>{
+  if(!running) startFlow(); else stopFlow();
+});
+</script>
 
 </body>
 </html>
