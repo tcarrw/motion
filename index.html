@@ -1,166 +1,111 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>motion.plnt.earth — Sixth Key / Miss Monique (Flow)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motion · Flow Key</title>
+<link rel="stylesheet" href="https://assets.plnt.earth/colors-daynight.css">
 <style>
-html,body{
-  margin:0;
-  background:radial-gradient(circle at 50% 45%, #eafcff 0%, #c7f1f6 100%);
-  font-family:'Segoe UI',sans-serif;color:#000;text-align:center;
+:root{
+  --emerald:#00ffbf;
+  --violet:#b88bff;
+  --bg-day:radial-gradient(circle at 50% 0%,#ffffff 0%,#eafaf3 90%);
+  --bg-night:radial-gradient(circle at 50% 10%,#0a0a12 0%,#060608 100%);
 }
-h1{margin-top:4vh;font-weight:400;letter-spacing:.08em;}
-#motion{
-  display:block;margin:6vh auto 0 auto;
-  font-size:6vw;
-  animation:glow 6s ease-in-out infinite;
-  transform-origin:center;
+body{
+  margin:0;padding:0;
+  background:var(--bg-day);
+  overflow:hidden;
+  font-family:"Helvetica Neue",sans-serif;
+  color:#111;
+  transition:background .8s,color .8s;
 }
-@keyframes glow{
-  0%,100%{opacity:.9;filter:brightness(1);}
-  50%{opacity:1;filter:brightness(1.25);}
+body.night{background:var(--bg-night);color:#d8f2e1;}
+canvas{position:fixed;inset:0;width:100%;height:100%;display:block;}
+#overlay{
+  position:fixed;inset:0;
+  background:#fff;
+  display:flex;align-items:center;justify-content:center;
+  z-index:1000;cursor:pointer;
+  font-size:1.6rem;letter-spacing:.05em;
+  transition:opacity 1s ease;
 }
-main{margin:0 auto;width:90%;max-width:560px;padding-bottom:6vh;}
-#text{font-size:1em;line-height:1.55em;opacity:.9;margin-bottom:1.4em;}
-section.note,section.help{
-  background:rgba(255,255,255,0.65);
-  backdrop-filter:blur(6px);
-  border-radius:10px;
-  margin-top:1.4em;text-align:left;
-  box-shadow:0 4px 20px rgba(0,0,0,0.05);
-  font-size:0.9em;line-height:1.5em;
-  padding:18px 24px;
+body.night #overlay{background:#000;color:#eee;}
+#overlay.hidden{opacity:0;pointer-events:none;}
+#mantra{
+  position:fixed;bottom:2rem;left:50%;
+  transform:translateX(-50%);
+  font-size:1.1rem;opacity:.15;
+  text-shadow:0 0 10px rgba(184,139,255,.5);
+  white-space:nowrap;pointer-events:none;
 }
-section.help summary{cursor:pointer;font-weight:600;letter-spacing:.03em;}
-section.help ul{margin:0.5em 0 0 1em;padding:0;}
-section.help li{margin:0.3em 0;}
-#footer{
-  text-align:center;font-size:.8em;opacity:.6;
-  line-height:1.6em;margin:3em auto 2em;
-  width:90%;max-width:700px;
+#toGarlic{
+  position:fixed;bottom:50%;left:50%;
+  transform:translate(-50%,50%);
+  font-size:1.3rem;opacity:0;
+  background:none;border:none;color:#00ffbf;
+  cursor:pointer;transition:opacity 1s;
 }
-#footer a{color:#000;text-decoration:none;opacity:.6;}
-#footer a:hover{opacity:1;}
-#toggle{
-  margin-top:1em;
-  background:rgba(255,255,255,0.7);
-  border:1px solid rgba(0,0,0,0.2);
-  border-radius:6px;
-  padding:6px 12px;
-  font-size:.9em;
-  cursor:pointer;
+#toGarlic.show{opacity:1;}
+#toggleMode{
+  position:fixed;top:1rem;right:1rem;
+  background:none;border:none;font-size:1.4rem;cursor:pointer;color:inherit;z-index:900;
 }
-#toggle:hover{background:rgba(255,255,255,0.9);}
 </style>
 </head>
 <body>
 
-<h1>🌊 motion.plnt.earth — The Sixth Key</h1>
+<canvas id="wave"></canvas>
+<div id="overlay">Tap to Begin Flow</div>
+<button id="toggleMode" title="Toggle Day/Night">🌗</button>
+<div id="mantra">Bevegelse lærer stillhet å svare.</div>
+<button id="toGarlic">Translate to Garlic ↠</button>
 
-<div id="motion">🌊</div>
-
-<main>
-  <div id="text">
-    <p><strong>Miss Monique — Flow Key</strong></p>
-    <p><em>“Movement is a form of remembering.”</em></p>
-    <p>
-      Motion carries sound across the field.  
-      Where Fire burns and Honey sweetens, Flow cools and connects.  
-      Miss Monique’s domain is rhythm without boundary — steady, patient, forever forward.
-    </p>
-    <p><small>tone · 320 → 444 Hz | element · Water → Air → Light | phase · Cycle 1 — Flow Activation</small></p>
-    <button id="toggle">Start Flow</button>
-  </div>
-
-  <section class="note">
-    <strong>About the Key</strong>
-    <p>
-      Flow isn’t speed; it’s continuity.  
-      Every beat she plays connects what came before to what will come next.  
-      The lesson of Motion is trust in momentum — once a rhythm begins, the field already knows where to go.
-    </p>
-    <strong>Bridge Forward</strong>
-    <p>
-      From Motion, heat meets clarity and spreads through the Cube.  
-      Flow is the return current that keeps Illumina alive.
-    </p>
-  </section>
-
-  <section class="help">
-    <details open>
-      <summary>🗣️ Ukrainian ↔ English Helper</summary>
-      <small style="opacity:0.6;">Language: Ukrainian (Українська)</small>
-      <ul>
-        <li><strong>душа</strong> — <em>doo-SHAH</em> → soul / spirit</li>
-        <li><strong>рух</strong> — <em>rookh</em> → motion / movement</li>
-        <li><strong>вогонь</strong> — <em>voh-HONE</em> → fire / flame</li>
-        <li><strong>світло</strong> — <em>SVEET-loh</em> → light</li>
-        <li><strong>ніч</strong> — <em>neech</em> → night</li>
-        <li><strong>любов</strong> — <em>lyoo-BOHV</em> → love</li>
-        <li><strong>звуки</strong> — <em>ZVOO-kee</em> → sounds</li>
-        <li><strong>музика</strong> — <em>MOO-zee-kah</em> → music</li>
-        <li><strong>серце</strong> — <em>SEHR-tseh</em> → heart</li>
-        <li><strong>енергія</strong> — <em>eh-NER-hee-yah</em> → energy</li>
-      </ul>
-      <p>Tip: Say each word once slowly, then whisper it with the rhythm of the music. Let pronunciation follow feeling, not fear.</p>
-    </details>
-  </section>
-</main>
-
-<div id="footer">
-  <a href="https://center.plnt.earth">← Back to Center</a> • 
-  <a href="https://flare.plnt.earth">Previous Domain — Flare / Fifth Key</a> • 
-  <a href="https://illumina.plnt.earth">Illumina Archive</a>
-</div>
+<audio id="motionTone" loop preload="auto" style="display:none;">
+  <!-- add actual source when ready -->
+  <!-- <source src="https://assets.plnt.earth/audio/monique-128hz.mp3" type="audio/mpeg"> -->
+</audio>
 
 <script>
-/* Motion Tone Field with Start/Stop */
-let ctx, masterGain, tones = [], running = false;
-const freqs = [320, 360, 432, 444];
-const button = document.getElementById('toggle');
-
-function makeTone(freq){
-  const osc = ctx.createOscillator();
-  const gain = ctx.createGain();
-  osc.type='sine'; osc.frequency.value=freq;
-  gain.gain.value=0;
-  osc.connect(gain).connect(masterGain);
-  osc.start();
-  // subtle breathing
-  const now = ctx.currentTime;
-  gain.gain.linearRampToValueAtTime(0.03, now+4);
-  gain.gain.linearRampToValueAtTime(0.01, now+12);
-  return {osc,gain};
-}
-
-function startFlow(){
-  if(!ctx){
-    ctx = new (window.AudioContext||window.webkitAudioContext)();
-    masterGain = ctx.createGain();
-    masterGain.gain.value = 0.05;
-    masterGain.connect(ctx.destination);
+const overlay=document.getElementById('overlay');
+const canvas=document.getElementById('wave');
+const ctx=canvas.getContext('2d');
+let w,h,t=0;function resize(){w=canvas.width=window.innerWidth;h=canvas.height=window.innerHeight;}
+window.addEventListener('resize',resize);resize();
+function draw(){
+  ctx.clearRect(0,0,w,h);
+  const g=ctx.createLinearGradient(0,0,w,h);
+  g.addColorStop(0,'#00ffbf');g.addColorStop(1,'#b88bff');
+  ctx.strokeStyle=g;ctx.lineWidth=2.2;
+  ctx.beginPath();
+  for(let x=0;x<w;x++){
+    const y=h/2+Math.sin((x/50)+(t/4))*60*Math.sin(t/10);
+    ctx.lineTo(x,y);
   }
-  if(ctx.state==='suspended') ctx.resume();
-  tones = freqs.map(f=>makeTone(f));
-  running=true;
-  button.textContent='Stop Flow';
+  ctx.stroke();
+  t+=0.6;requestAnimationFrame(draw);
 }
 
-function stopFlow(){
-  if(!ctx) return;
-  tones.forEach(t=>{
-    try{t.osc.stop(ctx.currentTime+0.5);}catch(e){}
-  });
-  tones=[];
-  running=false;
-  button.textContent='Start Flow';
-}
+overlay.addEventListener('click',()=>{
+  overlay.classList.add('hidden');
+  setTimeout(()=>overlay.remove(),1000);
+  draw();
+  const tone=document.getElementById('motionTone');
+  const startAudio=()=>{tone.play().catch(()=>{});document.removeEventListener('click',startAudio);};
+  document.addEventListener('click',startAudio);
+  setTimeout(()=>{
+    const btn=document.getElementById('toGarlic');
+    btn.classList.add('show');
+  },42000);
+});
+document.getElementById('toggleMode').addEventListener('click',()=>{
+  document.body.classList.toggle('night');
+});
 
-button.addEventListener('click',()=>{
-  if(!running) startFlow(); else stopFlow();
+document.getElementById('toGarlic').addEventListener('click',()=>{
+  try{localStorage.setItem('motionKey','true');}catch(e){}
+  window.location.href='https://garlic.plnt.earth';
 });
 </script>
-
 </body>
 </html>
