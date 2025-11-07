@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Motion · Flow Key</title>
+<title>Motion · Dormant Flow</title>
 <link rel="stylesheet" href="https://assets.plnt.earth/colors-daynight.css">
 <style>
 :root{
@@ -13,55 +13,32 @@
   --bg-night:radial-gradient(circle at 50% 10%,#0a0a12 0%,#060608 100%);
 }
 body{
-  margin:0;padding:0;
-  background:var(--bg-day);
-  overflow:hidden;
-  font-family:"Helvetica Neue",sans-serif;
-  color:#111;
-  transition:background .8s,color .8s;
+  margin:0;padding:0;background:var(--bg-day);
+  overflow:hidden;font-family:"Helvetica Neue",sans-serif;
+  color:#111;transition:background .8s,color .8s;
 }
 body.night{background:var(--bg-night);color:#d8f2e1;}
-body.school{background:#1a140f;color:#fffaec;}
-body.motion{background:var(--bg-night);color:#e0ffff;}
-body.quietmoon{background:#0a0a1a;color:#d0d0ff;}
 canvas{position:fixed;inset:0;width:100%;height:100%;display:block;}
 #overlay{
-  position:fixed;inset:0;background:#fff;
-  display:flex;align-items:center;justify-content:center;
-  z-index:1000;cursor:pointer;
-  font-size:1.6rem;letter-spacing:.05em;
+  position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+  z-index:1000;background:#fff;cursor:pointer;font-size:1.4rem;letter-spacing:.05em;
   transition:opacity 1s ease;
 }
 body.night #overlay{background:#000;color:#eee;}
 #overlay.hidden{opacity:0;pointer-events:none;}
-#mantra{
+#status{
   position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
-  font-size:1.1rem;opacity:.15;
-  text-shadow:0 0 10px rgba(184,139,255,.5);
+  font-size:1rem;opacity:.5;text-align:center;
   white-space:nowrap;pointer-events:none;
 }
-#toGarlic{
-  position:fixed;bottom:50%;left:50%;
-  transform:translate(-50%,50%);
-  font-size:1.3rem;opacity:0;
-  background:none;border:none;color:var(--emerald);
-  cursor:pointer;transition:opacity 1s;
-}
-#toGarlic.show{opacity:1;}
 #toggleMode{
   position:fixed;top:1rem;right:1rem;
-  background:none;border:none;font-size:1.4rem;
-  cursor:pointer;color:inherit;z-index:900;
+  background:none;border:none;font-size:1.4rem;cursor:pointer;color:inherit;z-index:900;
 }
-/* rule overlays */
-.rule{
-  position:fixed;top:1rem;left:50%;transform:translateX(-50%);
-  font-size:1rem;letter-spacing:.08em;text-transform:uppercase;
-  opacity:0;pointer-events:none;transition:opacity 1s ease;
+#glyph{
+  position:fixed;bottom:1rem;right:1rem;font-size:1.2rem;opacity:.4;transition:opacity 1s;
 }
-.rule.show{opacity:.6;}
-#technoRule{color:#00ffbf;text-shadow:0 0 10px #00ffbf;}
-#popRule{color:#ff4faf;text-shadow:0 0 10px #ff4faf;}
+body.active #glyph{opacity:.9;color:#f5c542;}
 </style>
 </head>
 <body>
@@ -69,60 +46,33 @@ body.night #overlay{background:#000;color:#eee;}
 <canvas id="wave"></canvas>
 <div id="overlay">Tap to Begin Flow</div>
 <button id="toggleMode" title="Toggle Day/Night">🌗</button>
-<div id="mantra">Bevegelse lærer stillhet å svare.</div>
-<button id="toGarlic">Translate to Garlic ↠</button>
-
-<div id="technoRule" class="rule">TECHNO RULE: TRUST RHYTHM, NOT CHAOS</div>
-<div id="popRule" class="rule">POP RULE: MAKE THEM FEEL, THEN THINK</div>
-
-<audio id="motionTone" loop preload="auto" style="display:none;"></audio>
+<div id="status">Resonance Dormant — awaiting tone 128 Hz (Monique)</div>
+<div id="glyph">🌀</div>
 
 <script>
-/* ---------- canvas motion ---------- */
-const overlay=document.getElementById('overlay');
-const canvas=document.getElementById('wave');
-const ctx=canvas.getContext('2d');
-let w,h,t=0;
-function resize(){w=canvas.width=innerWidth;h=canvas.height=innerHeight;}
-window.addEventListener('resize',resize);resize();
+const c=document.getElementById('wave'),ctx=c.getContext('2d');
+let w,h,t=0;function resize(){w=c.width=innerWidth;h=c.height=innerHeight;}
+resize();addEventListener('resize',resize);
 function draw(){
   ctx.clearRect(0,0,w,h);
   const g=ctx.createLinearGradient(0,0,w,h);
   g.addColorStop(0,'#00ffbf');g.addColorStop(1,'#b88bff');
-  ctx.strokeStyle=g;ctx.lineWidth=2.2;
+  ctx.strokeStyle=g;ctx.lineWidth=2;
   ctx.beginPath();
   for(let x=0;x<w;x++){
-    const y=h/2+Math.sin((x/50)+(t/4))*60*Math.sin(t/10);
+    const y=h/2+Math.sin((x/50)+(t/4))*40*Math.sin(t/20);
     ctx.lineTo(x,y);
   }
-  ctx.stroke();t+=0.6;requestAnimationFrame(draw);
+  ctx.stroke();
+  t+=0.15;requestAnimationFrame(draw); // slowed for dormant state
 }
-
-/* ---------- flow start ---------- */
-overlay.addEventListener('click',()=>{
-  overlay.classList.add('hidden');
-  setTimeout(()=>overlay.remove(),1000);
+document.getElementById('overlay').onclick=()=>{
+  document.body.classList.add('active');
+  document.getElementById('overlay').classList.add('hidden');
+  setTimeout(()=>document.getElementById('overlay').remove(),1000);
   draw();
-  const tone=document.getElementById('motionTone');
-  const startAudio=()=>{tone.play().catch(()=>{});document.removeEventListener('click',startAudio);};
-  document.addEventListener('click',startAudio);
-  setTimeout(()=>document.getElementById('toGarlic').classList.add('show'),42000);
-  // reveal rules if unlocked
-  if(localStorage.ruleTechno==="true")document.getElementById('technoRule').classList.add('show');
-  if(localStorage.rulePop==="true")document.getElementById('popRule').classList.add('show');
-});
-document.getElementById('toggleMode').addEventListener('click',()=>document.body.classList.toggle('night'));
-document.getElementById('toGarlic').addEventListener('click',()=>{
-  localStorage.setItem('motionKey','true');
-  localStorage.setItem('lastKeyGranted','motion');
-  location.href='https://garlic.plnt.earth';
-});
-
-/* ---------- Kendyl key sync ---------- */
-(function(){
-  const mode=localStorage.kendylKey||"motion";
-  document.body.classList.add(mode);
-})();
+};
+document.getElementById('toggleMode').onclick=()=>document.body.classList.toggle('night');
 </script>
 </body>
 </html>
