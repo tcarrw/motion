@@ -24,11 +24,9 @@ body.night{background:var(--bg-night);color:#d8f2e1;}
 body.school{background:#1a140f;color:#fffaec;}
 body.motion{background:var(--bg-night);color:#e0ffff;}
 body.quietmoon{background:#0a0a1a;color:#d0d0ff;}
-
 canvas{position:fixed;inset:0;width:100%;height:100%;display:block;}
 #overlay{
-  position:fixed;inset:0;
-  background:#fff;
+  position:fixed;inset:0;background:#fff;
   display:flex;align-items:center;justify-content:center;
   z-index:1000;cursor:pointer;
   font-size:1.6rem;letter-spacing:.05em;
@@ -37,8 +35,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block;}
 body.night #overlay{background:#000;color:#eee;}
 #overlay.hidden{opacity:0;pointer-events:none;}
 #mantra{
-  position:fixed;bottom:2rem;left:50%;
-  transform:translateX(-50%);
+  position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
   font-size:1.1rem;opacity:.15;
   text-shadow:0 0 10px rgba(184,139,255,.5);
   white-space:nowrap;pointer-events:none;
@@ -53,14 +50,18 @@ body.night #overlay{background:#000;color:#eee;}
 #toGarlic.show{opacity:1;}
 #toggleMode{
   position:fixed;top:1rem;right:1rem;
-  background:none;border:none;font-size:1.4rem;cursor:pointer;color:inherit;z-index:900;
+  background:none;border:none;font-size:1.4rem;
+  cursor:pointer;color:inherit;z-index:900;
 }
-/* triangle switch */
-#switchMap{
-  position:fixed;bottom:1.2rem;left:1.2rem;width:110px;height:110px;
-  cursor:pointer;z-index:900;opacity:.6;transition:opacity .3s;
+/* rule overlays */
+.rule{
+  position:fixed;top:1rem;left:50%;transform:translateX(-50%);
+  font-size:1rem;letter-spacing:.08em;text-transform:uppercase;
+  opacity:0;pointer-events:none;transition:opacity 1s ease;
 }
-#switchMap:hover{opacity:1;}
+.rule.show{opacity:.6;}
+#technoRule{color:#00ffbf;text-shadow:0 0 10px #00ffbf;}
+#popRule{color:#ff4faf;text-shadow:0 0 10px #ff4faf;}
 </style>
 </head>
 <body>
@@ -71,19 +72,10 @@ body.night #overlay{background:#000;color:#eee;}
 <div id="mantra">Bevegelse lærer stillhet å svare.</div>
 <button id="toGarlic">Translate to Garlic ↠</button>
 
-<!-- Kendyl triangle switch -->
-<div id="switchMap" title="Switch or choose your key">
-  <svg viewBox="0 0 200 200" width="100%" height="100%">
-    <polygon points="100,10 10,190 190,190" fill="none" stroke="#fff" stroke-width="1"/>
-    <text x="95" y="30" font-size="22" text-anchor="middle">🪶</text>
-    <text x="45" y="180" font-size="22" text-anchor="middle">🌙</text>
-    <text x="155" y="180" font-size="22" text-anchor="middle">🌀</text>
-  </svg>
-</div>
+<div id="technoRule" class="rule">TECHNO RULE: TRUST RHYTHM, NOT CHAOS</div>
+<div id="popRule" class="rule">POP RULE: MAKE THEM FEEL, THEN THINK</div>
 
-<audio id="motionTone" loop preload="auto" style="display:none;">
-  <!-- <source src="https://assets.plnt.earth/audio/monique-128hz.mp3" type="audio/mpeg"> -->
-</audio>
+<audio id="motionTone" loop preload="auto" style="display:none;"></audio>
 
 <script>
 /* ---------- canvas motion ---------- */
@@ -115,32 +107,21 @@ overlay.addEventListener('click',()=>{
   const startAudio=()=>{tone.play().catch(()=>{});document.removeEventListener('click',startAudio);};
   document.addEventListener('click',startAudio);
   setTimeout(()=>document.getElementById('toGarlic').classList.add('show'),42000);
+  // reveal rules if unlocked
+  if(localStorage.ruleTechno==="true")document.getElementById('technoRule').classList.add('show');
+  if(localStorage.rulePop==="true")document.getElementById('popRule').classList.add('show');
 });
-
-/* ---------- toggle day/night ---------- */
 document.getElementById('toggleMode').addEventListener('click',()=>document.body.classList.toggle('night'));
-
-/* ---------- garlic transition ---------- */
 document.getElementById('toGarlic').addEventListener('click',()=>{
-  try{
-    localStorage.setItem('motionKey','true');
-    localStorage.setItem('lastKeyGranted','motion');
-  }catch(e){}
+  localStorage.setItem('motionKey','true');
+  localStorage.setItem('lastKeyGranted','motion');
   location.href='https://garlic.plnt.earth';
 });
 
 /* ---------- Kendyl key sync ---------- */
 (function(){
-  const map=document.getElementById("switchMap");
   const mode=localStorage.kendylKey||"motion";
   document.body.classList.add(mode);
-  map.onclick=e=>{
-    const {offsetX:x,offsetY:y}=e;
-    if(y<60)localStorage.kendylKey="school";
-    else if(x<100)localStorage.kendylKey="quietmoon";
-    else localStorage.kendylKey="motion";
-    location.reload();
-  };
 })();
 </script>
 </body>
