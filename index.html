@@ -18,6 +18,7 @@
   --maxw:900px;
 }
 
+/* GLOBAL */
 body{
   margin:0;
   background:var(--bg);
@@ -29,38 +30,140 @@ body{
   overflow-x:hidden;
 }
 
-/* Aurora Layer */
+/* NAV */
+.illumina-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:14px;
+  padding:16px 20px;
+  background:#0d131a;
+  border-bottom:1px solid rgba(255,255,255,0.08);
+  position:relative;
+  z-index:20;
+}
+
+.illumina-nav a,
+.illumina-nav button{
+  color:#d8e9ff;
+  text-decoration:none;
+  background:rgba(255,255,255,0.05);
+  padding:8px 14px;
+  border-radius:8px;
+  font-size:15px;
+  border:none;
+  cursor:pointer;
+  backdrop-filter:blur(6px);
+}
+
+.nav-group{
+  position:relative;
+  display:inline-block;
+}
+
+.nav-group .dropdown{
+  display:none;
+  position:absolute;
+  top:42px;
+  left:0;
+  background:#111a24;
+  border:1px solid rgba(255,255,255,0.07);
+  border-radius:12px;
+  padding:12px;
+  min-width:180px;
+  box-shadow:0 10px 20px rgba(0,0,0,0.4);
+  z-index:30;
+}
+
+.nav-group .dropdown a{
+  display:block;
+  padding:10px 12px;
+  border-radius:8px;
+  margin:4px 0;
+  background:rgba(255,255,255,0.04);
+}
+
+.nav-group:hover .dropdown,
+.nav-group:focus-within .dropdown{
+  display:block;
+}
+
+/* AURORA BACKGROUND */
 .aurora{
   pointer-events:none;
   position:fixed;
-  top:0;
-  left:0;
+  top:0; left:0;
   width:100%;
   height:100vh;
   z-index:-1;
-  background:radial-gradient(ellipse at 50% 130%, rgba(94,234,212,0.18), transparent 65%),
-             radial-gradient(ellipse at 10% 0%, rgba(207,250,254,0.14), transparent 70%),
-             radial-gradient(ellipse at 90% 20%, rgba(94,234,212,0.12), transparent 75%),
-             linear-gradient(180deg, rgba(0,40,60,0.4), transparent);
+  background:
+    radial-gradient(ellipse at 50% 130%, rgba(94,234,212,0.18), transparent 65%),
+    radial-gradient(ellipse at 10% 0%, rgba(207,250,254,0.14), transparent 70%),
+    radial-gradient(ellipse at 90% 20%, rgba(94,234,212,0.12), transparent 75%),
+    linear-gradient(180deg, rgba(0,40,60,0.4), transparent);
   animation:auroraFlow 14s ease-in-out infinite alternate;
   filter:blur(26px) saturate(130%);
 }
 
 @keyframes auroraFlow{
-  0%{
-    transform:translate3d(0,-20px,0) scale(1.02);
-    opacity:0.8;
-  }
-  50%{
-    transform:translate3d(-20px,10px,0) scale(1.04);
-    opacity:1;
-  }
-  100%{
-    transform:translate3d(20px,-10px,0) scale(1.03);
-    opacity:0.85;
-  }
+  0%{transform:translate3d(0,-20px,0) scale(1.02);opacity:0.8;}
+  50%{transform:translate3d(-20px,10px,0) scale(1.04);opacity:1;}
+  100%{transform:translate3d(20px,-10px,0) scale(1.03);opacity:0.85;}
 }
 
+/* FLOATING SPARKS */
+.spark{
+  position:fixed;
+  width:3px;
+  height:3px;
+  background:#cffafe;
+  border-radius:50%;
+  opacity:0.75;
+  animation:sparkFloat 8s ease-in-out infinite alternate;
+  filter:blur(1px);
+}
+
+@keyframes sparkFloat{
+  0%{transform:translateY(0);}
+  100%{transform:translateY(-40px);}
+}
+
+/* FLOW ORBS */
+.orb{
+  position:fixed;
+  width:140px;
+  height:140px;
+  background:radial-gradient(circle, rgba(94,234,212,0.2), transparent 70%);
+  border-radius:50%;
+  filter:blur(40px);
+  animation:orbFloat 18s ease-in-out infinite;
+}
+
+@keyframes orbFloat{
+  0%{transform:translate3d(-8vw,6vh,0);}
+  50%{transform:translate3d(10vw,-4vh,0);}
+  100%{transform:translate3d(-6vw,8vh,0);}
+}
+
+/* HORIZON GLOW */
+.horizon{
+  position:fixed;
+  bottom:0;
+  left:0;
+  width:100%;
+  height:22vh;
+  background:radial-gradient(ellipse at 50% 100%, rgba(94,234,212,0.14), transparent 70%);
+  animation:horizonPulse 10s ease-in-out infinite;
+  filter:blur(20px);
+  z-index:-1;
+}
+
+@keyframes horizonPulse{
+  0%{opacity:0.4;}
+  50%{opacity:0.7;}
+  100%{opacity:0.45;}
+}
+
+/* MAIN */
 main{
   max-width:var(--maxw);
   padding:32px 20px 80px;
@@ -81,15 +184,6 @@ p{
   color:var(--muted);
 }
 
-ul{
-  margin:0 0 24px 20px;
-}
-
-li{
-  margin:8px 0;
-  color:var(--ink);
-}
-
 .panel{
   background:var(--panel);
   padding:24px;
@@ -99,6 +193,7 @@ li{
   backdrop-filter:blur(8px);
 }
 
+/* FOOTER */
 footer{
   margin-top:60px;
   padding:20px 0 40px;
@@ -116,16 +211,60 @@ footer a{
 
 <body>
 
+<!-- NAV -->
+<nav class="illumina-nav">
+  <a href="https://time.plnt.earth">Time</a>
+  <a href="https://time.plnt.earth/map/">Map</a>
+  <a href="https://time.plnt.earth/anchors/">Anchors</a>
+
+  <div class="nav-group">
+    <button>Core Illumina</button>
+    <div class="dropdown">
+      <a href="https://time.plnt.earth/charter/">Charter</a>
+      <a href="https://time.plnt.earth/interpretation/">Interpretation</a>
+      <a href="https://time.plnt.earth/time/">Time Page</a>
+      <a href="https://infinity.plnt.earth">Infinity</a>
+    </div>
+  </div>
+
+  <div class="nav-group">
+    <button>Technical</button>
+    <div class="dropdown">
+      <a href="https://manifolddynamics.plnt.earth">Manifold Dynamics</a>
+      <a href="https://manifolddynamics.plnt.earth/t">T (τ)</a>
+    </div>
+  </div>
+
+  <a href="https://tunes.plnt.earth">Tunes</a>
+  <a href="https://time.plnt.earth/elevator/">Elevator</a>
+  <a href="https://earth.plnt.earth">Earth</a>
+  <a href="https://froot.plnt.earth">Froot</a>
+  <a href="https://clarity.plnt.earth">Clarity</a>
+  <a href="https://quietmoon.plnt.earth">Quietmoon</a>
+  <a href="https://four.plnt.earth">Four</a>
+  <a href="https://jar.plnt.earth">Jar</a>
+</nav>
+
+<!-- BACKGROUND EFFECTS -->
 <div class="aurora"></div>
+<div class="orb" style="top:10vh; left:10vw;"></div>
+<div class="orb" style="top:50vh; left:75vw;"></div>
+<div class="orb" style="top:70vh; left:20vw;"></div>
+<div class="spark" style="top:30vh; left:40vw;"></div>
+<div class="spark" style="top:60vh; left:55vw;"></div>
+<div class="spark" style="top:20vh; left:75vw;"></div>
+<div class="horizon"></div>
 
 <main>
 
   <h1>Motion</h1>
 
+  <!-- TAP-TO-PLAY -->
   <div id="motion-video" style="position:relative;width:100%;max-width:680px;margin:0 auto 32px;cursor:pointer;border-radius:16px;overflow:hidden;background:#000;">
-    <img src="https://img.youtube.com/vi/PXQcEIM4su0/maxresdefault.jpg" alt="Video thumbnail" style="width:100%;display:block;opacity:0.9;">
+    <img src="https://img.youtube.com/vi/PXQcEIM4su0/maxresdefault.jpg" style="width:100%;display:block;opacity:0.9;">
   </div>
 
+  <!-- MOTION ENGINE -->
   <section class="panel">
     <p>Motion is where energy becomes direction. It’s the part of Illumina that studies how we move emotionally, creatively, physically, or intentionally. Motion is a field, not a role—a space where things accelerate, breathe, stretch, and shift.</p>
 
@@ -140,6 +279,7 @@ footer a{
     <p>Motion is exploration. Motion is energy finding its shape. Motion is the gentle forward pull when you’re ready for the next step. No one represents Motion. Anyone can influence it.</p>
   </section>
 
+  <!-- NEXT STEP -->
   <section class="panel">
     <h2>Next Step</h2>
     <p>If any part of this resonates, you’re welcome to step into Motion in whatever way feels natural. There’s no role, no expectation, and nothing to carry. Motion is just a space where creativity and movement overlap. It stays open, quietly, for whenever you wander back.</p>
@@ -151,9 +291,34 @@ footer a{
   <p><a href="https://earth.plnt.earth">earth.plnt.earth</a> · Grounding keeps everything safe.</p>
 </footer>
 
+<!-- VIDEO JS -->
 <script>
-document.getElementById('motion-video').addEventListener('click',function(){
-  this.innerHTML='<iframe width="100%" height="360" src="https://www.youtube-nocookie.com/embed/PXQcEIM4su0?autoplay=1&playsinline=1" style="border:0;width:100%;height:100%;" allow="autoplay; encrypted-media"></iframe>';
+document.getElementById('motion-video')
+.addEventListener('click',function(){
+  this.innerHTML='<iframe width="100%" height="360" src="https://www.youtube-nocookie.com/embed/PXQcEIM4su0?autoplay=1&playsinline=1" allow="autoplay; encrypted-media" style="border:0;width:100%;height:100%;"></iframe>';
+});
+</script>
+
+<!-- GIVE INTO THE LOVE EASTER EGG -->
+<script>
+document.addEventListener('keydown',function(e){
+  if(e.key.toLowerCase()==='l'){  
+    let msg=document.createElement('div');
+    msg.textContent='give into the love';
+    msg.style.position='fixed';
+    msg.style.bottom='20px';
+    msg.style.right='20px';
+    msg.style.padding='10px 16px';
+    msg.style.background='rgba(94,234,212,0.18)';
+    msg.style.border='1px solid rgba(255,255,255,0.12)';
+    msg.style.borderRadius='8px';
+    msg.style.color='#cffafe';
+    msg.style.fontSize='14px';
+    msg.style.backdropFilter='blur(6px)';
+    msg.style.zIndex='50';
+    document.body.appendChild(msg);
+    setTimeout(()=>msg.remove(),3000);
+  }
 });
 </script>
 
